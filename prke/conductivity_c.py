@@ -9,4 +9,7 @@
 
 
 def k_flibe(t_flibe):
-    return 50 # placeholder
+    # from http://www.psfc.mit.edu/library1/catalog/reports/1980/80rr/80rr012/80rr012_full.pdf
+    # would prefer temperature dependent thermal conductivity?
+    # [W/m-K]
+    return 1.0 
