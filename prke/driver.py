@@ -43,5 +43,3 @@ class Driver(object):
         self._plotter.plot_power()
 
 
-
-
