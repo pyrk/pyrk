@@ -15,7 +15,7 @@ component_names = {"fuel":0, "cool":1, "mod":2, "refl":3}
 n_components = len(component_names)
 n_entries = 1 + n_precursor_groups + n_decay_groups + n_components
 
-coeffs = {"fuel":1.8, "cool":1, "mod":2, "refl":3}
+coeffs = {"fuel":-3.7, "cool":-1.8, "mod":-0.7, "refl":1.8}
 
 y = np.zeros(shape = (n_entries, timesteps), dtype=float)
 dydt = np.zeros(shape = (n_entries, timesteps), dtype=float)

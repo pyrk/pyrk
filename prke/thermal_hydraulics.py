@@ -1,13 +1,12 @@
 from scipy import integrate
+from th_params import *
 
 class ThermalHydraulics(object):
     """This class handles calculations and data related to the 
     thermal_hydraulics subblock"""
 
-    def __init__(self,
-            cond,
-            spec_caps):
-        self.check_keys(cond, spec_caps)
+    def __init__(self):
+        self.check_keys(conductivities, spec_heat_caps)
         self._bodies = cond.keys()
         self._k = cond
         self._cp = spec_caps
