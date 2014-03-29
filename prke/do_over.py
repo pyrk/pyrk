@@ -35,37 +35,69 @@ dtempdt = np.zeros(shape= (n_components, timesteps), dtype=float)
 ne = neutronics.Neutronics()
 th = thermal_hydraulics.ThermalHydraulics()
 
-def f(t, y, coeffs, Lambda, lams, ksis):
+def f(t, y, coeffs):
+    lams = ne._data._lambdas
     temp_i = 2 + n_precursor_groups + n_decay_groups
-    temp_f = 3 + n_precursor_groups + n_decay + groups + n_components_
-    f = {"p":ne.dpdt(t, y[temp_i:temp_f], coeffs, Lambda, y[0], lams, ksis)}
+    temp_f = 3 + n_precursor_groups + n_decay_groups + n_components
+    f = {"p":ne.dpdt(t, dt, temp, coeffs, y[0],
+        y[1:n_precursor_groups+1])}
     for j in range(0, n_precursor_groups):
         name = "ksi"+str(j)
-        f[name] = ne.dksidt(Lambda, y[0], j)
+        f[name] = ne.dksidt(t, y[0], y[j+1], j)
     for k in range(0, n_decay_groups):
         name = "w"+str(k)
         f[name] = ne.dwdt(k)
     for c in component_names:
         f[c] = th.dtempdt(c)
-    return f
+    return f.values()
+
+def f_n(t, y, coeffs):
+    lams = ne._data._lambdas
+    temp_i = 2 + n_precursor_groups + n_decay_groups
+    temp_f = 3 + n_precursor_groups + n_decay_groups + n_components
+    f = {"p":ne.dpdt(t, dt, temp, coeffs, y[0],
+        y[1:n_precursor_groups+1])}
+    for j in range(0, n_precursor_groups):
+        name = "ksi"+str(j)
+        f[name] = ne.dksidt(t, y[0], y[j+1], j)
+    for k in range(0, n_decay_groups):
+        name = "w"+str(k)
+        f[name] = ne.dwdt(k)
+    return f.values()
+
+def f_th(t, y, power):
+    f = {}
+    for c in component_names:
+        f[c] = th.dtempdt(c, y, power)
+    return f.values()
 
 def y0(): 
-    y0 = [p_0]
+    y0 = [236] # 236 MWth?
     for j in range(0, n_precursor_groups):
-        y0.append(ne.ksi[j][0])
+        y0.append(0)
     for k in range(0, n_decay_groups):
-        y0.append(ne.w[j][0])
+        y0.append(ne._data._omegas[j])
     for name, num in component_names.iteritems():
         y0.append(th.temp(name, 0))
     assert len(y0) == n_entries
     return y0
 
+def y0_th():
+def y0_n():
 
-r = ode(f).set_integrator('dopri15')
-r.set_initial_value(y0(), t0).set_f_params(coeffs, Lambda, lams, ksis)
-while r.successful() and r.t < tf:
-    r.integrate(r.t+dt)
-    print("%g %g" % (r.t, r.y))
+
+
+def solve():
+    n = ode(f_n).set_integrator('dopri15')
+    n.set_initial_value(y0(), t0).set_f_params(coeffs)
+    th = ode(f_th).set_integrator('dopri15')
+    n.set_initial_value(y0(), t0).set_f_params(coeffs)
+    while n.successful() and n.t < tf:
+        n.integrate(n.t+dt)
+        print("%g %g" % (n.t, n.y))
+        th.integrate(th.t+dt)
+        print("%g %g" % (th.t, th.y))
+        update(n.y, th.y)
 
 #def f(t, y, arg1):
 #    return [1j*arg1*y[0] + y[1], -arg1*y[1]**2]

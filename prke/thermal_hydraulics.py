@@ -1,41 +1,51 @@
 from scipy import integrate
-from th_params import *
+import th_params
 
 class ThermalHydraulics(object):
     """This class handles calculations and data related to the 
     thermal_hydraulics subblock"""
 
     def __init__(self):
-        self.check_keys(conductivities, spec_heat_caps)
-        self._bodies = cond.keys()
-        self._k = cond
-        self._cp = spec_caps
-            
-    def check_keys(self, dict1, dict2):
-        diff = set(dict1.keys) - set(dict2.keys)
-        if len(diff) != 0:
-            raise ValueError("The dictionaries of specific heat capacity and \
-            conductivity have different keys. They must refer to the same set \
-            of bodies")
+        self._params = th_params.THParams()
+        self._temps = self._params._init_temps
 
-    def rhs(self):
-        for b in self._bodies:
-            self._temp[key] = rhs(self._k[key], self._cp[key]) 
-        
-        for key in lhs.keys():
-            if key in bodies:
-                f = self.find_f(key)
-        
+    def temp(self, component, t):
+        return self._temps[component][t]
 
-    def find_f(self, key):
-        try :
-            self._f[key]
-        except(KeyError): 
-            raise KeyError("There is currently no defined function for the \
-            temperature of the body: " + key)
-
-    def temp(self, key):
-        integrate.ode(f).set_integrator('dopri5')
-        return self._t[key]
+    def dtempdt(self, component, temps, power):
+        if component == "fuel":
+            return self.dtempfueldt(power, temps["cool"], temps["mod"])
+        elif component == "cool":
+            return self.dtempcooldt(temps["fuel"])
+        elif component == "mod":
+            return self.dtempmoddt(temps["cool"])
+        elif component == "refl":
+            return self.dtemprefldt(temps["fuel"])
+        else :
+            raise KeyError("This work only supports fuel, cool, mod, and \
+                    refl keys")
 
 
+    def dtempmoddt(self, tfuel):
+        h = self._params.h("mod")
+        # TODO Replace. This is a lie 
+        f = h*(tfuel)
+        return f
+    
+    def dtempfueldt(self, power, tcool, tmod):
+        h = self._params.h("cool")
+        # TODO Replace. This is a lie 
+        f = h*(tcool - tmod) 
+        return f
+
+    def dtempcooldt(self, tfuel):
+        h = self._params.h("refl")
+        # TODO Replace. This is a lie 
+        f = h*(tfuel)
+        return f
+
+    def dtemprefldt(self, tcool):
+        h = self._params.h("cool")
+        # TODO Replace. This is a lie 
+        f = h*(tcool)
+        return f
