@@ -30,31 +30,44 @@ class ThermalHydraulics(object):
                     refl keys")
     
     def dtempfueldt(self, power, omegas, tfuel, tcool, tmod):
-        #h = self._params.h("cool")
-        # TODO Replace. This is a lie 
-        f = power*(tfuel - tcool - tmod) 
-        rho = self._params.rho("fuel")
+        # check this, it may not get things quite right... 
+        rho = self._params.rho("fuel",tfuel)
         cp = self._params.cp("fuel")
         vol = self._params.vol("fuel")
-        power_tot = self._params.power_tot()
-        heat_gen = power_tot/vol/rho/cp
-        (1-kappa)*power 
-        return f
+        power_tot = self._params._power_tot
+        heat_gen = (power_tot/vol/rho/cp)*((1-self._params._kappa)*power + sum(omegas)) 
+        res_c = self._params.res("fuel", "cool")
+        res_m = self._params.res("fuel", "mod")
+        heat_loss_cool = (tfuel-tcool)/(rho*cp*res_f)
+        heat_loss_mod = (tfuel-tmod)/(rho*cp*res_m) # need some other solution?
+        heat_loss = heat_loss_cool+ heat_loss_mod # this cant be right
+        return heat_gen - heat_loss
 
     def dtempcooldt(self, tfuel, tcool):
-        #h = self._params.h("refl")
-        # TODO Replace. This is a lie 
-        f = (tfuel-tcool)
-        return f
+        h = self._params.height()
+        tinlet = self._params.t_inlet("cool")
+        v = self._params.v("cool")
+        rho = self._params.rho("cool", tcool)
+        cp = self._params.cp("cool")
+        res = self._params.res("cool", "fuel")
+        convection = (2.0*v/h)*(tcool-tinlet) 
+        afuel = self._params.area("fuel") # this is one pebble?
+        aflow = self._params.area("cool") # this is the flow path cross section
+        conduction = (afuel/aflow)*(tfuel - tcool)/(rho*cp*res)
+        return conduction - convection 
 
     def dtempmoddt(self, tfuel, tmod):
-        #h = self._params.h("mod")
-        # TODO Replace. This is a lie 
-        f = (tfuel - tmod)
+        rho = self._params.rho("mod", tmod)
+        cp = self._params.cp("mod")
+        res_m = self._params.res("mod", "fuel")
+        f = (tmod-tfuel)/(rho*cp*res_m)
         return f
 
     def dtemprefldt(self, tcool, trefl):
-        #h = self._params.h("cool")
-        # TODO Replace. This is a lie 
-        f = (tcool-trefl)
+        rho = self._params.rho("refl", trefl)
+        cp = self._params.cp("refl")
+        res_m = self._params.res("refl", "cool")
+        f = (trefl - tcool)/(rho*cp*res_r)
         return f
+
+
