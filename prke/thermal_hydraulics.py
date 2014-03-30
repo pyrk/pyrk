@@ -12,40 +12,49 @@ class ThermalHydraulics(object):
     def temp(self, component, t):
         return self._temps[component][t]
 
-    def dtempdt(self, component, temps, power):
+    def dtempdt(self, component, temps, power, omegas, component_names):
+        tfuel = temps[component_names["fuel"]]
+        tcool = temps[component_names["cool"]]
+        tmod = temps[component_names["mod"]]
+        trefl = temps[component_names["refl"]]
         if component == "fuel":
-            return self.dtempfueldt(power, temps["cool"], temps["mod"])
+            return self.dtempfueldt(power, omegas, tfuel, tcool, tmod)
         elif component == "cool":
-            return self.dtempcooldt(temps["fuel"])
+            return self.dtempcooldt(tfuel, tcool)
         elif component == "mod":
-            return self.dtempmoddt(temps["cool"])
+            return self.dtempmoddt(tfuel, tmod)
         elif component == "refl":
-            return self.dtemprefldt(temps["fuel"])
+            return self.dtemprefldt(tfuel, trefl)
         else :
             raise KeyError("This work only supports fuel, cool, mod, and \
                     refl keys")
-
-
-    def dtempmoddt(self, tfuel):
-        h = self._params.h("mod")
-        # TODO Replace. This is a lie 
-        f = h*(tfuel)
-        return f
     
-    def dtempfueldt(self, power, tcool, tmod):
-        h = self._params.h("cool")
+    def dtempfueldt(self, power, omegas, tfuel, tcool, tmod):
+        #h = self._params.h("cool")
         # TODO Replace. This is a lie 
-        f = h*(tcool - tmod) 
+        f = power*(tfuel - tcool - tmod) 
+        rho = self._params.rho("fuel")
+        cp = self._params.cp("fuel")
+        vol = self._params.vol("fuel")
+        power_tot = self._params.power_tot()
+        heat_gen = power_tot/vol/rho/cp
+        (1-kappa)*power 
         return f
 
-    def dtempcooldt(self, tfuel):
-        h = self._params.h("refl")
+    def dtempcooldt(self, tfuel, tcool):
+        #h = self._params.h("refl")
         # TODO Replace. This is a lie 
-        f = h*(tfuel)
+        f = (tfuel-tcool)
         return f
 
-    def dtemprefldt(self, tcool):
-        h = self._params.h("cool")
+    def dtempmoddt(self, tfuel, tmod):
+        #h = self._params.h("mod")
         # TODO Replace. This is a lie 
-        f = h*(tcool)
+        f = (tfuel - tmod)
+        return f
+
+    def dtemprefldt(self, tcool, trefl):
+        #h = self._params.h("cool")
+        # TODO Replace. This is a lie 
+        f = (tcool-trefl)
         return f

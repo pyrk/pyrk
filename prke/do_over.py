@@ -4,6 +4,7 @@ import neutronics
 import thermal_hydraulics
 from scipy.integrate import ode
 
+np.set_printoptions(precision=3)
 t0 = 0.0
 dt = 0.01
 tf = 1.0
@@ -17,92 +18,93 @@ n_entries = 1 + n_precursor_groups + n_decay_groups + n_components
 
 coeffs = {"fuel":-3.7, "cool":-1.8, "mod":-0.7, "refl":1.8}
 
-y = np.zeros(shape = (n_entries, timesteps), dtype=float)
-dydt = np.zeros(shape = (n_entries, timesteps), dtype=float)
+y = np.zeros(shape = (timesteps, n_entries), dtype=float)
+#dydt = np.zeros(shape = (timesteps, n_entries), dtype=float)
 
-p = np.zeros(shape= (1, timesteps), dtype=float)
-dpdt = np.zeros(shape= (1, timesteps), dtype=float)
+#p = np.zeros(shape= (1, timesteps), dtype=float)
+#dpdt = np.zeros(shape= (1, timesteps), dtype=float)
 
-ksi = np.zeros(shape= (n_precursor_groups, timesteps), dtype=float)
-dksidt = np.zeros(shape= (n_precursor_groups, timesteps), dtype=float)
+#ksi = np.zeros(shape= (n_precursor_groups, timesteps), dtype=float)
+#dksidt = np.zeros(shape= (n_precursor_groups, timesteps), dtype=float)
 
-w = np.zeros(shape= (n_decay_groups, timesteps), dtype=float)
-dwdt = np.zeros(shape= (n_decay_groups, timesteps), dtype=float)
+#w = np.zeros(shape= (n_decay_groups, timesteps), dtype=float)
+#dwdt = np.zeros(shape= (n_decay_groups, timesteps), dtype=float)
 
-temp = np.zeros(shape= (n_components, timesteps), dtype=float)
-dtempdt = np.zeros(shape= (n_components, timesteps), dtype=float)
+temp = np.zeros(shape= (timesteps, n_components), dtype=float)
+#dtempdt = np.zeros(shape= (n_components, timesteps), dtype=float)
 
 ne = neutronics.Neutronics()
 th = thermal_hydraulics.ThermalHydraulics()
 
-def f(t, y, coeffs):
-    lams = ne._data._lambdas
-    temp_i = 2 + n_precursor_groups + n_decay_groups
-    temp_f = 3 + n_precursor_groups + n_decay_groups + n_components
-    f = {"p":ne.dpdt(t, dt, temp, coeffs, y[0],
-        y[1:n_precursor_groups+1])}
-    for j in range(0, n_precursor_groups):
-        name = "ksi"+str(j)
-        f[name] = ne.dksidt(t, y[0], y[j+1], j)
-    for k in range(0, n_decay_groups):
-        name = "w"+str(k)
-        f[name] = ne.dwdt(k)
-    for c in component_names:
-        f[c] = th.dtempdt(c)
-    return f.values()
+def update_n(t, y_n):
+    n_n = len(y_n)
+    y[t][:n_n] = y_n
+
+def update_th(t, y_n, y_th):
+    temp[t] = y_th
+    n_n = len(y_n)
+    y[t][n_n:] = y_th
 
 def f_n(t, y, coeffs):
     lams = ne._data._lambdas
-    temp_i = 2 + n_precursor_groups + n_decay_groups
-    temp_f = 3 + n_precursor_groups + n_decay_groups + n_components
     f = {"p":ne.dpdt(t, dt, temp, coeffs, y[0],
         y[1:n_precursor_groups+1])}
+    #print str(f)
     for j in range(0, n_precursor_groups):
         name = "ksi"+str(j)
         f[name] = ne.dksidt(t, y[0], y[j+1], j)
+    #print str(f)
     for k in range(0, n_decay_groups):
         name = "w"+str(k)
         f[name] = ne.dwdt(k)
+    #print str(f)
+    #print "type of f_n : "+ str(type(f.values()))
+    #print "len of f_n : "+ str(len(f.values()))
     return f.values()
 
-def f_th(t, y, power):
+def f_th(t, y_th):
     f = {}
+    power = y[t][0]
+    o_i = 1+n_precursor_groups
+    o_f = 1+n_precursor_groups+n_decay_groups
+    omegas = y[t][o_i:o_f]
     for c in component_names:
-        f[c] = th.dtempdt(c, y, power)
+        f[c] = th.dtempdt(c, y_th, power, omegas, component_names)
+    #print "type of f_th : "+ str(type(f.values()))
     return f.values()
 
 def y0(): 
-    y0 = [236] # 236 MWth?
+    y0 = [1] # real power is 236 MWth, but normalized is 1
     for j in range(0, n_precursor_groups):
         y0.append(0)
     for k in range(0, n_decay_groups):
-        y0.append(ne._data._omegas[j])
+        y0.append(ne._data._omegas[k])
     for name, num in component_names.iteritems():
         y0.append(th.temp(name, 0))
     assert len(y0) == n_entries
     return y0
 
-def y0_th():
 def y0_n():
+    idx = n_precursor_groups+n_decay_groups + 1
+    #print "len y0_n : " + str(idx)
+    y = y0()[:idx]
+    return y
 
-
+def y0_th():
+    tidx = n_precursor_groups+n_decay_groups + 1
+    y = y0()[tidx:]
+    return y
 
 def solve():
-    n = ode(f_n).set_integrator('dopri15')
-    n.set_initial_value(y0(), t0).set_f_params(coeffs)
-    th = ode(f_th).set_integrator('dopri15')
-    n.set_initial_value(y0(), t0).set_f_params(coeffs)
+    n = ode(f_n).set_integrator('dopri5')
+    n.set_initial_value(y0_n(), t0).set_f_params(coeffs)
+    th = ode(f_th).set_integrator('dopri5')
+    th.set_initial_value(y0_th(), t0)
     while n.successful() and n.t < tf:
         n.integrate(n.t+dt)
-        print("%g %g" % (n.t, n.y))
+        print(n.t, n.y)
+        update_n(n.t, n.y)
         th.integrate(th.t+dt)
-        print("%g %g" % (th.t, th.y))
-        update(n.y, th.y)
+        print(th.t, th.y)
+        update_th(n.t, n.y, th.y)
 
-#def f(t, y, arg1):
-#    return [1j*arg1*y[0] + y[1], -arg1*y[1]**2]
-#def jac(t, y, arg1):    
-#    return [[1j*arg1, 1], [0, -arg1*2*y[1]]]
-
-#r = ode(f, jac).set_integrator('zvode', method='bdf', with_jacobian=True)
-#r.set_initial_value(y0(), t0).set_f_params(coeffs, Lambda, lams, ksis).set_jac_params(2.0)
