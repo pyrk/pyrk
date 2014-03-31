@@ -19,7 +19,7 @@ class THParams(object):
         self._vol_tot_defuel = 1.03 #m^3
         self._vol_tot_refl = 4.8 #m^3
         self._pebble_porosity = 0.4 
-        self._vol_flow_rate = 976.0 # kg/s
+        self._vol_flow_rate = 976.0*0.3 # kg/s TODO 0.3 is nat circ guess
         self._vel_cool = 0.54 # m^3/s 
         self._t_inlet = 600.0
         self._fuel_matrix_r = 0.005 # [m] ... matrix(4mm) + coating(1mm)
@@ -138,7 +138,7 @@ class THParams(object):
         # W.J.Carmac & D.L.Porter.
         # Average Value over Predicted Range of Temepratures
         # [kg/m^3]
-        rho = 100
+        rho = 10.5
         return rho
 
     def rho_graphite(self, t_graphite):

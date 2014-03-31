@@ -10,6 +10,15 @@ class Neutronics(object):
     def __init__(self):
         self._data = precursor_data.PrecursorData("u235", "thermal")
             
+    def rho_ext(self, t):
+        if t>0 and t<0.1:
+            return 0.1
+        elif t<0 :
+            raise ValueError("Negative times should not happen. Please check \
+                    input") 
+        else :
+            return 0
+
     def check_keys(self, dict1, dict2):
         diff = set(dict1.keys) - set(dict2.keys)
         if len(diff) != 0:
@@ -45,6 +54,8 @@ class Neutronics(object):
             idx = component_names[key]
             dtemp[key] = temps[idx][t] - temps[idx][t-dt]
             drho[key] = coeffs[key]*dtemp[key]
+        drho["external"] = self.rho_ext(t)
         print("Temps : ", temps)
+        print("Chane in temps : ", dtemp)
         print("Change in rho : ", drho)
         return sum(drho.values())

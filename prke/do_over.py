@@ -7,7 +7,7 @@ from scipy.integrate import ode
 np.set_printoptions(precision=3)
 t0 = 0.0
 dt = 0.0001
-tf = 0.0004
+tf = 0.002
 timesteps = tf/dt + 1
 
 n_precursor_groups = 6
