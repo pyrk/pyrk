@@ -138,11 +138,11 @@ class THParams(object):
         # W.J.Carmac & D.L.Porter.
         # Average Value over Predicted Range of Temepratures
         # [kg/m^3]
-        rho = 0 
+        rho = 100
         return rho
 
     def rho_graphite(self, t_graphite):
-        rho = 0
+        rho = 100
         return rho
 
     # MUST UPDATE: THE BELOW IS STILL FOR METAL FUEL
