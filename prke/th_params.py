@@ -25,7 +25,7 @@ class THParams(object):
         self._fuel_matrix_r = 0.005 # [m] ... matrix(4mm) + coating(1mm)
         self._mod_r = 0.025
         self._pebble_r = self._fuel_matrix_r + self._mod_r
-        self._kappa = 0.06 # This is an estimate
+        self._kappa = 0.00 # TODO if you fix omegas, kappa ~ 0.06
         self._core_height = 3.5 # [m] APPROXIMATELY (TODO look for actual)
         self._core_inner_radius = 0.35 #m
         self._core_outer_radius = 1.25 #m

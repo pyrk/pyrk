@@ -111,4 +111,5 @@ def solve():
         print(th.t, th.y)
         update_th(int(n.t/dt), n.y, th.y)
     print("Final Result : ", y) 
-
+    print(ne._data._lambdas)
+    print(ne._data._betas)
