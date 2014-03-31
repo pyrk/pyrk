@@ -43,9 +43,14 @@ class Neutronics(object):
         beta = self._data._betas[j]
         return beta*power/Lambda - lam*ksi
 
-    def dwdt(self, k):
-        return self._data._omegas[k]
-        
+    def dwdt(self, power, k):
+        #k = self._data._kappas[k] #TODO
+        w = self._data._omegas[k]
+        p = power
+        #lam = self._data_lambdas_fp[k] #TODO
+        k = 0 
+        lam = 0
+        return k*p-lam*w
 
     def reactivity(self, t, dt, temps, coeffs):
         drho = {}

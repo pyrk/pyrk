@@ -40,55 +40,59 @@ _temp = np.zeros(shape= (timesteps, n_components), dtype=float)
 for key, val in th._params._init_temps.iteritems():
     _temp[0][components[key]] = val  
 
-
 def update_n(t, y_n):
     n_n = len(y_n)
     _y[t/dt][:n_n] = y_n
 
 def update_th(t, y_n, y_th):
-    _temp[int(t/dt)] = y_th
+    _temp[int(t/dt)][:] = y_th
     n_n = len(y_n)
     _y[t/dt][n_n:] = y_th
 
 def f_n(t, y, coeffs):
+    f = np.zeros(shape=(1+n_precursor_groups + n_decay_groups,), dtype=float)
     lams = ne._data._lambdas
-    f = {"p":ne.dpdt(t, dt, _temp, coeffs, y[0],
-        y[1:n_precursor_groups+1])}
+    i=0
+    f[i] = ne.dpdt(t, dt, _temp, coeffs, y[0], y[1:n_precursor_groups+1])
     #print str(f)
     for j in range(0, n_precursor_groups):
-        name = "ksi"+str(j)
-        f[name] = ne.dksidt(t, y[0], y[j+1], j)
+        i += 1
+        f[i] = ne.dksidt(t, y[0], y[i], j)
     #print str(f)
     for k in range(0, n_decay_groups):
-        name = "w"+str(k)
-        f[name] = ne.dwdt(y[0], k)
+        i+=1
+        f[i] = ne.dwdt(y[0], k)
     #print str(f)
     #print "type of f_n : "+ str(type(f.values()))
     #print "len of f_n : "+ str(len(f.values()))
-    return f.values()
+    return f
 
 def f_th(t, y_th):
-    f = {}
+    f = np.zeros(shape=(n_components,), dtype=float)
     power = _y[t/dt][0]
     o_i = 1+n_precursor_groups
     o_f = 1+n_precursor_groups+n_decay_groups
     omegas = _y[t/dt][o_i:o_f]
-    for c in components:
-        f[c] = th.dtempdt(c, y_th, power, omegas, components)
+    for name, num in components.iteritems():
+        f[num] = th.dtempdt(name, y_th, power, omegas, components)
     #print "type of f_th : "+ str(type(f.values()))
-    return f.values()
+    return f
 
 def y0(): 
-    y0 = [1] # real power is 236 MWth, but normalized is 1
+    i = 0
+    f = np.zeros(shape=(n_entries ,), dtype=float)
+    f[i] = 1.0 # real power is 236 MWth, but normalized is 1
     for j in range(0, n_precursor_groups):
-        y0.append(0)
+        i += 1
+        f[i] = 0
     for k in range(0, n_decay_groups):
-        y0.append(ne._data._omegas[k])
+        i+=1
+        f[i] = ne._data._omegas[k]
     for name, num in components.iteritems():
-        y0.append(_temp[0][num])
-    assert len(y0) == n_entries
-    _y[0] = y0
-    return y0
+        f[i+num+1] = _temp[0][num]
+    assert len(f) == n_entries
+    _y[0] = f
+    return f
 
 def y0_n():
     idx = n_precursor_groups+n_decay_groups + 1
@@ -108,15 +112,16 @@ def solve():
     th.set_initial_value(y0_th(), t0)
     while n.successful() and n.t < tf:
         n.integrate(n.t+dt)
-        print("NT: ", n.t)
-        print "NE result:"
-        print(n.t, n.y)
+        #print("NT: ", n.t)
+        #print "NE result:"
+        #print(n.t, n.y)
         update_n(n.t, n.y)
         th.integrate(th.t+dt)
-        print "TH result:"
-        print(th.t, th.y)
+        #print "TH result:"
+        #print(th.t, th.y)
         update_th(n.t, n.y, th.y)
     print("Final Result : ", _y) 
     print("Final Temps :",_temp)
     print(ne._data._lambdas)
     print(ne._data._betas)
+    print(y0_th())
