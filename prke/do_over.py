@@ -1,10 +1,13 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.cm as cmx 
+import matplotlib.colors as colors
+from scipy.integrate import ode
 
 import neutronics 
 import thermal_hydraulics
-from scipy.integrate import ode
 
-np.set_printoptions(precision=3)
+np.set_printoptions(precision=5)
 t0 = 0.0000
 dt = 0.0001
 tf = 0.002
@@ -124,3 +127,48 @@ def solve():
     print("Final Temps :",_temp)
     print(ne._data._lambdas)
     print(ne._data._betas)
+    return _y
+
+def my_colors(num):
+    values = range(n_entries)
+    jet = cm = plt.get_cmap('jet') 
+    cNorm  = colors.Normalize(vmin=0, vmax=values[-1])
+    scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=jet)
+    colorVal = scalarMap.to_rgba(values[num])
+    return colorVal
+
+def plot(y):
+    x=np.arange(t0,tf+dt,dt)
+    plot_power(x, y)
+    plot_ksis(x, y)
+    plot_omegas(x, y)
+    plot_temps(x, y)
+
+def plot_power(x, y):
+    power = y[:,0]
+    plt.plot(x, power, color=my_colors(1), marker='.')
+    saveplot("power", plt)
+
+def plot_temps(x, y):
+    for name, num in components.iteritems():
+        idx = 1 + n_precursor_groups + n_decay_groups + num
+        plt.plot(x, y[:,idx],label=name, color=my_colors(num), marker='.')
+    saveplot("temps", plt)
+
+def plot_ksis(x, y):
+    for num in range(0, n_precursor_groups):
+        idx = num + 1
+        plt.plot(x, y[:,idx], color=my_colors(num), marker='.')
+    saveplot("ksis", plt)
+
+def plot_omegas(x, y):
+    for num in range(0, n_decay_groups):
+        idx = 1 + n_precursor_groups + num
+        plt.plot(x, y[:,idx], color=my_colors(num), marker='.')
+    saveplot("omegas", plt)
+
+def saveplot(name, plt):
+    plt.savefig(str(name+'.pdf'), bbox_inches='tight')
+    plt.savefig(str(name+'.eps'), bbox_inches='tight')
+    plt.clf()
+
