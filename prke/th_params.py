@@ -179,7 +179,7 @@ class THParams(object):
 
     def cp_cool(self):
         # [J/kg-K]
-        return 2350 # from www-ferp.ucsd.edu/LIB/PROPS/HTS.shtml
+        return 2350.0 # from www-ferp.ucsd.edu/LIB/PROPS/HTS.shtml
 
     def cp_mod(self):
         c_p = 100.0 # TODO : placeholder
@@ -206,7 +206,7 @@ class THParams(object):
             raise KeyError("The only supported options for component set are \
             the pairs mod&fuel, fuel&cool, cool&refl")
 
-    def h(self, component):
+    def h(self, components):
         # h_conv calculates the heat tranfer coefficient between the coolant the fuel.
         # This taken from Todreas, N.E., Kazimi, M.S., 1990. Nuclear Systems: I. 
         # Thermal Hydraulic Fundamentals. Taylor & Francis.

@@ -36,11 +36,13 @@ class ThermalHydraulics(object):
         vol = self._params.vol("fuel")
         power_tot = self._params._power_tot
         heat_gen = (power_tot/vol/rho/cp)*((1-self._params._kappa)*power + sum(omegas)) 
+        print("HEAT GEN",heat_gen)
         res_c = self._params.res("fuel", "cool")
         res_m = self._params.res("fuel", "mod")
         heat_loss_cool = (tfuel-tcool)/(rho*cp*res_c)
         heat_loss_mod = (tfuel-tmod)/(rho*cp*res_m) # need some other solution?
-        heat_loss = heat_loss_cool+ heat_loss_mod # this cant be right
+        heat_loss = heat_loss_cool + heat_loss_mod # this cant be right
+        print("HEAT LOSS",heat_loss)
         return heat_gen - heat_loss
 
     def dtempcooldt(self, tfuel, tcool):

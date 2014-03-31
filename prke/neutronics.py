@@ -13,7 +13,7 @@ class Neutronics(object):
     def check_keys(self, dict1, dict2):
         diff = set(dict1.keys) - set(dict2.keys)
         if len(diff) != 0:
-            raise ValueError("The dictionaries for the two dictionaries do not \
+            raise ValueError("The two dictionaries do not \
             have the same set of keys. They must refer to the same set of \
             bodies.")
 
@@ -39,11 +39,12 @@ class Neutronics(object):
         
 
     def reactivity(self, t, dt, temps, coeffs):
-        dalpha = {}
+        drho = {}
         dtemp = {}
         for key, alpha in coeffs.iteritems():
             idx = component_names[key]
             dtemp[key] = temps[idx][t] - temps[idx][t-dt]
-            dalpha[key] = coeffs[key]*dtemp[key]
-        print dalpha
-        return sum(dalpha.values())
+            drho[key] = coeffs[key]*dtemp[key]
+        print("Temps : ", temps)
+        print("Change in rho : ", drho)
+        return sum(drho.values())

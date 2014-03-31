@@ -82,6 +82,7 @@ def y0():
     for name, num in component_names.iteritems():
         y0.append(th.temp(name, 0))
     assert len(y0) == n_entries
+    y[0] = y0
     return y0
 
 def y0_n():
