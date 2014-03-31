@@ -38,21 +38,21 @@ class ThermalHydraulics(object):
         heat_gen = (power_tot/vol/rho/cp)*((1-self._params._kappa)*power + sum(omegas)) 
         res_c = self._params.res("fuel", "cool")
         res_m = self._params.res("fuel", "mod")
-        heat_loss_cool = (tfuel-tcool)/(rho*cp*res_f)
+        heat_loss_cool = (tfuel-tcool)/(rho*cp*res_c)
         heat_loss_mod = (tfuel-tmod)/(rho*cp*res_m) # need some other solution?
         heat_loss = heat_loss_cool+ heat_loss_mod # this cant be right
         return heat_gen - heat_loss
 
     def dtempcooldt(self, tfuel, tcool):
-        h = self._params.height()
-        tinlet = self._params.t_inlet("cool")
-        v = self._params.v("cool")
+        h = self._params._core_height
+        tinlet = self._params._t_inlet
+        v = self._params._vel_cool
         rho = self._params.rho("cool", tcool)
         cp = self._params.cp("cool")
         res = self._params.res("cool", "fuel")
         convection = (2.0*v/h)*(tcool-tinlet) 
-        afuel = self._params.area("fuel") # this is one pebble?
-        aflow = self._params.area("cool") # this is the flow path cross section
+        afuel = self._params.area(set(["fuel", "cool"])) # this is one pebble?
+        aflow = self._params.flow_area() # this is the flow path cross section
         conduction = (afuel/aflow)*(tfuel - tcool)/(rho*cp*res)
         return conduction - convection 
 
@@ -67,7 +67,7 @@ class ThermalHydraulics(object):
         rho = self._params.rho("refl", trefl)
         cp = self._params.cp("refl")
         res_m = self._params.res("refl", "cool")
-        f = (trefl - tcool)/(rho*cp*res_r)
+        f = (trefl - tcool)/(rho*cp*res_m)
         return f
 
 
