@@ -6,8 +6,8 @@ from scipy.integrate import ode
 
 np.set_printoptions(precision=3)
 t0 = 0.0
-dt = 0.01
-tf = 1.0
+dt = 0.0001
+tf = 0.0004
 timesteps = tf/dt + 1
 
 n_precursor_groups = 6
@@ -16,7 +16,7 @@ component_names = {"fuel":0, "cool":1, "mod":2, "refl":3}
 n_components = len(component_names)
 n_entries = 1 + n_precursor_groups + n_decay_groups + n_components
 
-coeffs = {"fuel":-3.7, "cool":-1.8, "mod":-0.7, "refl":1.8}
+coeffs = {"fuel":-3.8, "cool":-1.8, "mod":-0.7, "refl":1.8}
 
 y = np.zeros(shape = (timesteps, n_entries), dtype=float)
 #dydt = np.zeros(shape = (timesteps, n_entries), dtype=float)
@@ -102,9 +102,12 @@ def solve():
     th.set_initial_value(y0_th(), t0)
     while n.successful() and n.t < tf:
         n.integrate(n.t+dt)
+        print "NE result:"
         print(n.t, n.y)
-        update_n(n.t, n.y)
+        update_n(int(n.t/dt), n.y)
         th.integrate(th.t+dt)
+        print "TH result:"
         print(th.t, th.y)
-        update_th(n.t, n.y, th.y)
+        update_th(int(n.t/dt), n.y, th.y)
+    print("Final Result : ", y) 
 

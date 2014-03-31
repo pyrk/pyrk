@@ -45,4 +45,5 @@ class Neutronics(object):
             idx = component_names[key]
             dtemp[key] = temps[idx][t] - temps[idx][t-dt]
             dalpha[key] = coeffs[key]*dtemp[key]
+        print dalpha
         return sum(dalpha.values())

@@ -29,7 +29,7 @@ class PrecursorData(object):
         beta_dict = {}
         beta_dict["u235"] = {}
         beta_dict["pu239"] = {}
-        beta_dict["u235"]["thermal"] = [0.0,0.0,0.0,0.0,0.0,0.0]
+        beta_dict["u235"]["thermal"] = [0.038,0.213,0.188,0.407,0.128,0.026]
         beta_dict["u235"]["fast"] = [0.000266, 0.001491, 0.001316, 0.002849, 0.000896, 0.000182] 
         beta_dict["pu239"]["thermal"] = [0.0,0.0,0.0,0.0,0.0,0.0] 
         beta_dict["pu239"]["fast"] = [0.0,0.0,0.0,0.0,0.0,0.0] 
@@ -40,7 +40,7 @@ class PrecursorData(object):
         lambda_dict = {}
         lambda_dict["u235"] = {}
         lambda_dict["pu239"] = {}
-        lambda_dict["u235"]["thermal"] = [0.0,0.0,0.0,0.0,0.0,0.0]
+        lambda_dict["u235"]["thermal"] = [54.51, 21.84, 6.00, 2.23, 0.496, 0.179]
         lambda_dict["u235"]["fast"] = [0.0127, 0.0317, 0.155, 0.311, 1.4, 3.87] 
         lambda_dict["pu239"]["thermal"] = [0.0,0.0,0.0,0.0,0.0,0.0] 
         lambda_dict["pu239"]["fast"] = [0.0,0.0,0.0,0.0,0.0,0.0]
