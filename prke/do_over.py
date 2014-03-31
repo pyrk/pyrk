@@ -85,7 +85,7 @@ def y0():
     for k in range(0, n_decay_groups):
         y0.append(ne._data._omegas[k])
     for name, num in components.iteritems():
-        y0.append(th.temp(name, 0))
+        y0.append(_temp[0][num])
     assert len(y0) == n_entries
     _y[0] = y0
     return y0

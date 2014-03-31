@@ -7,10 +7,6 @@ class ThermalHydraulics(object):
 
     def __init__(self):
         self._params = th_params.THParams()
-        self._temps = self._params._init_temps
-
-    def temp(self, component, t):
-        return self._temps[component][t]
 
     def dtempdt(self, component, temps, power, omegas, component_names):
         tfuel = temps[component_names["fuel"]]
