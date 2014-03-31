@@ -5,7 +5,7 @@ class THParams(object):
     your own damn class."""
 
     def __init__(self):
-        self._components = ["fuel", "cool", "mod", "refl"]
+        self._components = {"fuel":0, "cool":1, "mod":2, "refl":3}
         # below from greenspan/cisneros
         self._init_temps = {
                 "fuel": [730.0],
