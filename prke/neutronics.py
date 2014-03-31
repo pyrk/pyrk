@@ -58,7 +58,7 @@ class Neutronics(object):
         t_idx = t/dt
         for key, alpha in coeffs.iteritems():
             idx = component_names[key]
-            dtemp[key] = (temps[t_idx][idx] - temps[t_idx-1][idx])
+            dtemp[key] = (temps[t_idx][idx] - temps[0][idx])
             drho[key] = coeffs[key]*dtemp[key]
         drho["external"] = self.rho_ext(t)
         print("Temps : ", temps)

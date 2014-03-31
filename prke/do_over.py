@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cmx 
 import matplotlib.colors as colors
+from matplotlib.pyplot import legend
+
 from scipy.integrate import ode
 
 import neutronics 
@@ -10,7 +12,7 @@ import thermal_hydraulics
 np.set_printoptions(precision=5)
 t0 = 0.0000
 dt = 0.0001
-tf = 0.002
+tf = 0.01
 timesteps = tf/dt + 1
 
 
