@@ -10,14 +10,19 @@ dt = 0.0001
 tf = 0.002
 timesteps = tf/dt + 2
 
-n_precursor_groups = 6
-n_decay_groups = 3
-n_components = len(component_names)
-n_entries = 1 + n_precursor_groups + n_decay_groups + n_components
 
 coeffs = {"fuel":-3.8, "cool":-1.8, "mod":-0.7, "refl":1.8}
 
+ne = neutronics.Neutronics()
+th = thermal_hydraulics.ThermalHydraulics()
+components = th._params._components
+n_precursor_groups = 6
+n_decay_groups = 3
+n_components = len(components)
+n_entries = 1 + n_precursor_groups + n_decay_groups + n_components
+
 _y = np.zeros(shape = (timesteps, n_entries), dtype=float)
+
 #dydt = np.zeros(shape = (timesteps, n_entries), dtype=float)
 
 #p = np.zeros(shape= (1, timesteps), dtype=float)
@@ -32,11 +37,9 @@ _y = np.zeros(shape = (timesteps, n_entries), dtype=float)
 _temp = np.zeros(shape= (timesteps, n_components), dtype=float)
 #dtempdt = np.zeros(shape= (n_components, timesteps), dtype=float)
 
-ne = neutronics.Neutronics()
-th = thermal_hydraulics.ThermalHydraulics()
-component_names = th._params._components
 for key, val in th._params._init_temps.iteritems():
-    _temp[0][component_names[key]] = val  
+    _temp[0][components[key]] = val  
+
 
 def update_n(t, y_n):
     n_n = len(y_n)
@@ -70,8 +73,8 @@ def f_th(t, y_th):
     o_i = 1+n_precursor_groups
     o_f = 1+n_precursor_groups+n_decay_groups
     omegas = _y[t/dt][o_i:o_f]
-    for c in component_names:
-        f[c] = th.dtempdt(c, y_th, power, omegas, component_names)
+    for c in components:
+        f[c] = th.dtempdt(c, y_th, power, omegas, components)
     #print "type of f_th : "+ str(type(f.values()))
     return f.values()
 
@@ -81,7 +84,7 @@ def y0():
         y0.append(0)
     for k in range(0, n_decay_groups):
         y0.append(ne._data._omegas[k])
-    for name, num in component_names.iteritems():
+    for name, num in components.iteritems():
         y0.append(th.temp(name, 0))
     assert len(y0) == n_entries
     _y[0] = y0

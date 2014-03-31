@@ -8,10 +8,10 @@ class THParams(object):
         self._components = {"fuel":0, "cool":1, "mod":2, "refl":3}
         # below from greenspan/cisneros
         self._init_temps = {
-                "fuel": [730.0],
-                "cool": [650.0],
-                "mod": [700.0],
-                "refl": [650.0]
+                "fuel": 730.0,
+                "cool": 650.0,
+                "mod": 700.0,
+                "refl": 650.0
                 }
         # the data below comes form design doc rev c
         self._power_tot=236.0
