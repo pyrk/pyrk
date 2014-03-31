@@ -8,7 +8,7 @@ np.set_printoptions(precision=3)
 t0 = 0.0000
 dt = 0.0001
 tf = 0.002
-timesteps = tf/dt + 2
+timesteps = tf/dt + 1
 
 
 coeffs = {"fuel":-3.8, "cool":-1.8, "mod":-0.7, "refl":1.8}
@@ -124,4 +124,3 @@ def solve():
     print("Final Temps :",_temp)
     print(ne._data._lambdas)
     print(ne._data._betas)
-    print(y0_th())
