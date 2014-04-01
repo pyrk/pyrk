@@ -219,5 +219,4 @@ class THParams(object):
         # Nu  =   4.0+0.33*P2D^(3.8)*(Pe/100).^(0.86)+0.16*(P2D)^5
         # h   =   Nu.*conductivity_c(t_cool)/D_h
         # TODO : placeholder : 
-        # return 27000
-
+        return 27000

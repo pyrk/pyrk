@@ -12,7 +12,7 @@ import thermal_hydraulics
 np.set_printoptions(precision=5)
 t0 = 0.0000
 dt = 0.0001
-tf = 0.01
+tf = 0.0025
 timesteps = tf/dt + 1
 
 
