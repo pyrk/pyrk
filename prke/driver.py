@@ -11,8 +11,8 @@ import thermal_hydraulics
 
 np.set_printoptions(precision=5)
 t0 = 0.0000
-dt = 0.0001
-tf = 0.0025
+dt = 0.0002
+tf = 0.001
 timesteps = tf/dt + 1
 
 
@@ -144,18 +144,25 @@ def plot(y):
     plot_power(x, y)
     plot_ksis(x, y)
     plot_omegas(x, y)
-    plot_temps(x, y)
+    plot_temps_together(x, y)
+    plot_temps_separately(x, y)
 
 def plot_power(x, y):
     power = y[:,0]
     plt.plot(x, power, color=my_colors(1), marker='.')
     saveplot("power", plt)
 
-def plot_temps(x, y):
+def plot_temps_together(x, y):
     for name, num in components.iteritems():
         idx = 1 + n_precursor_groups + n_decay_groups + num
         plt.plot(x, y[:,idx],label=name, color=my_colors(num), marker='.')
     saveplot("temps", plt)
+
+def plot_temps_separately(x, y):
+    for name, num in components.iteritems():
+        idx = 1 + n_precursor_groups + n_decay_groups + num
+        plt.plot(x, y[:,idx],label=name, color=my_colors(num), marker='.')
+        saveplot(name+" Temp[K]", plt)
 
 def plot_ksis(x, y):
     for num in range(0, n_precursor_groups):

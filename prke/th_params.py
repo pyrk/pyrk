@@ -1,5 +1,9 @@
 import math
 
+def vol_sphere(r):
+    assert(r >= 0) 
+    return (4./3.)*math.pi*pow(r,3)
+
 class THParams(object):
     """This holds the parameters for the PB-FHR. For other reactors, implement 
     your own damn class."""
@@ -14,17 +18,18 @@ class THParams(object):
                 "refl": 650.0 + 273.15
                 }
         # the data below comes form design doc rev c
-        self._power_tot=236.0
+        self._power_tot=236000.0 # Wth
         self._vol_tot_active = 4.16 # m^3
         self._vol_tot_defuel = 1.03 #m^3
         self._vol_tot_refl = 4.8 #m^3
-        self._pebble_porosity = 0.4 
-        self._vol_flow_rate = 976.0*0.3 # kg/s TODO 0.3 is nat circ guess
-        self._vel_cool = 0.54 # m^3/s 
+        self._pebble_porosity = 0.4 # [-] 
+        #self._vol_flow_rate = 976.0*0.3 # kg/s TODO 0.3 is nat circ guess
+        self._vel_cool = 2. # m/s 
         self._t_inlet = 600.0
-        self._fuel_matrix_r = 0.005 # [m] ... matrix(4mm) + coating(1mm)
-        self._mod_r = 0.025
-        self._pebble_r = self._fuel_matrix_r + self._mod_r
+        self._thickness_fuel_matrix = 0.005 # [m] ... matrix(4mm) + coating(1mm)
+        self._r_fuel = 0.03 # [m] ... matrix(4mm) + coating(1mm)
+        self._r_mod = 0.025
+        self._pebble_r = self._r_fuel + self._r_mod
         self._kappa = 0.00 # TODO if you fix omegas, kappa ~ 0.06
         self._core_height = 3.5 # [m] APPROXIMATELY (TODO look for actual)
         self._core_inner_radius = 0.35 #m
@@ -34,14 +39,16 @@ class THParams(object):
         inner = 2.0*math.pi*pow(self._core_inner_radius,2) 
         outer = 2.0*math.pi*pow(self._core_outer_radius,2) 
         return outer - inner
+
+
     def vol(self, component):
-        f = self._fuel_matrix_r
-        m = self._mod_r
+        f = self._r_fuel
+        m = self._r_mod
         tot_fuel_pebble_vol = (1 - self._pebble_porosity)*\
                 (self._vol_tot_active + self._vol_tot_defuel)
-        single_pebble_vol =  (4./3.)*math.pi*(pow(f+m,3))
+        single_pebble_vol =  vol_sphere(f)
         if component == "fuel":
-            fuel_vol_in_single_pebble = (4./3.)*math.pi*(pow(f+m,3) - pow(m,3))
+            fuel_vol_in_single_pebble = vol_sphere(f+m) - vol_sphere(m)
             fuel_vol = tot_fuel_pebble_vol*fuel_vol_in_single_pebble/single_pebble_vol
             return fuel_vol
         elif component == "cool":
@@ -49,7 +56,7 @@ class THParams(object):
                     self._vol_tot_refl
             return tot_vol*self._pebble_porosity
         elif component == "mod":
-            mod_vol_in_single_pebble = (4./3.)*math.pi*pow(m,3)
+            mod_vol_in_single_pebble = vol_sphere(m)
             mod_vol = tot_fuel_pebble_vol*mod_vol_in_single_pebble/single_pebble_vol
             return mod_vol
         elif component == "refl":
@@ -130,15 +137,12 @@ class THParams(object):
         t_c = 4498.8
         # rho correlation [kg/m^3]
         rho = 2415.6 - 0.49072*t_cool
+        # at 650C, this is 1962
         return rho
 
     def rho_fuel(self, t_fuel):
-        # density_f describes the density of the fuel a function of temperature.
-        # From From a Pu-40Zr metal fuel in Metallic fuels for advanced reactors
-        # W.J.Carmac & D.L.Porter.
-        # Average Value over Predicted Range of Temepratures
         # [kg/m^3]
-        rho = 10.5
+        rho = 1720.0 # from COMSOL model by Raluca Scarlat
         return rho
 
     def rho_graphite(self, t_graphite):
@@ -168,13 +172,8 @@ class THParams(object):
             cool, mod, and refl.")
 
     def cp_fuel(self):
-        # cp_f is the heat capacity at constant pressure as a function of temperature
-        # From From a Pu-40Zr metal fuel in Metallic fuels for advanced reactors
-        # W.J.Carmac & D.L.Porter.
-        # Average Value over Predicted Range of Temepratures
         # [J/kg-K]
-        # TODO placeholder
-        c_p =   161
+        c_p = 1744 # From COMSOL model by Raluca Scarlat
         return c_p
 
     def cp_cool(self):
@@ -182,11 +181,15 @@ class THParams(object):
         return 2350.0 # from www-ferp.ucsd.edu/LIB/PROPS/HTS.shtml
 
     def cp_mod(self):
-        c_p = 100.0 # TODO : placeholder
+        c_p = 1650.0 
+        # Approximate: 
+        #http://www.sciencedirect.com/science/article/pii/0022369760900950
         return c_p
 
     def cp_refl(self):
-        c_p = 100.0 # TODO : placeholder
+        c_p = 1650.0 
+        # Approximate: 
+        # http://www.sciencedirect.com/science/article/pii/0022369760900950
         return c_p
 
     def res(self, component1, component2):
@@ -197,7 +200,7 @@ class THParams(object):
     
     def area(self, components):
         if components == set(["mod", "fuel"]):
-            return 4.0*math.pi*pow(self._mod_r,2)
+            return 4.0*math.pi*pow(self._r_mod,2)
         elif components == set(["fuel", "cool"]):
             return 4.0*math.pi*pow(self._pebble_r,2)
         elif components == set(["cool", "refl"]):
