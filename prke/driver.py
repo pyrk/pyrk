@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cmx 
 import matplotlib.colors as colors
 from matplotlib.pyplot import legend
+import os
 
 from scipy.integrate import ode
 
@@ -14,7 +15,6 @@ t0 = 0.0000
 dt = 0.0002
 tf = 0.001
 timesteps = tf/dt + 1
-
 
 coeffs = {"fuel":-3.8, "cool":-1.8, "mod":-0.7, "refl":1.8}
 
@@ -28,19 +28,7 @@ n_entries = 1 + n_precursor_groups + n_decay_groups + n_components
 
 _y = np.zeros(shape = (timesteps, n_entries), dtype=float)
 
-#dydt = np.zeros(shape = (timesteps, n_entries), dtype=float)
-
-#p = np.zeros(shape= (1, timesteps), dtype=float)
-#dpdt = np.zeros(shape= (1, timesteps), dtype=float)
-
-#ksi = np.zeros(shape= (n_precursor_groups, timesteps), dtype=float)
-#dksidt = np.zeros(shape= (n_precursor_groups, timesteps), dtype=float)
-
-#w = np.zeros(shape= (n_decay_groups, timesteps), dtype=float)
-#dwdt = np.zeros(shape= (n_decay_groups, timesteps), dtype=float)
-
 _temp = np.zeros(shape= (timesteps, n_components), dtype=float)
-#dtempdt = np.zeros(shape= (n_components, timesteps), dtype=float)
 
 for key, val in th._params._init_temps.iteritems():
     _temp[0][components[key]] = val  
@@ -177,7 +165,16 @@ def plot_omegas(x, y):
     saveplot("omegas", plt)
 
 def saveplot(name, plt):
-    plt.savefig(str(name+'.pdf'), bbox_inches='tight')
-    plt.savefig(str(name+'.eps'), bbox_inches='tight')
+    plotdir = 'images'
+    if not os.path.exists(plotdir):
+        os.makedirs(plotdir)
+    plt.savefig(str(plotdir+"/"+name+'.pdf'), bbox_inches='tight')
+    plt.savefig(str(plotdir+"/"+name+'.eps'), bbox_inches='tight')
     plt.clf()
+
+"""Run it as a script"""
+if __name__ == "__main__":
+  sol = solve()
+  a = plot(sol)
+
 
