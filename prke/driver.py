@@ -11,9 +11,11 @@ import neutronics
 import thermal_hydraulics
 
 np.set_printoptions(precision=5)
+
 t0 = 0.0000
-dt = 0.0002
+dt = 0.00001
 tf = 0.001
+
 timesteps = tf/dt + 1
 
 coeffs = {"fuel":-3.8, "cool":-1.8, "mod":-0.7, "refl":1.8}
@@ -50,7 +52,7 @@ def f_n(t, y, coeffs):
     #print str(f)
     for j in range(0, n_precursor_groups):
         i += 1
-        f[i] = ne.dksidt(t, y[0], y[i], j)
+        f[i] = ne.dzetadt(t, y[0], y[i], j)
     #print str(f)
     for k in range(0, n_decay_groups):
         i+=1
@@ -130,7 +132,7 @@ def my_colors(num):
 def plot(y):
     x=np.arange(t0,tf+dt,dt)
     plot_power(x, y)
-    plot_ksis(x, y)
+    plot_zetas(x, y)
     plot_omegas(x, y)
     plot_temps_together(x, y)
     plot_temps_separately(x, y)
@@ -138,30 +140,45 @@ def plot(y):
 def plot_power(x, y):
     power = y[:,0]
     plt.plot(x, power, color=my_colors(1), marker='.')
+    plt.xlabel("Time [s]")
+    plt.ylabel("Power [units]")
+    plt.title("Power [units]")
     saveplot("power", plt)
 
 def plot_temps_together(x, y):
     for name, num in components.iteritems():
         idx = 1 + n_precursor_groups + n_decay_groups + num
         plt.plot(x, y[:,idx],label=name, color=my_colors(num), marker='.')
+    plt.xlabel("Time [s]")
+    plt.ylabel("Temperature [K]")
+    plt.title("Temperature of Each Component")
     saveplot("temps", plt)
 
 def plot_temps_separately(x, y):
     for name, num in components.iteritems():
         idx = 1 + n_precursor_groups + n_decay_groups + num
         plt.plot(x, y[:,idx],label=name, color=my_colors(num), marker='.')
+        plt.xlabel("Time [s]")
+        plt.ylabel("Temperature [K]")
+        plt.title("Temperature of "+name)
         saveplot(name+" Temp[K]", plt)
 
-def plot_ksis(x, y):
+def plot_zetas(x, y):
     for num in range(0, n_precursor_groups):
         idx = num + 1
         plt.plot(x, y[:,idx], color=my_colors(num), marker='.')
-    saveplot("ksis", plt)
+    plt.xlabel(r'Time $[s]$')
+    plt.ylabel("Concentration of Neutron Precursors, $\zeta_i [\#/dr^3]$")
+    plt.title("Concentration of Neutron Precursors, $\zeta_i [\#/dr^3]$")
+    saveplot("zetas", plt)
 
 def plot_omegas(x, y):
     for num in range(0, n_decay_groups):
         idx = 1 + n_precursor_groups + num
         plt.plot(x, y[:,idx], color=my_colors(num), marker='.')
+    plt.xlabel(r'Time $[s]$')
+    plt.ylabel(r'Decay Heat Fractions, $\omega_i [\#/dr^3]$')
+    plt.title(r'Decay Heat Fractions, $\omega_i [\#/dr^3]$')
     saveplot("omegas", plt)
 
 def saveplot(name, plt):

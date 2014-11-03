@@ -27,22 +27,22 @@ class Neutronics(object):
             have the same set of keys. They must refer to the same set of \
             bodies.")
 
-    def dpdt(self, t, dt, temps, coeffs, power, ksis):
+    def dpdt(self, t, dt, temps, coeffs, power, zetas):
         rho = self.reactivity(t, dt, temps, coeffs)
         beta = self._data.beta()
         lams = self._data._lambdas
         Lambda = self._data.Lambda()
         precursors = 0
         for l in range(0,len(lams)):
-            precursors += lams[l]*ksis[l]
+            precursors += lams[l]*zetas[l]
         dp = power*(rho - beta)/Lambda + precursors
         return dp
 
-    def dksidt(self, t, power, ksi, j):
+    def dzetadt(self, t, power, zeta, j):
         Lambda = self._data.Lambda()
         lam = self._data._lambdas[j]
         beta = self._data._betas[j]
-        return beta*power/Lambda - lam*ksi
+        return beta*power/Lambda - lam*zeta
 
     def dwdt(self, power, k):
         #k = self._data._kappas[k] #TODO
