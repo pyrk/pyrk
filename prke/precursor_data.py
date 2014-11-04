@@ -6,7 +6,6 @@ class PrecursorData(object):
         should be 'thermal' or 'fast' to indicate the energy spectrum."""
         self._betas = self.betas(nuc, e)
         self._lambdas = self.lambdas(nuc, e)
-        self._omegas = self.omegas(nuc, e)
         self._Lambda = self.Lambdas(nuc, e)
         self._nuc = nuc
         self._e = e
@@ -53,17 +52,6 @@ class PrecursorData(object):
         lambda_dict["pu239"]["fast"] = [0.0,0.0,0.0,0.0,0.0,0.0]
         return lambda_dict[nuc][e]
 
-    def omegas(self, nuc, e):
-        # should obtain decay heat values
-        omega_dict = {}
-        omega_dict["u235"] = {}
-        omega_dict["pu239"] = {}
-        omega_dict["u235"]["thermal"] = [0.0, 0.0, 0.0]
-        omega_dict["u235"]["fast"] = [0.0, 0.0, 0.0]
-        omega_dict["pu239"]["thermal"] = [0.0,0.0,0.0] 
-        omega_dict["pu239"]["fast"] = [0.0,0.0,0.0]
-        return omega_dict[nuc][e]
-    
     def Lambdas(self, nuc, e):
         Lambda_dict = {}
         Lambda_dict["u235"] = {}
