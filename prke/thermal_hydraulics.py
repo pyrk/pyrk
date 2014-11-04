@@ -3,7 +3,8 @@ import th_params
 
 class ThermalHydraulics(object):
     """This class handles calculations and data related to the 
-    thermal_hydraulics subblock"""
+    thermal_hydraulics subblock
+    """
 
     def __init__(self):
         self._params = th_params.THParams()
@@ -67,5 +68,23 @@ class ThermalHydraulics(object):
         res_m = self._params.res("refl", "cool")
         f = (trefl - tcool)/(rho*cp*res_m)
         return f
+
+    def convection(self, t_b, t_env, h, A):
+        """
+        The temperature of the body, environment, the heat transfer 
+        coefficient, and the surface area of heat transfer are required.
+        """
+        num = (t_b-t_env)
+        denom = (h*A)
+        return num/denom
+
+    def conduction(self, t_b, t_env, l, k, A):
+        """
+        The temperature of the body, environment, the length scale, the thermal 
+        conductivity, and the surface area of heat transfer are required.
+        """
+        num = L*(t_b-t_env)
+        denom = (k*A)
+        return num/denom
 
 
