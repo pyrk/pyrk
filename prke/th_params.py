@@ -40,6 +40,15 @@ class THParams(object):
         outer = 2.0*math.pi*pow(self._core_outer_radius,2) 
         return outer - inner
 
+    def r(self, component):
+        """Radius of each component in m"""
+        if component == "fuel":
+            return self._r_fuel
+        elif component == "mod":
+            return self._r_mod
+        else :
+            raise KeyError("The only supported options for components with \
+                           radii are fuel and mod.")
 
     def vol(self, component):
         f = self._r_fuel
@@ -66,16 +75,16 @@ class THParams(object):
             cool, mod, and refl.")
 
     # Conductivity
-    def k(component, temp):
+    def k(self, component, temp):
         """Thermal conductivitiy in W/m-K"""
         if component == "fuel":
-            return k_fuel(temp)
+            return self.k_fuel(temp)
         elif component == "cool":
-            return k_cool(temp)
+            return self.k_cool(temp)
         elif component == "mod":
-            return k_graphite(temp)
+            return self.k_graphite(temp)
         elif component == "refl":
-            return k_graphite(temp)
+            return self.k_graphite(temp)
         else :
             raise KeyError("The only supported options for components are fuel, \
             cool, mod, and refl.")
@@ -222,4 +231,4 @@ class THParams(object):
         # Nu  =   4.0+0.33*P2D^(3.8)*(Pe/100).^(0.86)+0.16*(P2D)^5
         # h   =   Nu.*conductivity_c(t_cool)/D_h
         # TODO : placeholder : 
-        return 27000
+        return 4700

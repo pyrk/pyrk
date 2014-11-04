@@ -31,16 +31,17 @@ class ThermalHydraulics(object):
         rho = self._params.rho("fuel",tfuel)
         cp = self._params.cp("fuel")
         vol = self._params.vol("fuel")
+        rm = self._params.r("mod")
+        amod = self._params.area(set(["mod","fuel"]))
+        afuel = self._params.area(set(["fuel","cool"]))
+        kf = self._params.k("fuel",tfuel)
+        hf = self._params.h("fuel")
         power_tot = self._params._power_tot
-        heat_gen = (power_tot/vol/rho/cp)*((1-self._params._kappa)*power + sum(omegas)) 
-        #print("HEAT GEN",heat_gen)
-        res_c = self._params.res("fuel", "cool")
-        res_m = self._params.res("fuel", "mod")
-        heat_loss_cool = (tfuel-tcool)/(rho*cp*res_c)
-        heat_loss_mod = (tfuel-tmod)/(rho*cp*res_m) # need some other solution?
-        heat_loss = heat_loss_cool + heat_loss_mod # this cant be right
-        #print("HEAT LOSS",heat_loss)
-        return heat_gen - heat_loss
+        #heat_gen = (power_tot/vol/rho/cp)*((1-self._params._kappa)*power + sum(omegas)) 
+        heat_gen = (power_tot)*(power-sum(omegas)) 
+        cond_mod = self.conduction(tfuel, tmod, rm, kf, amod)
+        conv_cool = self.convection(tfuel, tcool, hf, afuel)
+        return (heat_gen - cond_mod - conv_cool)/(rho*cp*vol)
 
     def dtempcooldt(self, tfuel, tcool):
         h = self._params._core_height
@@ -78,7 +79,7 @@ class ThermalHydraulics(object):
         denom = (h*A)
         return num/denom
 
-    def conduction(self, t_b, t_env, l, k, A):
+    def conduction(self, t_b, t_env, L, k, A):
         """
         The temperature of the body, environment, the length scale, the thermal 
         conductivity, and the surface area of heat transfer are required.
