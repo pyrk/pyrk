@@ -20,11 +20,15 @@ timesteps = tf/dt + 1
 
 coeffs = {"fuel":-3.8, "cool":-1.8, "mod":-0.7, "refl":1.8}
 
-ne = neutronics.Neutronics("u235", "thermal")
-th = thermal_hydraulics.ThermalHydraulics()
-components = th._params._components
 n_precursor_groups = 6
 n_decay_groups = 3
+
+ne = neutronics.Neutronics("u235", 
+                           "thermal", 
+                           n_precursor_groups, 
+                           n_decay_groups)
+th = thermal_hydraulics.ThermalHydraulics()
+components = th._params._components
 n_components = len(components)
 n_entries = 1 + n_precursor_groups + n_decay_groups + n_components
 
@@ -46,7 +50,6 @@ def update_th(t, y_n, y_th):
 
 def f_n(t, y, coeffs):
     f = np.zeros(shape=(1+n_precursor_groups + n_decay_groups,), dtype=float)
-    lams = ne._data._lambdas
     i=0
     f[i] = ne.dpdt(t, dt, _temp, coeffs, y[0], y[1:n_precursor_groups+1])
     #print str(f)
@@ -56,7 +59,7 @@ def f_n(t, y, coeffs):
     #print str(f)
     for k in range(0, n_decay_groups):
         i+=1
-        f[i] = ne.dwdt(y[0], k)
+        f[i] = ne.dwdt(y[0], y[i], k)
     #print str(f)
     #print "type of f_n : "+ str(type(f.values()))
     #print "len of f_n : "+ str(len(f.values()))
@@ -82,7 +85,7 @@ def y0():
         f[i] = 0
     for k in range(0, n_decay_groups):
         i+=1
-        f[i] = ne._data._omegas[k]
+        f[i] = 0
     for name, num in components.iteritems():
         f[i+num+1] = _temp[0][num]
     assert len(f) == n_entries
@@ -117,8 +120,14 @@ def solve():
         update_th(n.t, n.y, th.y)
     print("Final Result : ", _y) 
     print("Final Temps :",_temp)
-    print(ne._data._lambdas)
-    print(ne._data._betas)
+    print("Precursor lambdas:")
+    print(ne._pd._lambdas)
+    print("Precursor betas:")
+    print(ne._pd._betas)
+    print("Decay kappas")
+    print(ne._dd._kappas)
+    print("Decay lambdas")
+    print(ne._dd._lambdas)
     return _y
 
 def my_colors(num):

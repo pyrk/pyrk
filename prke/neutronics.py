@@ -11,8 +11,8 @@ class Neutronics(object):
     def __init__(self, iso, e, n_precursors, n_decay):
         # TODO Add a check that iso is something like "u235" and e is "thermal" 
         # or "fast"
-        self._data = precursor_data.PrecursorData(iso, e, n_precursors)
-        self._data = decay_data.DecayData(iso, e, n_decay)
+        self._pd = precursor_data.PrecursorData(iso, e, n_precursors)
+        self._dd = decay_data.DecayData(iso, e, n_decay)
         self._rho = {0:0}
 
     def rho_ext(self, t):
@@ -33,9 +33,9 @@ class Neutronics(object):
 
     def dpdt(self, t, dt, temps, coeffs, power, zetas):
         rho = self.reactivity(t, dt, temps, coeffs)
-        beta = self._data.beta()
-        lams = self._data._lambdas
-        Lambda = self._data.Lambda()
+        beta = self._pd.beta()
+        lams = self._pd._lambdas
+        Lambda = self._pd.Lambda()
         precursors = 0
         for l in range(0,len(lams)):
             precursors += lams[l]*zetas[l]
@@ -43,19 +43,16 @@ class Neutronics(object):
         return dp
 
     def dzetadt(self, t, power, zeta, j):
-        Lambda = self._data.Lambda()
-        lam = self._data._lambdas[j]
-        beta = self._data._betas[j]
+        Lambda = self._pd.Lambda()
+        lam = self._pd._lambdas[j]
+        beta = self._pd._betas[j]
         return beta*power/Lambda - lam*zeta
 
-    def dwdt(self, power, k):
-        #k = self._data._kappas[k] #TODO
-        w = self._data._omegas[k]
+    def dwdt(self, power, omega, k):
+        kappa = self._dd._kappas[k]
         p = power
-        #lam = self._data_lambdas_fp[k] #TODO
-        k = 0 
-        lam = 0
-        return k*p-lam*w
+        lam = self._dd._lambdas[k]
+        return kappa*p-lam*omega
 
     def reactivity(self, t, dt, temps, coeffs):
         drho = {}
