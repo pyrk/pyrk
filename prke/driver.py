@@ -20,7 +20,7 @@ timesteps = tf/dt + 1
 
 coeffs = {"fuel":-3.8, "cool":-1.8, "mod":-0.7, "refl":1.8}
 
-ne = neutronics.Neutronics()
+ne = neutronics.Neutronics("u235", "thermal")
 th = thermal_hydraulics.ThermalHydraulics()
 components = th._params._components
 n_precursor_groups = 6

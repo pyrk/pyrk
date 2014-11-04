@@ -1,7 +1,7 @@
 import math
 
 class PrecursorData(object):
-    def __init__(self, nuc, e):
+    def __init__(self, nuc, e, n):
         """initializes the precursor group data for the fissioning nuclide. e 
         should be 'thermal' or 'fast' to indicate the energy spectrum."""
         self._betas = self.betas(nuc, e)
@@ -63,7 +63,7 @@ class PrecursorData(object):
         omega_dict["pu239"]["thermal"] = [0.0,0.0,0.0] 
         omega_dict["pu239"]["fast"] = [0.0,0.0,0.0]
         return omega_dict[nuc][e]
-
+    
     def Lambdas(self, nuc, e):
         Lambda_dict = {}
         Lambda_dict["u235"] = {}

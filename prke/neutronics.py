@@ -1,5 +1,6 @@
 import scipy as sp
 import precursor_data 
+import decay_data 
 
 component_names = {"fuel":0, "cool":1, "mod":2, "refl":3}
 
@@ -7,8 +8,11 @@ class Neutronics(object):
     """This class handles calculations and data related to the 
     neutronics subblock"""
 
-    def __init__(self):
-        self._data = precursor_data.PrecursorData("u235", "thermal")
+    def __init__(self, iso, e, n_precursors, n_decay):
+        # TODO Add a check that iso is something like "u235" and e is "thermal" 
+        # or "fast"
+        self._data = precursor_data.PrecursorData(iso, e, n_precursors)
+        self._data = decay_data.DecayData(iso, e, n_decay)
         self._rho = {0:0}
 
     def rho_ext(self, t):
