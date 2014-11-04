@@ -8,7 +8,7 @@ class DecayData(object):
         n should indicate the number of decay heat groups 
         """
         self._lambdas = self.lambdas(nuc, e)
-        self._omegas = self.omegas(nuc, e)
+        self._kappas = self.kappas(nuc, e)
         self._nuc = nuc
         self._e = e
         self._n = n
@@ -16,8 +16,8 @@ class DecayData(object):
     def lambdas(self):
         return self._lambdas
 
-    def omegas(self):
-        return self._omegas
+    def kappas(self):
+        return self._kappas
 
     def lambdas(self, nuc, e):
         # Decay heat data, ANS/ANSI 5.1-1971 for 235U thermal fission, 11grps 
@@ -40,12 +40,12 @@ class DecayData(object):
         lambda_dict["pu239"]["fast"] = [0.0,0.0,0.0,0.0,0.0,0.0]
         return lambda_dict[nuc][e]
 
-    def omegas(self, nuc, e):
+    def kappas(self, nuc, e):
         # Decay heat data, ANS/ANSI 5.1-1971 for 235U thermal fission, 11grps 
-        omega_dict = {}
-        omega_dict["u235"] = {}
-        omega_dict["pu239"] = {}
-        omega_dict["u235"]["thermal"] = [6.587*10^0, 
+        kappa_dict = {}
+        kappa_dict["u235"] = {}
+        kappa_dict["pu239"] = {}
+        kappa_dict["u235"]["thermal"] = [6.587*10^0, 
                                          1.490*10^(-1), 
                                          2.730*10^(-1),
                                          2.173*10^(-2), 
@@ -56,8 +56,8 @@ class DecayData(object):
                                          1.452*10^(-8),
                                          1.893*10^(-9), 
                                          1.633*10^(-10)]
-        omega_dict["u235"]["fast"] = [0.0, 0.0, 0.0]
-        omega_dict["pu239"]["thermal"] = [0.0,0.0,0.0] 
-        omega_dict["pu239"]["fast"] = [0.0,0.0,0.0]
-        return omega_dict[nuc][e]
+        kappa_dict["u235"]["fast"] = [0.0, 0.0, 0.0]
+        kappa_dict["pu239"]["thermal"] = [0.0,0.0,0.0] 
+        kappa_dict["pu239"]["fast"] = [0.0,0.0,0.0]
+        return kappa_dict[nuc][e]
 
