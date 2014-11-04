@@ -21,7 +21,7 @@ timesteps = tf/dt + 1
 coeffs = {"fuel":-3.8, "cool":-1.8, "mod":-0.7, "refl":1.8}
 
 n_precursor_groups = 6
-n_decay_groups = 3
+n_decay_groups = 11
 
 ne = neutronics.Neutronics("u235", 
                            "thermal", 
