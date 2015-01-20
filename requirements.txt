@@ -1,5 +1,4 @@
 matplotlib
-math
 numpy
 os
 scipy
