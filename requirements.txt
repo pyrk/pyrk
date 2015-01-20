@@ -1,0 +1,6 @@
+matplotlib
+mapth
+numpy
+os
+scipy.integrate
+nose
