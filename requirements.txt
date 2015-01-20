@@ -1,6 +1,5 @@
 matplotlib
-mapth
+math
 numpy
 os
-scipy.integrate
-nose
+scipy
