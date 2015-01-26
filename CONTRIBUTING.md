@@ -15,7 +15,7 @@ one.
 
   - Explain what the expected behavior was, and what you saw instead.
 
-#### Pull Requests
+##### Pull Requests
 
   - **Make sure the test suite passes** on your computer. To do so, run `nosetests` in the tests directory.
   - Please reference relevant Github issues in your commit message using `GH1234`
