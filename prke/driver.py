@@ -128,13 +128,13 @@ def solve():
     print("Final Result : ", _y)
     print("Final Temps :",_temp)
     print("Precursor lambdas:")
-    print(ne._pd._lambdas)
+    print(ne._pd.lambdas())
     print("Precursor betas:")
-    print(ne._pd._betas)
+    print(ne._pd.betas())
     print("Decay kappas")
-    print(ne._dd._kappas)
+    print(ne._dd.kappas())
     print("Decay lambdas")
-    print(ne._dd._lambdas)
+    print(ne._dd.lambdas())
     return _y
 
 def my_colors(num):

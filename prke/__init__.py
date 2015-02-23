@@ -6,6 +6,5 @@ for coupled, 0-D transient analysis.
 
 
 from prke.release import __version__
-from prke.author import __author__, __email__
 from prke.thermal_hydraulics import *
 from prke.neutronics import *
