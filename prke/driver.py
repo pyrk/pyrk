@@ -1,13 +1,20 @@
+# Licensed under a 3-clause BSD style license - see LICENSE.rst
+"""
+This is an example driver for the simulation. It should soon be refactored to
+result in an input file, an input parser, a solver interface, and output
+scripts.
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.cm as cmx 
+import matplotlib.cm as cmx
 import matplotlib.colors as colors
 from matplotlib.pyplot import legend
 import os
 
 from scipy.integrate import ode
 
-import neutronics 
+import neutronics
 import thermal_hydraulics
 
 np.set_printoptions(precision=5)
@@ -23,9 +30,9 @@ coeffs = {"fuel":-3.8, "cool":-1.8, "mod":-0.7, "refl":1.8}
 n_precursor_groups = 6
 n_decay_groups = 11
 
-ne = neutronics.Neutronics("u235", 
-                           "thermal", 
-                           n_precursor_groups, 
+ne = neutronics.Neutronics("u235",
+                           "thermal",
+                           n_precursor_groups,
                            n_decay_groups)
 th = thermal_hydraulics.ThermalHydraulics()
 components = th._params._components
@@ -37,7 +44,7 @@ _y = np.zeros(shape = (timesteps, n_entries), dtype=float)
 _temp = np.zeros(shape= (timesteps, n_components), dtype=float)
 
 for key, val in th._params._init_temps.iteritems():
-    _temp[0][components[key]] = val  
+    _temp[0][components[key]] = val
 
 def update_n(t, y_n):
     n_n = len(y_n)
@@ -76,7 +83,7 @@ def f_th(t, y_th):
     #print "type of f_th : "+ str(type(f.values()))
     return f
 
-def y0(): 
+def y0():
     i = 0
     f = np.zeros(shape=(n_entries ,), dtype=float)
     f[i] = 1.0 # real power is 236 MWth, but normalized is 1
@@ -118,7 +125,7 @@ def solve():
         #print "TH result:"
         #print(th.t, th.y)
         update_th(n.t, n.y, th.y)
-    print("Final Result : ", _y) 
+    print("Final Result : ", _y)
     print("Final Temps :",_temp)
     print("Precursor lambdas:")
     print(ne._pd._lambdas)
@@ -132,7 +139,7 @@ def solve():
 
 def my_colors(num):
     values = range(n_entries)
-    jet = cm = plt.get_cmap('jet') 
+    jet = cm = plt.get_cmap('jet')
     cNorm  = colors.Normalize(vmin=0, vmax=values[-1])
     scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=jet)
     colorVal = scalarMap.to_rgba(values[num])

@@ -1,14 +1,12 @@
 from __future__ import print_function
-from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
+from setuptools import setup
 import io
-import codecs
 import os
-import sys
 
 import prke
 
 here = os.path.abspath(os.path.dirname(__file__))
+
 
 def read(*filenames, **kwargs):
     encoding = kwargs.get('encoding', 'utf-8')
@@ -19,14 +17,14 @@ def read(*filenames, **kwargs):
             buf.append(f.read())
     return sep.join(buf)
 
-long_description = read('README.md','CONTRIBUTING.md')
+long_description = read('README.md', 'CONTRIBUTING.md')
 
 setup(
     name='prke',
     version=prke.__version__,
     url='http://github.com/katyhuff/prke/',
     license='BSD 3-Clause License',
-    author='Katy Huff',
+    author='Kathryn D. Huff',
     tests_require=['nose'],
     author_email='katyhuff@gmail.com',
     description='Transient Neutron Kinetics Simulation in 0D.',
@@ -35,7 +33,7 @@ setup(
     include_package_data=True,
     platforms='any',
     test_suite='prke.test.test_prke',
-    classifiers = [
+    classifiers=[
         'Development Status :: 1 - Planning',
         'Intended Audience :: Education',
         'Intended Audience :: Science/Research',
