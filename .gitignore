@@ -19,3 +19,6 @@ build/
 # Ignore specific files
 matplotlibrc
 .ipynb_checkpoints
+
+# Ignore rope files introduced by python-mode
+.ropeproject
