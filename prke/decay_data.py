@@ -6,19 +6,21 @@ groups.
 
 
 class DecayData(object):
+
     """
     The DecayData class contains fission decay heat data.
 
-        It is used to contain decay heat data retrieved from ANS/ANSI standards for decay heat from fission products.
+        It is used to contain decay heat data retrieved from ANS/ANSI standards
+        for decay heat from fission products.
 
         The traits are documented close to their definition by using a special
         comment ``#:`` prefix.
 
     .. note::
 
-       The ANS/ANSI standards can be found at the ans store: http://www.ans.org/store/i_240256
+       The ANS/ANSI standards can be found at the ans store:
+           http://www.ans.org/store/i_240256
     """
-
 
     def __init__(self, nuc, e, n):
         """Initializes the decay group data for the fissioning nuclide (u235,
