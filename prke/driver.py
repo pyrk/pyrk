@@ -17,21 +17,14 @@ from scipy.integrate import ode
 import neutronics
 import thermal_hydraulics
 
-np.set_printoptions(precision=5)
+from testin import *
 
-t0 = 0.0000
-dt = 0.00001
-tf = 0.001
+np.set_printoptions(precision=5)
 
 timesteps = tf/dt + 1
 
-coeffs = {"fuel": -3.8, "cool": -1.8, "mod": -0.7, "refl": 1.8}
-
-n_precursor_groups = 6
-n_decay_groups = 11
-
-ne = neutronics.Neutronics("u235",
-                           "thermal",
+ne = neutronics.Neutronics(fission_iso,
+                           spectrum,
                            n_precursor_groups,
                            n_decay_groups)
 th = thermal_hydraulics.ThermalHydraulics()
