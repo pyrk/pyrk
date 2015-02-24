@@ -102,7 +102,7 @@ def pep440adapt(version):
         # adapt git-describe version to be in line with PEP 440
         # by setting a dev release identifier
         parts = version.split('-')
-        parts[-2] = 'dev' + parts[-2]
+        parts[-2] = 'dev' + parts[-1].lstrip('g')
         version = '.'.join(parts[:-1])
     return version
 
