@@ -1,5 +1,4 @@
-from . import th_params
-
+import th_params
 
 class ThermalHydraulics(object):
     """This class handles calculations and data related to the
