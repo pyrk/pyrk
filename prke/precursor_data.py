@@ -2,6 +2,7 @@ import math
 
 
 class PrecursorData(object):
+
     def __init__(self, nuc, e, n):
         """initializes the precursor group data for the fissioning nuclide. e
         should be 'thermal' or 'fast' to indicate the energy spectrum."""
