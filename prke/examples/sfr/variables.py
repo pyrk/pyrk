@@ -30,13 +30,13 @@ lam(5)  = 1.14;     % precursor time constant grp1 (1/s)
 lam(6)  = 3.01;     % precursor time constant grp1 (1/s)
 Lambda  = 1.0e-5;   % mean generation time (s)
 
-d       = 1;        % Doppler reactivity exponent               
-alpha_d = -0.8841;  % doppler reactivity coeff. (pcm/C_d)       
-alpha_c = 0.1263;   % coolant reactivity coeff. (pcm/C)         
+d       = 1;        % Doppler reactivity exponent
+alpha_d = -0.8841;  % doppler reactivity coeff. (pcm/C_d)
+alpha_c = 0.1263;   % coolant reactivity coeff. (pcm/C)
 
 %------------- Heat Transfer Data -------------------------
 w       = 4/9;      % Weighting Factor Used in the Effective Fuel Temperature Formula [-]
-k_clad  = 21.5;     % Thermal Conductivity @ 500 [C], Clad [W/m-K]       
+k_clad  = 21.5;     % Thermal Conductivity @ 500 [C], Clad [W/m-K]
 %   16-DEC-2009     Reference - http://www.azom.com/details.asp?Articleid=863
 
 %------------- Conversion Factors -------------------------
