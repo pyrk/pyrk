@@ -21,7 +21,7 @@ from testin import *
 
 np.set_printoptions(precision=5)
 
-timesteps = tf/dt + 1
+timesteps = (tf-t0)/dt + 1
 
 ne = neutronics.Neutronics(fission_iso,
                            spectrum,
