@@ -9,3 +9,24 @@ def test_validation_ge_wrong_type():
     valname = "testval"
     llim = 0
     assert_raises(TypeError, v.validate_ge, [valname, val, llim])
+
+
+def test_validation_ge_right_type():
+    val = 10
+    valname = "testval"
+    llim = 0
+    assert_equal(v.validate_ge(valname, val, llim), 10)
+
+
+def test_validation_ge_too_small():
+    val = -2
+    valname = "testval"
+    llim = 0
+    assert_raises(ValueError, v.validate_ge, [valname, val, llim])
+
+
+def test_validation_ge_both_neg():
+    val = -2
+    valname = "testval"
+    llim = -3
+    assert_equal(v.validate_ge(valname, val, llim), -2)
