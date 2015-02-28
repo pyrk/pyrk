@@ -8,7 +8,7 @@ def test_validation_ge_wrong_type():
     val = "ten"
     valname = "testval"
     llim = 0
-    assert_raises(TypeError, v.validate_ge, [valname, val, llim])
+    assert_raises(TypeError, v.validate_ge, valname, val, llim)
 
 
 def test_validation_ge_right_type():
@@ -22,7 +22,7 @@ def test_validation_ge_too_small():
     val = -2
     valname = "testval"
     llim = 0
-    assert_raises(ValueError, v.validate_ge, [valname, val, llim])
+    assert_raises(ValueError, v.validate_ge, valname, val, llim)
 
 
 def test_validation_ge_both_neg():
