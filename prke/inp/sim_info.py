@@ -12,6 +12,20 @@ class SimInfo(object):
         self.t0 = validation.validate_ge("t0", t0, 0)
         self.tf = validation.validate_ge("tf", tf, t0)
         self.dt = validation.validate_ge("dt", dt, 0)
+        self.components = {}
+
+    def add_th_component(self, th_component):
+        """Adds a thermal-hydralic component to this simulation.
+        It should be fully initialized. A single simulation may have many
+        thermal-hydralic components. They are held in a dictionary."""
+
+        if th_component.name in self.components:
+            msg = "A component named "
+            msg += th_component.name
+            mas += " already exists in the simulation."
+            raise ValueError(msg)
+        else:
+            self.components[th_component.name] = th_component
 
     def timesteps(self):
         return (self.tf-self.t0)/self.dt

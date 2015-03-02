@@ -7,7 +7,6 @@ def vol_sphere(r):
 
 
 class THParams(object):
-
     """This holds the parameters for the PB-FHR. For other reactors, implement
     your own damn class."""
 
