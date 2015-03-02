@@ -3,7 +3,7 @@ from setuptools import setup
 import io
 import os
 
-import prke
+import pyrk
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -20,19 +20,19 @@ def read(*filenames, **kwargs):
 long_description = read('README.md', 'CONTRIBUTING.md')
 
 setup(
-    name='prke',
-    version=prke.version.get_git_version(),
-    url='http://github.com/katyhuff/prke/',
+    name='pyrk',
+    version=pyrk.version.get_git_version(),
+    url='http://github.com/katyhuff/pyrk/',
     license='BSD 3-Clause License',
     author='Kathryn D. Huff',
     tests_require=['nose'],
     author_email='katyhuff@gmail.com',
     description='Transient Neutron Kinetics Simulation in 0D.',
     long_description=long_description,
-    packages=['prke'],
+    packages=['pyrk'],
     include_package_data=True,
     platforms='any',
-    test_suite='prke.test.test_prke',
+    test_suite='pyrk.test.test_pyrk',
     classifiers=[
         'Development Status :: 1 - Planning',
         'Intended Audience :: Education',

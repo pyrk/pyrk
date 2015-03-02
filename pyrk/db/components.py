@@ -17,7 +17,7 @@ def make_components_table(db, components):
     Parameters
     ----------
     db: Database
-        The prke backend database object
+        The pyrk backend database object
 
     components: list(Component)
     """
