@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# prke documentation build configuration file, created by
-# sphinx-quickstart on Tue Dec  2 17:36:15 2014.
+# PyRK documentation build configuration file, created by
+# sphinx-quickstart on Mon Mar  2 15:04:20 2015.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -52,8 +52,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'prke'
-copyright = u'2014, Kathryn Huff'
+project = u'PyRK'
+copyright = u'2015, Kathryn D. Huff'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -185,7 +185,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'prkedoc'
+htmlhelp_basename = 'PyRKdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -205,8 +205,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'prke.tex', u'prke Documentation',
-   u'Kathryn Huff', 'manual'),
+  ('index', 'PyRK.tex', u'PyRK Documentation',
+   u'Kathryn D. Huff', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -235,8 +235,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'prke', u'prke Documentation',
-     [u'Kathryn Huff'], 1)
+    ('index', 'pyrk', u'PyRK Documentation',
+     [u'Kathryn D. Huff'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -249,8 +249,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'prke', u'prke Documentation',
-   u'Kathryn Huff', 'prke', 'One line description of project.',
+  ('index', 'PyRK', u'PyRK Documentation',
+   u'Kathryn D. Huff', 'PyRK', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -265,6 +265,76 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+
+# -- Options for Epub output ----------------------------------------------
+
+# Bibliographic Dublin Core info.
+epub_title = u'PyRK'
+epub_author = u'Kathryn D. Huff'
+epub_publisher = u'Kathryn D. Huff'
+epub_copyright = u'2015, Kathryn D. Huff'
+
+# The basename for the epub file. It defaults to the project name.
+#epub_basename = u'PyRK'
+
+# The HTML theme for the epub output. Since the default themes are not optimized
+# for small screen space, using the same theme for HTML and epub output is
+# usually not wise. This defaults to 'epub', a theme designed to save visual
+# space.
+#epub_theme = 'epub'
+
+# The language of the text. It defaults to the language option
+# or en if the language is not set.
+#epub_language = ''
+
+# The scheme of the identifier. Typical schemes are ISBN or URL.
+#epub_scheme = ''
+
+# The unique identifier of the text. This can be a ISBN number
+# or the project homepage.
+#epub_identifier = ''
+
+# A unique identification for the text.
+#epub_uid = ''
+
+# A tuple containing the cover image and cover page html template filenames.
+#epub_cover = ()
+
+# A sequence of (type, uri, title) tuples for the guide element of content.opf.
+#epub_guide = ()
+
+# HTML files that should be inserted before the pages created by sphinx.
+# The format is a list of tuples containing the path and title.
+#epub_pre_files = []
+
+# HTML files shat should be inserted after the pages created by sphinx.
+# The format is a list of tuples containing the path and title.
+#epub_post_files = []
+
+# A list of files that should not be packed into the epub file.
+epub_exclude_files = ['search.html']
+
+# The depth of the table of contents in toc.ncx.
+#epub_tocdepth = 3
+
+# Allow duplicate toc entries.
+#epub_tocdup = True
+
+# Choose between 'default' and 'includehidden'.
+#epub_tocscope = 'default'
+
+# Fix unsupported image types using the PIL.
+#epub_fix_images = False
+
+# Scale large images.
+#epub_max_image_width = 0
+
+# How to display URL addresses: 'footnote', 'no', or 'inline'.
+#epub_show_urls = 'inline'
+
+# If false, no index is generated.
+#epub_use_index = True
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
