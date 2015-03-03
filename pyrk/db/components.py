@@ -14,12 +14,10 @@ def make_components_table(db, components):
     """Adds a components table to hold information about each component in the
     database
 
-    Parameters
-    ----------
-    db: Database
-        The pyrk backend database object
-
-    components: list(Component)
+    :param db: The pyrk backend database object
+    :type db: Database object.
+    :param components: List of the components to record
+    :type components: list(Component)
     """
 
     # Define data types involved in a component
