@@ -31,8 +31,8 @@ install:
   - pip install coveralls
 
 script:
-  - cd pyrk && nosetests
+  - cd pyrk && pyrk && nosetests
 
 after_success:
-    - coveralls
+  - coveralls
 
