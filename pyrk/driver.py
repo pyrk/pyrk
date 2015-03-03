@@ -83,7 +83,8 @@ def f_th(t, y_th):
     omegas = _y[t/dt][o_i:o_f]
     for name, num in si.components.iteritems():
         f[num] = th.dtempdt(name, y_th, power, omegas, si.components)
-    # print "type of f_th : "+ str(type(f.values()))
+        # print "type of f_th : "+:w
+        str(type(f.values()))
     return f
 
 
@@ -156,6 +157,15 @@ def plot(y):
     plot_omegas(x, y)
     plot_temps_together(x, y)
     plot_temps_separately(x, y)
+
+
+def plot_power(x, y):
+    reactivity = y[:, 0]
+    plt.plot(x, reactivity, color=my_colors(1), marker='.')
+    plt.xlabel("Time [s]")
+    plt.ylabel("Reactivity [$Delta$k/k]")
+    plt.title("Reactivity [$Delta$k/k]")
+    saveplot("reactivity", plt)
 
 
 def plot_power(x, y):

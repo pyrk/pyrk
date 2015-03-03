@@ -35,7 +35,7 @@ def make_components_table(db, components):
     # Open the hdf5 file
     db_file = tb.openFile(db, 'a')
 
-    # Create a group for the table (TODO: add something that fixes the
+    # Create a group for the table
     input_group = db_file.createGroup("/", "input", "Input")
 
     # Make the new table
