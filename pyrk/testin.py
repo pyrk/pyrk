@@ -5,8 +5,10 @@ tf = 0.001
 coeffs = {"fuel": -3.8, "cool": -1.8, "mod": -0.7, "refl": 1.8}
 
 # choose your data
-n_precursor_groups = 6
-n_decay_groups = 11
+# precursor groups
+n_pg = 6
+# decay heat groups
+n_dg = 11
 fission_iso = "u235"
 spectrum = "thermal"
 
