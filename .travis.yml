@@ -26,9 +26,9 @@ install:
   - conda info -a
 
   # Replace dep1 dep2 ... with your dependencies
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION requirements.txt
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION scipy numpy matplotlib
   - source activate test-environment
-  - python setup.py install
+  - pip install coveralls
 
 script:
   - cd pyrk && nosetests
