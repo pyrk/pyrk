@@ -14,12 +14,10 @@ def make_components_table(db, components):
     """Adds a components table to hold information about each component in the
     database
 
-    Parameters
-    ----------
-    db: Database
-        The pyrk backend database object
-
-    components: list(Component)
+    :param db: The pyrk backend database object
+    :type db: Database object.
+    :param components: List of the components to record
+    :type components: list(Component)
     """
 
     # Define data types involved in a component
@@ -35,7 +33,7 @@ def make_components_table(db, components):
     # Open the hdf5 file
     db_file = tb.openFile(db, 'a')
 
-    # Create a group for the table (TODO: add something that fixes the
+    # Create a group for the table
     input_group = db_file.createGroup("/", "input", "Input")
 
     # Make the new table

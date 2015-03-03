@@ -84,10 +84,12 @@ def th(self):
     ]
 
 
+
 self._alpha = {"fuel":-3.8,
                "cool":-1.8,
                "gmod":-0.7,
-               "refl":1.8}
+               "refl": 1.8}
+
 
 self._temp = {"fuel":{0,730},
               "cool":{0,650},

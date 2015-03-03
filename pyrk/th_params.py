@@ -7,8 +7,7 @@ def vol_sphere(r):
 
 
 class THParams(object):
-    """This holds the parameters for the PB-FHR. For other reactors, implement
-    your own damn class."""
+    """This holds the parameters for the PB-FHR."""
 
     def __init__(self):
         self._components = {"fuel": 0, "cool": 1, "mod": 2, "refl": 3}
@@ -33,7 +32,7 @@ class THParams(object):
         self._r_fuel = 0.03  # [m] ... matrix(4mm) + coating(1mm)
         self._r_mod = 0.025
         self._pebble_r = self._r_fuel + self._r_mod
-        self._kappa = 0.00  # TODO if you fix omegas, kappa ~ 0.06
+        self._kappa = 0.06  # TODO if you fix omegas, kappa ~ 0.06
         self._core_height = 3.5  # [m] APPROXIMATELY (TODO look for actual)
         self._core_inner_radius = 0.35  # m
         self._core_outer_radius = 1.25  # m
@@ -94,7 +93,7 @@ class THParams(object):
             raise KeyError("The only supported options for components are fuel, \
             cool, mod, and refl.")
 
-    def k_cool(self, _cool):
+    def k_cool(self, t_cool):
         """Thermal conductivitiy in W/m-K for flibe"""
         # http://www.psfc.mit.edu/library1/catalog/reports/1980/80rr
         # /80rr012/80rr012_full.pdf

@@ -12,4 +12,4 @@ def test_init_reasonable_sim():
     assert_equal(t0, info.t0)
     assert_equal(tf, info.tf)
     assert_equal(t0, info.t0)
-    assert_equal(info.timesteps(),100)
+    assert_equal(info.timesteps(),101)

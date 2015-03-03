@@ -1,8 +1,9 @@
 
 import logging
+log = logging.getLogger(__name__)
 
 
-def run_sim(self, si, db, driver):
+def run_sim(self, si, db):
 
     logging.info(si.print_str())
     logging.info("Simulation starting.")
