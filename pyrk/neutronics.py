@@ -7,14 +7,46 @@ component_names = {"fuel": 0, "cool": 1, "mod": 2, "refl": 3}
 
 class Neutronics(object):
     """This class handles calculations and data related to the
-    neutronics subblock"""
+    neutronics subblock
+    """
 
     def __init__(self, iso, e, n_precursors, n_decay):
-        # TODO Add a check that iso is something like "u235" and e is "thermal"
-        # or "fast"
+        """
+        Creates a Neutronics object that holds the neutronics simulation
+        information.
+
+
+        :param iso: The fissioning isotope. 'u235' or 'pu239' are supported.
+        :type iso: str.
+        :param e: The energy spectrum 'thermal' or 'fast' are supported.
+        :type e: str.
+        :param n_precursors: Number of neutron precursor groups. 6 is supported.
+        :type n_precursors: int.
+        :param n_decay: The number of decay heat groups. 11 is supported.
+        :type n_decay: int.
+        :returns: A Neutronics object that holds neutronics simulation info
+        """
+
+        self._iso = iso
+        """_iso (str): Fissioning isotope. 'u235' or 'pu239' are supported."""
+
+        self._e = e
+        """_e (str): Energy spectrum 'thermal' or 'fast' are supported."""
+
+        self._npg = n_precursors
+        """_npg (int): Number of neutron precursor groups. 6 is supported."""
+
+        self._ndg = n_decay
+        """_ndg (int): Number of decay heat groups. 11 is supported."""
+
         self._pd = pr.PrecursorData(iso, e, n_precursors)
+        """_pd (PrecursorData): A data.precursors.PrecursorData object"""
+
         self._dd = dh.DecayData(iso, e, n_decay)
+        """_dd (DecayData): A data.decay_heat.DecayData object"""
+
         self._rho = {0: 0}
+        """_rho (dict): A dictionary of times and reactivity values"""
 
     def rho_ext(self, t):
         if t > 0 and t < 0.1:

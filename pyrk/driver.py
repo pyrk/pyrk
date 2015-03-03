@@ -31,7 +31,6 @@ ne = neutronics.Neutronics(testin.fission_iso,
                            testin.n_pg,
                            testin.n_dg)
 
-
 th = thermal_hydraulics.ThermalHydraulics()
 
 si = sim_info.SimInfo(t0=testin.t0, tf=testin.tf, dt=testin.dt, components=th._params._components)
@@ -48,19 +47,19 @@ for key, val in th._params._init_temps.iteritems():
 
 def update_n(t, y_n):
     n_n = len(y_n)
-    _y[t/testin.dt][:n_n] = y_n
+    _y[t/si.dt][:n_n] = y_n
 
 
 def update_th(t, y_n, y_th):
-    _temp[int(t/testin.dt)][:] = y_th
+    _temp[int(t/si.dt)][:] = y_th
     n_n = len(y_n)
-    _y[t/testin.dt][n_n:] = y_th
+    _y[t/si.dt][n_n:] = y_th
 
 
 def f_n(t, y, coeffs):
     f = np.zeros(shape=(1+testin.n_pg + testin.n_dg,), dtype=float)
     i = 0
-    f[i] = ne.dpdt(t, testin.dt, _temp, coeffs, y[0], y[1:testin.n_pg+1])
+    f[i] = ne.dpdt(t, si.dt, _temp, coeffs, y[0], y[1:testin.n_pg+1])
     # print str(f)
     for j in range(0, testin.n_pg):
         i += 1
@@ -77,10 +76,10 @@ def f_n(t, y, coeffs):
 
 def f_th(t, y_th):
     f = np.zeros(shape=(n_components,), dtype=float)
-    power = _y[t/testin.dt][0]
+    power = _y[t/si.dt][0]
     o_i = 1+testin.n_pg
     o_f = 1+testin.n_pg+testin.n_dg
-    omegas = _y[t/testin.dt][o_i:o_f]
+    omegas = _y[t/si.dt][o_i:o_f]
     for name, num in si.components.iteritems():
         f[num] = th.dtempdt(name, y_th, power, omegas, si.components)
     return f

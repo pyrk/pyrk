@@ -26,24 +26,14 @@ class DecayData(object):
         """Initializes the decay group data for the fissioning nuclide (u235,
         pu238, etc.... currently only u235 is supported).
 
-        Extract the fields from the docstring
 
-        Parse the fields into tuples of name, type and description in a
-        list of strings. The strings are also removed from the list.
-
-        Arguments
-        ---------
-        e : str
-            The energy spectrum type. This should be 'thermal' or 'fast' to
-            indicate the energy spectrum.
-
-        n : int
-            The number of decay heat groups. Currently, only 11 is supported.
-
-        Returns
-        -------
-        object: A DecayData object.
-
+        :param e: The energy spectrum type. This should be 'thermal' or 'fast'
+            to indicate the energy spectrum.
+        :type e: str.
+        :param n: The number of decay heat groups. Currently, only 11 is
+            supported.
+        :type n: int.
+        :returns: A DecayData object.
         """
         self._lambdas = self._get_lambdas(nuc, e)
         self._kappas = self._get_kappas(nuc, e)
@@ -53,36 +43,27 @@ class DecayData(object):
 
     def lambdas(self):
         """
-        Returns
-        -------
-        lambdas: a list of floats
+        :returns: a list of floats
             the lambdas (decay constants) for each decay heat group
         """
         return self._lambdas
 
     def kappas(self):
         """
-        Returns
-        -------
-        kappas: a list of floats
+        :returns: a list of floats
             the kappas (decay heat values) for each decay heat group
         """
         return self._kappas
 
     def _get_lambdas(self, nuc, e):
         """
-        Arguments
-        ---------
-        e : str
-            The energy spectrum type. This should be 'thermal' or 'fast' to
-            indicate the energy spectrum.
-
-        n : int
-            The number of decay heat groups. Currently, only 11 is supported.
-
-        Returns
-        -------
-        lambdas: a list of floats
+        :param e: The energy spectrum type. This should be 'thermal' or 'fast'
+            to indicate the energy spectrum.
+        :type e: str.
+        :param n: The number of decay heat groups. Currently, only 11 is
+            supported.
+        :type n: int.
+        :returns: a list of floats
             the lambdas (decay constants) for each decay heat group
         """
         lambda_dict = {}
@@ -104,18 +85,13 @@ class DecayData(object):
 
     def _get_kappas(self, nuc, e):
         """
-        Arguments
-        ---------
-        e : str
-            The energy spectrum type. This should be 'thermal' or 'fast' to
-            indicate the energy spectrum.
-
-        n : int
-            The number of decay heat groups. Currently, only 11 is supported.
-
-        Returns
-        -------
-        lambdas: a list of floats
+        :param e: The energy spectrum type. This should be 'thermal' or 'fast'
+            to indicate the energy spectrum.
+        :type e: str.
+        :param n: The number of decay heat groups. Currently, only 11 is
+            supported.
+        :type n: int.
+        :returns: a list of floats
             the kappas (decay heat values) for each decay heat group
         """
         kappa_dict = {}

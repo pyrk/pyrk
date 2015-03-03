@@ -45,6 +45,8 @@ pyrk.neutronics module
     :members:
     :undoc-members:
     :show-inheritance:
+    :private-members:
+    :special-members:
 
 pyrk.reactivity_external module
 -------------------------------
