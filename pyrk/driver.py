@@ -11,6 +11,9 @@ import matplotlib.cm as cmx
 import matplotlib.colors as colors
 from matplotlib.pyplot import legend
 import os
+from utils.logger import logger
+import logging
+log = logging.getLogger(__name__)
 
 from scipy.integrate import ode
 
@@ -19,6 +22,7 @@ import thermal_hydraulics
 
 from testin import *
 
+log.info("Simulation starting.")
 np.set_printoptions(precision=5)
 
 timesteps = (tf-t0)/dt + 1
@@ -118,16 +122,11 @@ def solve():
     th.set_initial_value(y0_th(), t0)
     while n.successful() and n.t < tf:
         n.integrate(n.t+dt)
-        #print("NT: ", n.t)
-        # print "NE result:"
-        #print(n.t, n.y)
         update_n(n.t, n.y)
         th.integrate(th.t+dt)
-        # print "TH result:"
-        #print(th.t, th.y)
         update_th(n.t, n.y, th.y)
-    print("Final Result : ", _y)
-    print("Final Temps :", _temp)
+    print("Final Result : ",_y)
+    print("Final Temps : ",_temp)
     print("Precursor lambdas:")
     print(ne._pd.lambdas())
     print("Precursor betas:")
@@ -141,7 +140,7 @@ def solve():
 
 def my_colors(num):
     values = range(n_entries)
-    jet = cm = plt.get_cmap('jet')
+    jet = plt.get_cmap('jet')
     cNorm = colors.Normalize(vmin=0, vmax=values[-1])
     scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=jet)
     colorVal = scalarMap.to_rgba(values[num])

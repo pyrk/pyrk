@@ -7,7 +7,6 @@ def vol_sphere(r):
 
 
 class THParams(object):
-
     """This holds the parameters for the PB-FHR. For other reactors, implement
     your own damn class."""
 
@@ -20,7 +19,7 @@ class THParams(object):
             "mod": 700.0 + 273.15,
             "refl": 650.0 + 273.15
             }
-        # the data below comes form design doc rev c
+        # the data below comes from design doc rev c
         self._power_tot = 236000.0  # Wth
         self._vol_tot_active = 4.16  # m^3
         self._vol_tot_defuel = 1.03  # m^3

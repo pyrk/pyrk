@@ -1,5 +1,4 @@
 import numpy as np
-from geometry import Geometry
 
 class State(object):
     """A class representing the solution state, such as the initial conditions"""
@@ -12,7 +11,7 @@ class State(object):
                 "refl": 1.8
                 }
         self._temp = {"fuel": 730.,
-                "cool": 650., 
+                "cool": 650.,
                 "gmod": 700.,
                 "refl": 650.
                 }
@@ -20,7 +19,7 @@ class State(object):
         self._dt
 
     def temp(self):
-        """A function that returns the temperature vector, representing the 
+        """A function that returns the temperature vector, representing the
         temperatures of each component"""
         return self._temp
 
@@ -29,12 +28,12 @@ class State(object):
         self._temp = val
 
     def temp(self, key, val):
-        """A function that sets the temperature of a single component with the 
+        """A function that sets the temperature of a single component with the
         key, key"""
         self._temp[key] = val
 
     def rho(self):
-        """A function that returns the reactivity dictionary, representing the 
+        """A function that returns the reactivity dictionary, representing the
         reactivities of each component"""
         return self._rho_temp
 
@@ -43,7 +42,7 @@ class State(object):
         self._rho_temp = rho_dict
 
     def rho(self, key, val):
-        """A function that sets the reactivity of a single component with the 
+        """A function that sets the reactivity of a single component with the
         key, key"""
         self._rho[key] = val
 
@@ -55,7 +54,7 @@ class State(object):
         self._power = val
 
     def dydt(self):
-        for key in elements : 
+        for key in elements :
             lhs[key] = self.rhs[key]()
         return lhs
 
