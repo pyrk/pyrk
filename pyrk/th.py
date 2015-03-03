@@ -1,4 +1,5 @@
 import numpy as np
+from inp import validation
 
 
 class THComponent(object):
@@ -27,3 +28,8 @@ class THComponent(object):
         self.T = np.zeros(shape=(1, si.timesteps()), dtype=float)
         self.T[0] = T0
         self.sim_info = si
+
+    def temp(self, timestep):
+        validation.validate_ge("timestep", timestep, 0)
+        validation.validate_le("timestep", timestep, si.timesteps())
+        return self.T[timestep]

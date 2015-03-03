@@ -7,8 +7,7 @@ def vol_sphere(r):
 
 
 class THParams(object):
-    """This holds the parameters for the PB-FHR. For other reactors, implement
-    your own damn class."""
+    """This holds the parameters for the PB-FHR."""
 
     def __init__(self):
         self._components = {"fuel": 0, "cool": 1, "mod": 2, "refl": 3}
@@ -94,7 +93,7 @@ class THParams(object):
             raise KeyError("The only supported options for components are fuel, \
             cool, mod, and refl.")
 
-    def k_cool(self, _cool):
+    def k_cool(self, t_cool):
         """Thermal conductivitiy in W/m-K for flibe"""
         # http://www.psfc.mit.edu/library1/catalog/reports/1980/80rr
         # /80rr012/80rr012_full.pdf

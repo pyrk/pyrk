@@ -26,8 +26,6 @@ from inp import sim_info
 log.info("Simulation starting.")
 np.set_printoptions(precision=np_precision)
 
-si = sim_info.SimInfo(t0=t0, tf=tf, dt=dt)
-
 ne = neutronics.Neutronics(fission_iso,
                            spectrum,
                            n_precursor_groups,
@@ -35,9 +33,9 @@ ne = neutronics.Neutronics(fission_iso,
 
 
 th = thermal_hydraulics.ThermalHydraulics()
-components = th._params._components
 
-n_components = ne.n_components()
+si = sim_info.SimInfo(t0=t0, tf=tf, dt=dt, components=th._params._components)
+n_components = len(si.components)
 n_entries = 1 + n_precursor_groups + n_decay_groups + n_components
 
 _y = np.zeros(shape=(si.timesteps(), n_entries), dtype=float)
@@ -45,7 +43,7 @@ _y = np.zeros(shape=(si.timesteps(), n_entries), dtype=float)
 _temp = np.zeros(shape=(si.timesteps(), n_components), dtype=float)
 
 for key, val in th._params._init_temps.iteritems():
-    _temp[0][components[key]] = val
+    _temp[0][si.components[key]] = val
 
 
 def update_n(t, y_n):
@@ -83,8 +81,8 @@ def f_th(t, y_th):
     o_i = 1+n_precursor_groups
     o_f = 1+n_precursor_groups+n_decay_groups
     omegas = _y[t/dt][o_i:o_f]
-    for name, num in components.iteritems():
-        f[num] = th.dtempdt(name, y_th, power, omegas, components)
+    for name, num in si.components.iteritems():
+        f[num] = th.dtempdt(name, y_th, power, omegas, si.components)
     # print "type of f_th : "+ str(type(f.values()))
     return f
 
@@ -99,7 +97,7 @@ def y0():
     for k in range(0, n_decay_groups):
         i += 1
         f[i] = 0
-    for name, num in components.iteritems():
+    for name, num in si.components.iteritems():
         f[i+num+1] = _temp[0][num]
     assert len(f) == n_entries
     _y[0] = f
@@ -170,7 +168,7 @@ def plot_power(x, y):
 
 
 def plot_temps_together(x, y):
-    for name, num in components.iteritems():
+    for name, num in si.components.iteritems():
         idx = 1 + n_precursor_groups + n_decay_groups + num
         plt.plot(x, y[:, idx], label=name, color=my_colors(num), marker='.')
     plt.xlabel("Time [s]")
@@ -180,7 +178,7 @@ def plot_temps_together(x, y):
 
 
 def plot_temps_separately(x, y):
-    for name, num in components.iteritems():
+    for name, num in si.components.iteritems():
         idx = 1 + n_precursor_groups + n_decay_groups + num
         plt.plot(x, y[:, idx], label=name, color=my_colors(num), marker='.')
         plt.xlabel("Time [s]")

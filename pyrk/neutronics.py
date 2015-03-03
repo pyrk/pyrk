@@ -67,6 +67,3 @@ class Neutronics(object):
         to_ret = sum(drho.values())
         self._rho[t_idx] = to_ret
         return to_ret
-
-    def n_components(self):
-        len(component_names)

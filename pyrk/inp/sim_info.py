@@ -6,13 +6,13 @@ from inp import validation
 class SimInfo(object):
     """This class holds information about a reactor kinetics simulation"""
 
-    def __init__(self, t0=0, tf=1, dt=1,):
+    def __init__(self, t0=0, tf=1, dt=1, components={}):
         """This class holds information about a reactor kinetics simulation
         """
         self.t0 = validation.validate_ge("t0", t0, 0)
         self.tf = validation.validate_ge("tf", tf, t0)
         self.dt = validation.validate_ge("dt", dt, 0)
-        self.components = {}
+        self.components = components
 
     def add_th_component(self, th_component):
         """Adds a thermal-hydralic component to this simulation.
@@ -22,7 +22,7 @@ class SimInfo(object):
         if th_component.name in self.components:
             msg = "A component named "
             msg += th_component.name
-            mas += " already exists in the simulation."
+            msg += " already exists in the simulation."
             raise ValueError(msg)
         else:
             self.components[th_component.name] = th_component
