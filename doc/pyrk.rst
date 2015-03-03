@@ -30,14 +30,6 @@ pyrk.kinetics module
     :undoc-members:
     :show-inheritance:
 
-pyrk.kinetics_driver module
----------------------------
-
-.. automodule:: pyrk.kinetics_driver
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pyrk.neutronics module
 ----------------------
 
@@ -45,8 +37,6 @@ pyrk.neutronics module
     :members:
     :undoc-members:
     :show-inheritance:
-    :private-members:
-    :special-members:
 
 pyrk.reactivity_external module
 -------------------------------
