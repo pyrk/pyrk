@@ -11,7 +11,6 @@ import matplotlib.cm as cmx
 import matplotlib.colors as colors
 from matplotlib.pyplot import legend
 import os
-from utils.logger import logger
 import logging
 log = logging.getLogger(__name__)
 
@@ -21,24 +20,29 @@ import neutronics
 import thermal_hydraulics
 
 from testin import *
+from inp import sim_info
+
 
 log.info("Simulation starting.")
-np.set_printoptions(precision=5)
+np.set_printoptions(precision=np_precision)
 
-timesteps = (tf-t0)/dt + 1
+si = sim_info.SimInfo(t0=t0, tf=tf, dt=dt)
 
 ne = neutronics.Neutronics(fission_iso,
                            spectrum,
                            n_precursor_groups,
                            n_decay_groups)
+
+
 th = thermal_hydraulics.ThermalHydraulics()
 components = th._params._components
-n_components = len(components)
+
+n_components = ne.n_components()
 n_entries = 1 + n_precursor_groups + n_decay_groups + n_components
 
-_y = np.zeros(shape=(timesteps, n_entries), dtype=float)
+_y = np.zeros(shape=(si.timesteps(), n_entries), dtype=float)
 
-_temp = np.zeros(shape=(timesteps, n_components), dtype=float)
+_temp = np.zeros(shape=(si.timesteps(), n_components), dtype=float)
 
 for key, val in th._params._init_temps.iteritems():
     _temp[0][components[key]] = val

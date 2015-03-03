@@ -28,4 +28,4 @@ class SimInfo(object):
             self.components[th_component.name] = th_component
 
     def timesteps(self):
-        return (self.tf-self.t0)/self.dt
+        return (self.tf-self.t0)/self.dt + 1
