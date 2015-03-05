@@ -50,7 +50,7 @@ class Neutronics(object):
 
     def rho_ext(self, t):
         if t > 0 and t < 0.1:
-            return 1.0
+            return 0.1
         elif t < 0:
             raise ValueError("Negative times should not happen. Please check \
                     input")
@@ -88,6 +88,7 @@ class Neutronics(object):
         return kappa*p-lam*omega
 
     def reactivity(self, t, dt, temps, coeffs):
+        """Returns the reactivity, in dollars, at time t"""
         drho = {}
         dtemp = {}
         t_idx = int(t/dt)

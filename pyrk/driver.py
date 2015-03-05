@@ -125,6 +125,8 @@ def solve():
         update_n(n.t, n.y)
         th.integrate(th.t+si.dt)
         update_th(n.t, n.y, th.y)
+    print("Reactivity : ", ne._rho)
+    print(ne._dd.lambdas())
     print("Final Result : ",_y)
     print("Final Temps : ",_temp)
     print("Precursor lambdas:")
