@@ -48,7 +48,7 @@ class Neutronics(object):
         self._rho = {0: 0}
         """_rho (dict): A dictionary of times and reactivity values"""
 
-    def rho_ext(self, t):
+    def rho_ext(self, t ):
         if t > 0 and t < 0.1:
             return 0.1
         elif t < 0:
@@ -65,6 +65,21 @@ class Neutronics(object):
             bodies.")
 
     def dpdt(self, t, dt, temps, coeffs, power, zetas):
+        """Calculates the power term. The first in the neutronics block.
+        :param t: the time
+        :type t: float.
+        :param dt: the timestep
+        :type dt: float.
+        :param temps: the temperatures for each component
+        :type temps: np.ndarray.
+        :param coeffs: the temperature coefficients of reactivity for each
+        component
+        :type coeffs: dict.
+        :param power: the current reactor power in Watts (timestep t-1 ?)
+        :type power: float.
+        :param zetas: the current delayed neutron precursor populations, zeta_i
+        :type zetas: np.ndarray.
+        """
         rho = self.reactivity(t, dt, temps, coeffs)
         beta = self._pd.beta()
         lams = self._pd.lambdas()

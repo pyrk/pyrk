@@ -1,6 +1,6 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 """
-The kintetic file handles time.
+The kinetic file handles neutron kinetics.
 """
 
 
