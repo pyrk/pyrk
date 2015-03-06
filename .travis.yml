@@ -5,7 +5,6 @@
 language: python
 python:
   - "2.7"
-  - "3.0"
 
 # command to install dependencies
 install:
@@ -22,7 +21,7 @@ install:
   # Useful for debugging any issues with conda
   - conda info -a
   # Replace dep1 dep2 ... with your dependencies
-  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION scipy numpy matplotlib nose tables
+  - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION scipy numpy matplotlib nose pytables
   - source activate test-environment
   - pip install coveralls
   - export PYTHONPATH="${PYTHONPATH}:${HOME}/prke/prke"
