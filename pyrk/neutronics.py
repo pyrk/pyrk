@@ -48,7 +48,11 @@ class Neutronics(object):
         self._rho = {0: 0}
         """_rho (dict): A dictionary of times and reactivity values"""
 
-    def rho_ext(self, t):
+    def rho_ext(self, t ):
+        """
+        :param t: time
+        :type t: float.
+        """
         if t > 0 and t < 0.1:
             return 0.1
         elif t < 0:
@@ -57,14 +61,22 @@ class Neutronics(object):
         else:
             return 0
 
-    def check_keys(self, dict1, dict2):
-        diff = set(dict1.keys) - set(dict2.keys)
-        if len(diff) != 0:
-            raise ValueError("The two dictionaries do not \
-            have the same set of keys. They must refer to the same set of \
-            bodies.")
-
     def dpdt(self, t, dt, temps, coeffs, power, zetas):
+        """Calculates the power term. The first in the neutronics block.
+        :param t: the time
+        :type t: float.
+        :param dt: the timestep
+        :type dt: float.
+        :param temps: the temperatures for each component
+        :type temps: np.ndarray.
+        :param coeffs: the temperature coefficients of reactivity for each
+        component
+        :type coeffs: dict.
+        :param power: the current reactor power in Watts (timestep t-1 ?)
+        :type power: float.
+        :param zetas: the current delayed neutron precursor populations, zeta_i
+        :type zetas: np.ndarray.
+        """
         rho = self.reactivity(t, dt, temps, coeffs)
         beta = self._pd.beta()
         lams = self._pd.lambdas()
@@ -76,19 +88,27 @@ class Neutronics(object):
         return dp
 
     def dzetadt(self, t, power, zeta, j):
+        """
+        :param <++>: <++>
+        :type <++>: <++>
+        """
         Lambda = self._pd.Lambda()
         lam = self._pd.lambdas()[j]
         beta = self._pd.betas()[j]
         return beta*power/Lambda - lam*zeta
 
     def dwdt(self, power, omega, k):
+        """Returns the change in decay heat for w_k at a certain power
+        :param <++>: <++>
+        :type <++>: <++>
+        """
         kappa = self._dd.kappas()[k]
         p = power
         lam = self._dd.lambdas()[k]
         return kappa*p-lam*omega
 
     def reactivity(self, t, dt, temps, coeffs):
-        """Returns the reactivity, in dollars, at time t"""
+        """Returns the reactivity, in dollars (or pcm? TODO), at time t"""
         drho = {}
         dtemp = {}
         t_idx = int(t/dt)
