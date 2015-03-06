@@ -4,6 +4,7 @@
 # I guess it's irrelevant, though, since we immediately install python using conda.
 language: python
 python:
+  - "2.6"
   - "2.7"
 
 # command to install dependencies
@@ -20,11 +21,11 @@ install:
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
-
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION scipy numpy matplotlib nose
   - source activate test-environment
   - pip install coveralls
+  - export PYTHONPATH="${PYTHONPATH}:${HOME}/prke/prke"
 
 script:
   - cd pyrk && nosetests
