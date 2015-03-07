@@ -13,26 +13,41 @@ class PrecursorData(object):
         self._e = e
 
     def beta(self):
+        """
+        The Big Beta is the sum of all betas? TODO: Double check.
+        """
         return sum(self._betas)
 
     def betas(self):
+        """
+        The betas are populations of neutron precursors.
+        """
         return self._betas
 
     def lambdas(self):
+        """
+        The lambdas are the decay constants for the neutron precursor groups.
+        """
         return self._lambdas
 
-    def omegas(self):
-        return self._omegas
-
     def Lambda(self):
+        """
+        TODO: get definition
+        """
         return self._Lambda
 
     def v_d(self, nuc, e):
+        """
+        TODO: figure out why you felt you needed this
+        """
         if nuc == "u235" and e == "thermal":
             return 0.01668
 
     def _get_betas(self, nuc, e):
-        # obtained from http://arxiv.org/pdf/1001.4100.pdf
+        """
+        Retrieves the values for beta_i
+        Data for u235 was obtained from http://arxiv.org/pdf/1001.4100.pdf
+        """
         beta_dict = {}
         beta_dict["u235"] = {}
         beta_dict["pu239"] = {}
@@ -45,7 +60,10 @@ class PrecursorData(object):
         return beta_dict[nuc][e]
 
     def _get_lambdas(self, nuc, e):
-        # obtained from http://arxiv.org/pdf/1001.4100.pdf
+        """
+        Retrieves the values for lambda_i
+        Data for u235 was obtained from http://arxiv.org/pdf/1001.4100.pdf
+        """
         lambda_dict = {}
         lambda_dict["u235"] = {}
         lambda_dict["pu239"] = {}
@@ -58,6 +76,9 @@ class PrecursorData(object):
         return lambda_dict[nuc][e]
 
     def _get_Lambda(self, nuc, e):
+        """
+        TODO: deifnition of Lambda
+        """
         Lambda_dict = {}
         Lambda_dict["u235"] = {}
         Lambda_dict["pu239"] = {}
