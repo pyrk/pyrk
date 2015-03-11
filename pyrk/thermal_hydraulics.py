@@ -1,5 +1,6 @@
 import th_params
 
+
 class ThermalHydraulics(object):
     """This class handles calculations and data related to the
     thermal_hydraulics subblock
@@ -72,8 +73,14 @@ class ThermalHydraulics(object):
 
     def convection(self, t_b, t_env, h, A):
         """
-        The temperature of the body, environment, the heat transfer
-        coefficient, and the surface area of heat transfer are required.
+        :param t_b: The temperature of the body
+        :type t_b: float.
+        :param t_env: The temperature of the environment
+        :type t_env: float.
+        :param h: the heat transfer coefficient between environment and body
+        :type h: float.
+        :param A: the surface area of heat transfer
+        :type A: float.
         """
         num = (t_b-t_env)
         denom = (h*A)
@@ -81,9 +88,18 @@ class ThermalHydraulics(object):
 
     def conduction(self, t_b, t_env, L, k, A):
         """
-        The temperature of the body, environment, the length scale, the thermal
-        conductivity, and the surface area of heat transfer are required.
+        :param t_b: The temperature of the body
+        :type t_b: float.
+        :param t_env: The temperature of the environment
+        :type t_env: float.
+        :param L: the length scale of the body
+        :type L: float.
+        :param k: the thermal conductivity
+        :type k: float.
+        :param A: the surface area of heat transfer
+        :type A: float.
         """
-        num = L*(t_b-t_env)
-        denom = (k*A)
+        num = (t_b-t_env)
+        denom = (k*A)/L
         return num/denom
+
