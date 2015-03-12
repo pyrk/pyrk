@@ -24,7 +24,7 @@ install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION scipy numpy matplotlib nose pytables
   - source activate test-environment
   - pip install coveralls
-  - export PYTHONPATH="${PYTHONPATH}:${HOME}/prke/prke"
+  - export PYTHONPATH="${PYTHONPATH}:${HOME}/pyrk/pyrk"
 
 script:
   - cd pyrk && nosetests
