@@ -1,4 +1,4 @@
-
+from ur import units
 
 def validate_ge(valname, val, llim):
     """Raises errors if the value is less than the lower limit (llim) or if it
@@ -27,7 +27,7 @@ def validate_le(valname, val, ulim):
 
 
 def validate_num(valname, val):
-    if isinstance(val, int) or isinstance(val, float):
+    if isinstance(val, (int, long, float, units.Quantity)):
         return val
     else:
         msg = valname + " must be an integer or float.\n"

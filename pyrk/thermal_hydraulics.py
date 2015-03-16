@@ -58,13 +58,14 @@ class ThermalHydraulics(object):
         conv = (2.0*v/h)*(tcool-tinlet)
         afuel = self._params.area(set(["fuel", "cool"]))  # this is one pebble?
         aflow = self._params.flow_area()  # this is the flow path cross section
-        cond = (afuel/aflow)*(tfuel - tcool)/(rho*cp*res)
+        vol = self._params.vol("cool")
+        cond = (afuel/aflow)*(tfuel - tcool)/res/(rho*cp*vol)
         return cond - conv
 
     def dtempmoddt(self, tfuel, tmod):
         rho = self._params.rho("mod", tmod)
         cp = self._params.cp("mod")
-        vol = self._params.vol("cool")
+        vol = self._params.vol("mod")
         res_m = self._params.res("mod", "fuel")
         f = (tmod-tfuel)/res_m/(rho*cp*vol)
         return f

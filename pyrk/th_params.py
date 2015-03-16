@@ -105,7 +105,7 @@ class THParams(object):
         # /80rr012/80rr012_full.pdf
         # would prefer temperature dependent thermal conductivity?
         # [W/m-K]
-        return 1.0*units.watt/(units.meter*units.kelvin) # W/mK
+        return 1.0*units.watt/(units.meter*units.kelvin)  # W/m-K
 
     def k_fuel(self, t_fuel):
         """Thermal conductivitiy in W/m-K for the triso fuel layer"""
@@ -117,14 +117,14 @@ class THParams(object):
         # http://ac.els-cdn.com/0017931094903921/1-s2.0-0017931094903921-main.pdf
         # ?_tid=e7d08bac-b380-11e3-90e0-00000aacb35f&acdnat
         # =1395685377_d73165eba81bc145ccebc98c195abf36
-        k = 2*units.watt/(units.meter*units.kelvin) # W/mK
+        k = 2*units.watt/(units.meter*units.kelvin)  # W/m-K
         # 20 is what's assumed for the pbmr pebble bed...
         return k
 
     def k_graphite(self, t_graphite):
         """Thermal conductivitiy in W/m-K for the graphite moderator and the \
         reflector"""
-        return 0.26*units.watt/(units.meter*units.kelvin) # W/mK
+        return 0.26*units.watt/(units.meter*units.kelvin)  # W/m-K
 
     def rho(self, component, temp):
         """Density, as a function of temperature [kg/m^3]"""
@@ -153,17 +153,18 @@ class THParams(object):
         # critical point [K]
         # t_c = 4498.8
         # rho correlation [kg/m^3]
-        rho = 2415.6 - 0.49072*t_cool
+        rho = 2415.6 - 0.49072*t_cool.magnitude
+        rho = rho*units.kg/(units.meter**3)
         # at 650C, this is 1962
         return rho
 
     def rho_fuel(self, t_fuel):
         # from COMSOL model by Raluca Scarlat
-        rho = 1720.0*units.kg/(units.meter**3) # [kg/m^3]
+        rho = 1720.0*units.kg/(units.meter**3)  # [kg/m^3]
         return rho
 
     def rho_graphite(self, t_graphite):
-        rho = 100*units.kg/(units.meter**3) # [kg/m^3]
+        rho = 100*units.kg/(units.meter**3)  # [kg/m^3]
         return rho
 
     def cp(self, component):
@@ -181,7 +182,7 @@ class THParams(object):
 
     def cp_fuel(self):
         # From COMSOL model by Raluca Scarlat
-        c_p = 1744 *units.joule/(units.kg*units.kelvin)  # [J/kg-K]
+        c_p = 1744*units.joule/(units.kg*units.kelvin)  # [J/kg-K]
         return c_p
 
     def cp_cool(self):

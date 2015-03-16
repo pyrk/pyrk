@@ -66,7 +66,7 @@ def update_th(t, y_n, y_th):
     :param y_th: The array that solves thermal hydraulics block at time t
     :type y_th: thp.thdarray.
     """
-    _temp[int(t/si.dt)][:] = y_th
+    _temp[int(t/si.dt)][:] = units.Quantity(y_th, 'kelvin')
     n_n = len(y_n)
     _y[t/si.dt][n_n:] = y_th
 
@@ -107,7 +107,6 @@ def f_th(t, y_th):
     o_f = 1+testin.n_pg+testin.n_dg
     omegas = _y[t/si.dt][o_i:o_f]
     for name, num in si.components.iteritems():
-        print name
         f[num] = th.dtempdt(name, y_th, power, omegas, si.components)
     return f
 
