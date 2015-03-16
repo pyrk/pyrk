@@ -72,8 +72,9 @@ class ThermalHydraulics(object):
     def dtemprefldt(self, tcool, trefl):
         rho = self._params.rho("refl", trefl)
         cp = self._params.cp("refl")
+        vol = self._params.vol("refl")
         res_m = self._params.res("refl", "cool")
-        f = (trefl - tcool)/(rho*cp*res_m)
+        f = (trefl - tcool)/res_m/(rho*cp*vol)
         return f
 
     def convection(self, t_b, t_env, h, A):
