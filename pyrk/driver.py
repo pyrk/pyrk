@@ -21,6 +21,8 @@ import thermal_hydraulics
 import testin
 from inp import sim_info
 
+from ur import units
+
 
 log.info("Simulation starting.")
 np.set_printoptions(precision=testin.np_precision)
@@ -39,7 +41,8 @@ n_entries = 1 + testin.n_pg + testin.n_dg + n_components
 
 _y = np.zeros(shape=(si.timesteps(), n_entries), dtype=float)
 
-_temp = np.zeros(shape=(si.timesteps(), n_components), dtype=float)
+_temp = units.Quantity(np.zeros(shape=(si.timesteps(), n_components),
+                                dtype=float), 'K')
 
 for key, val in th._params._init_temps.iteritems():
     _temp[0][si.components[key]] = val
@@ -111,7 +114,7 @@ def y0():
     """The initial conditions for y"""
     i = 0
     f = np.zeros(shape=(n_entries,), dtype=float)
-    f[i] = 1.0  # real power is 236 MWth, but normalized is 1
+    f[i] = 1.0 # real power is 236 MWth, but normalized is 1
     for j in range(0, testin.n_pg):
         i += 1
         f[i] = 0
@@ -119,7 +122,7 @@ def y0():
         i += 1
         f[i] = 0
     for name, num in si.components.iteritems():
-        f[i+num+1] = _temp[0][num]
+        f[i+num+1] = _temp[0][num].magnitude
     assert len(f) == n_entries
     _y[0] = f
     return f
@@ -147,7 +150,7 @@ def solve():
     n.set_initial_value(y0_n(), si.t0).set_f_params(testin.coeffs)
     th = ode(f_th).set_integrator('dopri5')
     th.set_initial_value(y0_th(), si.t0)
-    while n.successful() and n.t < testin.tf:
+    while n.successful() and n.t*units.seconds < testin.tf:
         n.integrate(n.t+si.dt)
         update_n(n.t, n.y)
         th.integrate(th.t+si.dt)

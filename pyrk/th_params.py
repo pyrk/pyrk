@@ -1,5 +1,6 @@
 import math
 
+from ur import units
 
 def vol_sphere(r):
     assert(r >= 0)
@@ -12,14 +13,18 @@ class THParams(object):
     def __init__(self):
         self._components = {"fuel": 0, "cool": 1, "mod": 2, "refl": 3}
         # below from greenspan/cisneros
+        t_f = units.Quantity(730.0, units.degC)
+        t_c = units.Quantity(650.0, units.degC)
+        t_m = units.Quantity(700.0, units.degC)
+        t_r = units.Quantity(650.0, units.degC)
         self._init_temps = {
-            "fuel": 730.0 + 273.15,
-            "cool": 650.0 + 273.15,
-            "mod": 700.0 + 273.15,
-            "refl": 650.0 + 273.15
+            "fuel": t_f.to('K'),
+            "cool": t_c.to('K'),
+            "mod": t_m.to('K'),
+            "refl": t_r.to('K')
             }
         # the data below comes from design doc rev c
-        self._power_tot = 236000.0  # Wth
+        self._power_tot = 236000.0*units.watt  # Wth
         self._vol_tot_active = 4.16  # m^3
         self._vol_tot_defuel = 1.03  # m^3
         self._vol_tot_refl = 4.8  # m^3
