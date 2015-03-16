@@ -5,11 +5,14 @@ t0 = 0.0000*units.seconds
 dt = 0.00001*units.seconds
 tf = 0.001*units.seconds
 
-alpha_f = -3.8*units.pcm
-alpha_c = -1.8*units.pcm
-alpha_m = -0.7*units.pcm
-alpha_r = 1.8*units.pcm
-coeffs = {"fuel": -3.8, "cool": -1.8, "mod": -0.7, "refl": 1.8}
+alpha_f = -3.8*units.pcm/units.kelvin
+alpha_c = -1.8*units.pcm/units.kelvin
+alpha_m = -0.7*units.pcm/units.kelvin
+alpha_r = 1.8*units.pcm/units.kelvin
+coeffs = {"fuel": alpha_f,
+          "cool": alpha_c,
+          "mod": alpha_m,
+          "refl": alpha_r}
 
 # choose your data
 # precursor groups
