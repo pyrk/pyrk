@@ -100,12 +100,14 @@ def f_th(t, y_th):
     :param y: TODO
     :type y: np.ndarray
     """
-    f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),'kelvin')
+    f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),
+                       'kelvin / second')
     power = _y[t/si.dt][0]
     o_i = 1+testin.n_pg
     o_f = 1+testin.n_pg+testin.n_dg
     omegas = _y[t/si.dt][o_i:o_f]
     for name, num in si.components.iteritems():
+        print name
         f[num] = th.dtempdt(name, y_th, power, omegas, si.components)
     return f
 
@@ -114,7 +116,7 @@ def y0():
     """The initial conditions for y"""
     i = 0
     f = np.zeros(shape=(n_entries,), dtype=float)
-    f[i] = 1.0 # real power is 236 MWth, but normalized is 1
+    f[i] = 1.0  # real power is 236 MWth, but normalized is 1
     for j in range(0, testin.n_pg):
         i += 1
         f[i] = 0

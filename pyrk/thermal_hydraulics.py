@@ -64,8 +64,9 @@ class ThermalHydraulics(object):
     def dtempmoddt(self, tfuel, tmod):
         rho = self._params.rho("mod", tmod)
         cp = self._params.cp("mod")
+        vol = self._params.vol("cool")
         res_m = self._params.res("mod", "fuel")
-        f = (tmod-tfuel)/(rho*cp*res_m)
+        f = (tmod-tfuel)/res_m/(rho*cp*vol)
         return f
 
     def dtemprefldt(self, tcool, trefl):
