@@ -42,7 +42,7 @@ n_entries = 1 + testin.n_pg + testin.n_dg + n_components
 _y = np.zeros(shape=(si.timesteps(), n_entries), dtype=float)
 
 _temp = units.Quantity(np.zeros(shape=(si.timesteps(), n_components),
-                                dtype=float), 'K')
+                                dtype=float), 'kelvin')
 
 for key, val in th._params._init_temps.iteritems():
     _temp[0][si.components[key]] = val
@@ -100,7 +100,7 @@ def f_th(t, y_th):
     :param y: TODO
     :type y: np.ndarray
     """
-    f = np.zeros(shape=(n_components,), dtype=float)
+    f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),'kelvin')
     power = _y[t/si.dt][0]
     o_i = 1+testin.n_pg
     o_f = 1+testin.n_pg+testin.n_dg
