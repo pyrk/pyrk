@@ -2,6 +2,7 @@ import math
 
 from ur import units
 
+
 def vol_sphere(r):
     assert(r >= 0)
     return (4./3.)*math.pi*pow(r, 3)
@@ -25,22 +26,22 @@ class THParams(object):
             }
         # the data below comes from design doc rev c
         self._power_tot = 236000.0*units.watt  # Wth
-        self._vol_tot_active = 4.16  # m^3
-        self._vol_tot_defuel = 1.03  # m^3
-        self._vol_tot_refl = 4.8  # m^3
+        self._vol_tot_active = 4.16*units.meter**3  # m^3
+        self._vol_tot_defuel = 1.03*units.meter**3  # m^3
+        self._vol_tot_refl = 4.8*units.meter**3  # m^3
         self._pebble_porosity = 0.4  # [-]
         # self._vol_flow_rate = 976.0*0.3 # kg/s TODO 0.3 is nat circ guess
-        self._vel_cool = 2.  # m/s
-        self._t_inlet = 600.0
+        self._vel_cool = 2.*units.meter/units.second  # m/s
+        self._t_inlet = units.Quantity(600.0, units.degC)  # degrees C
         # [m] ... matrix(4mm) + coating(1mm)
-        self._thickness_fuel_matrix = 0.005
-        self._r_fuel = 0.03  # [m] ... matrix(4mm) + coating(1mm)
-        self._r_mod = 0.025
+        self._thickness_fuel_matrix = 0.005*units.meter
+        self._r_fuel = 0.03*units.meter  # [m] ... matrix(4mm) + coating(1mm)
+        self._r_mod = 0.025*units.meter
         self._pebble_r = self._r_fuel + self._r_mod
         self._kappa = 0.06  # TODO if you fix omegas, kappa ~ 0.06
-        self._core_height = 3.5  # [m] APPROXIMATELY (TODO look for actual)
-        self._core_inner_radius = 0.35  # m
-        self._core_outer_radius = 1.25  # m
+        self._core_height = 3.5*units.meter  # [m] (TODO currently approximate)
+        self._core_inner_radius = 0.35*units.meter  # m
+        self._core_outer_radius = 1.25*units.meter  # m
 
     def flow_area(self):
         inner = 2.0*math.pi*pow(self._core_inner_radius, 2)
