@@ -4,7 +4,7 @@ from ur import units
 
 
 def vol_sphere(r):
-    assert(r >= 0*units.meter**3)
+    assert(r >= 0*units.meter)
     return (4./3.)*math.pi*pow(r, 3)
 
 
