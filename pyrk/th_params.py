@@ -105,7 +105,7 @@ class THParams(object):
         # /80rr012/80rr012_full.pdf
         # would prefer temperature dependent thermal conductivity?
         # [W/m-K]
-        return 1.0
+        return 1.0*units.watt/(units.meter*units.kelvin) # W/mK
 
     def k_fuel(self, t_fuel):
         """Thermal conductivitiy in W/m-K for the triso fuel layer"""
@@ -117,14 +117,14 @@ class THParams(object):
         # http://ac.els-cdn.com/0017931094903921/1-s2.0-0017931094903921-main.pdf
         # ?_tid=e7d08bac-b380-11e3-90e0-00000aacb35f&acdnat
         # =1395685377_d73165eba81bc145ccebc98c195abf36
-        k = 2
+        k = 2*units.watt/(units.meter*units.kelvin) # W/mK
         # 20 is what's assumed for the pbmr pebble bed...
         return k
 
     def k_graphite(self, t_graphite):
         """Thermal conductivitiy in W/m-K for the graphite moderator and the \
         reflector"""
-        return 0.26
+        return 0.26*units.watt/(units.meter*units.kelvin) # W/mK
 
     def rho(self, component, temp):
         """Density, as a function of temperature [kg/m^3]"""
@@ -158,12 +158,12 @@ class THParams(object):
         return rho
 
     def rho_fuel(self, t_fuel):
-        # [kg/m^3]
-        rho = 1720.0  # from COMSOL model by Raluca Scarlat
+        # from COMSOL model by Raluca Scarlat
+        rho = 1720.0*units.kg/(units.meter**3) # [kg/m^3]
         return rho
 
     def rho_graphite(self, t_graphite):
-        rho = 100
+        rho = 100*units.kg/(units.meter**3) # [kg/m^3]
         return rho
 
     def cp(self, component):
@@ -180,22 +180,22 @@ class THParams(object):
             cool, mod, and refl.")
 
     def cp_fuel(self):
-        # [J/kg-K]
-        c_p = 1744  # From COMSOL model by Raluca Scarlat
+        # From COMSOL model by Raluca Scarlat
+        c_p = 1744 *units.joule/(units.kg*units.kelvin)  # [J/kg-K]
         return c_p
 
     def cp_cool(self):
-        # [J/kg-K]
-        return 2350.0  # from www-ferp.ucsd.edu/LIB/PROPS/HTS.shtml
+        # from www-ferp.ucsd.edu/LIB/PROPS/HTS.shtml
+        return 2350.0*units.joule/(units.kg*units.kelvin)  # [J/kg-K]
 
     def cp_mod(self):
-        c_p = 1650.0
+        c_p = 1650.0*units.joule/(units.kg*units.kelvin)  # [J/kg-K]
         # Approximate:
         # http://www.sciencedirect.com/science/article/pii/0022369760900950
         return c_p
 
     def cp_refl(self):
-        c_p = 1650.0
+        c_p = 1650.0*units.joule/(units.kg*units.kelvin)  # [J/kg-K]
         # Approximate:
         # http://www.sciencedirect.com/science/article/pii/0022369760900950
         return c_p
@@ -212,7 +212,7 @@ class THParams(object):
         elif components == set(["fuel", "cool"]):
             return 4.0*math.pi*pow(self._pebble_r, 2)
         elif components == set(["cool", "refl"]):
-            return 2*math.pi*self._core_height
+            return 2*math.pi*self._core_outer_radius*self._core_height
         else:
             raise KeyError("The only supported options for component set are \
             the pairs mod&fuel, fuel&cool, cool&refl")
@@ -231,4 +231,4 @@ class THParams(object):
         # Nu  =   4.0+0.33*P2D^(3.8)*(Pe/100).^(0.86)+0.16*(P2D)^5
         # h   =   Nu.*conductivity_c(t_cool)/D_h
         # TODO : placeholder :
-        return 4700
+        return 4700*units.joules/(units.second*units.kelvin*units.meter**2)
