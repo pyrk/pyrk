@@ -50,7 +50,7 @@ class Neutronics(object):
         self._rho = {0: 0}
         """_rho (dict): A dictionary of times and reactivity values"""
 
-    def rho_ext(self, t ):
+    def rho_ext(self, t):
         """
         :param t: time
         :type t: float.
@@ -84,20 +84,20 @@ class Neutronics(object):
         lams = self._pd.lambdas()
         Lambda = self._pd.Lambda()
         precursors = 0
-        for l in range(0, len(lams)):
-            precursors += lams[l]*zetas[l]
+        for j in range(0, len(lams)):
+            precursors += lams[j]*zetas[j]
         dp = power*(rho - beta)/Lambda + precursors
         return dp
 
     def dzetadt(self, t, power, zeta, j):
         """
-        :param <++>: <++>
+        :param t: time
         :type <++>: <++>
         """
         Lambda = self._pd.Lambda()
-        lam = self._pd.lambdas()[j]
-        beta = self._pd.betas()[j]
-        return beta*power/Lambda - lam*zeta
+        lambda_j = self._pd.lambdas()[j]
+        beta_j = self._pd.betas()[j]
+        return beta_j*power/Lambda - lambda_j*zeta
 
     def dwdt(self, power, omega, k):
         """Returns the change in decay heat for w_k at a certain power
@@ -110,13 +110,14 @@ class Neutronics(object):
         return kappa*p-lam*omega
 
     def reactivity(self, t, dt, temps, coeffs):
-        """Returns the reactivity, in dollars (or pcm? TODO), at time t"""
+        """Returns the reactivity, (units? TODO), at time t"""
         drho = {}
         dtemp = {}
         t_idx = int(t/dt)
+        prev = 0 if (t_idx == 0) else (t_idx - 1)
         for key, alpha in coeffs.iteritems():
             idx = component_names[key]
-            dtemp[key] = (temps[t_idx][idx] - temps[0][idx])
+            dtemp[key] = (temps[t_idx][idx] - temps[prev][idx])
             drho[key] = coeffs[key]*dtemp[key]
         drho["external"] = self.rho_ext(t)
         to_ret = sum(drho.values())

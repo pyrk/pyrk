@@ -55,8 +55,9 @@ def update_n(t, y_n):
     :param y_n: The array that solves the neutronics block at time t
     :type y_n: np.ndarray.
     """
+    t_idx = int(t/si.dt.magnitude)
     n_n = len(y_n)
-    _y[t/si.dt][:n_n] = y_n
+    _y[t_idx][:n_n] = y_n
 
 
 def update_th(t, y_n, y_th):
@@ -68,7 +69,7 @@ def update_th(t, y_n, y_th):
     """
     _temp[int(t*units.second/si.dt)][:] = units.Quantity(y_th, 'kelvin')
     n_n = len(y_n)
-    _y[t/si.dt][n_n:] = y_th
+    _y[int(t*units.second/si.dt)][n_n:] = y_th
 
 
 def f_n(t, y, coeffs):
@@ -81,12 +82,15 @@ def f_n(t, y, coeffs):
     :param coeffs: a dictionary of component names and coefficients
     :type coeffs: dict.
     """
-    f = np.zeros(shape=(1+testin.n_pg + testin.n_dg,), dtype=float)
+    n_n = 1 + testin.n_pg + testin.n_dg
+    end_pg = testin.n_pg + 1
+    f = np.zeros(shape=(n_n,), dtype=float)
     i = 0
-    f[i] = ne.dpdt(t*units.second, si.dt, _temp, coeffs, y[0], y[1:testin.n_pg+1])
+    f[i] = ne.dpdt(t*units.second, si.dt, _temp, coeffs, y[0], y[1:end_pg])
     for j in range(0, testin.n_pg):
         i += 1
         f[i] = ne.dzetadt(t, y[0], y[i], j)
+    assert(i == end_pg-1)
     for k in range(0, testin.n_dg):
         i += 1
         f[i] = ne.dwdt(y[0], y[i], k)
@@ -100,12 +104,13 @@ def f_th(t, y_th):
     :param y: TODO
     :type y: np.ndarray
     """
+    t_idx = int(t/si.dt.magnitude)
     f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),
                        'kelvin / second')
-    power = _y[t/si.dt][0]
+    power = _y[t_idx][0]
     o_i = 1+testin.n_pg
     o_f = 1+testin.n_pg+testin.n_dg
-    omegas = _y[t/si.dt][o_i:o_f]
+    omegas = _y[t_idx][o_i:o_f]
     for name, num in si.components.iteritems():
         f[num] = th.dtempdt(name, y_th, power, omegas, si.components)
     return f
