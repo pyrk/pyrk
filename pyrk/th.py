@@ -1,5 +1,6 @@
 import numpy as np
 from inp import validation
+from ur import units
 
 
 class THComponent(object):
@@ -27,12 +28,13 @@ class THComponent(object):
         """
         self.name = name
         self.vol = vol
-        validation.validate_ge("vol", vol, 0)
+        validation.validate_ge("vol", vol, 0*units.meter**3)
         self.k = k
-        validation.validate_ge("k", k, 0)
+        validation.validate_ge("k", k, 0*units.watt/units.meter/units.kelvin)
         self.dm = dm
         self.T0 = T0
-        self.T = np.zeros(shape=(1, si.timesteps()), dtype=float)
+        self.T = units.Quantity(np.zeros(shape=(1, si.timesteps()),
+                                         dtype=float), 'kelvin')
         self.T[0] = T0
         self.sim_info = si
 

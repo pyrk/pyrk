@@ -28,7 +28,7 @@ class ThermalHydraulics(object):
                     refl keys")
 
     def dtempfueldt(self, power, omegas, tfuel, tcool, tmod):
-        # check this, it may not get things quite right...
+        # TODO check this, it may not get things quite right...
         rho = self._params.rho("fuel", tfuel)
         cp = self._params.cp("fuel")
         vol = self._params.vol("fuel")
@@ -36,7 +36,7 @@ class ThermalHydraulics(object):
         amod = self._params.area(set(["mod", "fuel"]))
         afuel = self._params.area(set(["fuel", "cool"]))
         kf = self._params.k("fuel", tfuel)
-        hf = self._params.h("fuel")
+        hf = self._params.h(set(["fuel", "cool"]))
         power_tot = self._params._power_tot
         # heat_gen = (power_tot/vol/rho/cp)*((1-self._params._kappa)*power +
         # sum(omegas))
@@ -54,7 +54,7 @@ class ThermalHydraulics(object):
         v = self._params._vel_cool
         rho = self._params.rho("cool", tcool)
         cp = self._params.cp("cool")
-        res = self._params.res("cool", "fuel")
+        res = self._params.res_conv("cool", "fuel")
         conv = (2.0*v/h)*(tcool-tinlet)
         afuel = self._params.area(set(["fuel", "cool"]))  # this is one pebble?
         aflow = self._params.flow_area()  # this is the flow path cross section
@@ -66,16 +66,16 @@ class ThermalHydraulics(object):
         rho = self._params.rho("mod", tmod)
         cp = self._params.cp("mod")
         vol = self._params.vol("mod")
-        res_m = self._params.res("mod", "fuel")
-        f = (tmod-tfuel)/res_m/(rho*cp*vol)
+        res = self._params.res_cond("mod", "fuel")
+        f = (tmod-tfuel)/res/(rho*cp*vol)
         return f
 
     def dtemprefldt(self, tcool, trefl):
         rho = self._params.rho("refl", trefl)
         cp = self._params.cp("refl")
         vol = self._params.vol("refl")
-        res_m = self._params.res("refl", "cool")
-        f = (trefl - tcool)/res_m/(rho*cp*vol)
+        res = self._params.res_conv("refl", "cool")
+        f = (trefl - tcool)/res/(rho*cp*vol)
         return f
 
     def convection(self, t_b, t_env, h, A):

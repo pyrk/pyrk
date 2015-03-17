@@ -201,10 +201,17 @@ class THParams(object):
         # http://www.sciencedirect.com/science/article/pii/0022369760900950
         return c_p
 
-    def res(self, component1, component2):
+    def res_conv(self, component1, component2):
         A = self.area(set([component1, component2]))
         h = self.h(set([component1, component2]))
-        r_th = 1.0/h/A
+        r_th = 1.0/(h*A)
+        return r_th
+
+    def res_cond(self, component1, component2):
+        A = self.area(set([component1, component2]))
+        k = self.k(component1, 0*units.kelvin) # todo, fix temp
+        L = self.vol(component1)/A
+        r_th = L/(k*A)
         return r_th
 
     def area(self, components):
@@ -231,5 +238,14 @@ class THParams(object):
         # Pe  =   Re*Pr
         # Nu  =   4.0+0.33*P2D^(3.8)*(Pe/100).^(0.86)+0.16*(P2D)^5
         # h   =   Nu.*conductivity_c(t_cool)/D_h
-        # TODO : placeholder :
-        return 4700*units.joules/(units.second*units.kelvin*units.meter**2)
+        if components == set(["fuel", "cool"]):
+            # TODO : placeholder :
+            return 4700*units.joules/(units.second*units.kelvin*units.meter**2)
+        elif components == set(["cool", "refl"]):
+            # TODO : placeholder :
+            return 4700*units.joules/(units.second*units.kelvin*units.meter**2)
+        else:
+            msg = "fuel&cool and  cool&refl are supported. "
+            msg += "You have provided "
+            msg += str(components)
+            raise KeyError(msg)

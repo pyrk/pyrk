@@ -4,14 +4,18 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
 import th
 from inp import sim_info
 import density_model
+from ur import units
 
 
 name = "testname"
-vol = 20
-k = 10
-dm = density_model.DensityModel(a=0, b=100, model='constant')
-T0 = 700
-si = sim_info.SimInfo(t0=0, tf=10, dt=0.1)
+vol = 20*units.meter**3
+k = 10*units.watt/units.meter/units.kelvin
+dm = density_model.DensityModel(a=0*units.kg/units.meter**3,
+                                b=100*units.kg/units.meter**3,
+                                model='constant')
+T0 = 700*units.kelvin
+si = sim_info.SimInfo(t0=0*units.seconds, tf=10*units.seconds,
+                      dt=0.1*units.seconds)
 tester = th.THComponent(name, vol, k, dm, T0, si)
 
 
@@ -29,7 +33,9 @@ def test_temp():
 
 def test_update_temp():
     assert_equal(tester.temp(0), T0)
-    tester.update_temp(1, 10)
-    assert_equal(tester.temp(1), 10)
-    tester.update_temp(2, 100)
-    assert_equal(tester.temp(2), 100)
+    T1 = 10*units.kelvin
+    T2 = 100*units.kelvin
+    tester.update_temp(1, T1)
+    assert_equal(tester.temp(1), T1)
+    tester.update_temp(2, T2)
+    assert_equal(tester.temp(2), T2)
