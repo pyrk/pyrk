@@ -1,6 +1,8 @@
 from data import precursors as pr
 from data import decay_heat as dh
 
+from ur import units
+
 
 component_names = {"fuel": 0, "cool": 1, "mod": 2, "refl": 3}
 
@@ -53,9 +55,9 @@ class Neutronics(object):
         :param t: time
         :type t: float.
         """
-        if t > 0 and t < 0.1:
+        if t > 0*units.seconds and t < 0.1*units.seconds:
             return 0.1
-        elif t < 0:
+        elif t < 0*units.seconds:
             raise ValueError("Negative times should not happen. Please check \
                     input")
         else:

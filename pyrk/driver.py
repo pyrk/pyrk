@@ -66,7 +66,7 @@ def update_th(t, y_n, y_th):
     :param y_th: The array that solves thermal hydraulics block at time t
     :type y_th: thp.thdarray.
     """
-    _temp[int(t/si.dt)][:] = units.Quantity(y_th, 'kelvin')
+    _temp[int(t*units.second/si.dt)][:] = units.Quantity(y_th, 'kelvin')
     n_n = len(y_n)
     _y[t/si.dt][n_n:] = y_th
 
@@ -83,7 +83,7 @@ def f_n(t, y, coeffs):
     """
     f = np.zeros(shape=(1+testin.n_pg + testin.n_dg,), dtype=float)
     i = 0
-    f[i] = ne.dpdt(t, si.dt, _temp, coeffs, y[0], y[1:testin.n_pg+1])
+    f[i] = ne.dpdt(t*units.second, si.dt, _temp, coeffs, y[0], y[1:testin.n_pg+1])
     for j in range(0, testin.n_pg):
         i += 1
         f[i] = ne.dzetadt(t, y[0], y[i], j)
@@ -148,13 +148,13 @@ def y0_th():
 def solve():
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
     n = ode(f_n).set_integrator('dopri5')
-    n.set_initial_value(y0_n(), si.t0).set_f_params(testin.coeffs)
+    n.set_initial_value(y0_n(), si.t0.magnitude).set_f_params(testin.coeffs)
     th = ode(f_th).set_integrator('dopri5')
-    th.set_initial_value(y0_th(), si.t0)
-    while n.successful() and n.t*units.seconds < testin.tf:
-        n.integrate(n.t+si.dt)
+    th.set_initial_value(y0_th(), si.t0.magnitude)
+    while n.successful() and n.t < testin.tf.magnitude:
+        n.integrate(n.t+si.dt.magnitude)
         update_n(n.t, n.y)
-        th.integrate(th.t+si.dt)
+        th.integrate(th.t+si.dt.magnitude)
         update_th(n.t, n.y, th.y)
     print("Reactivity : ", ne._rho)
     print(ne._dd.lambdas())
