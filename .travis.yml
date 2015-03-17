@@ -6,6 +6,13 @@ language: python
 python:
   - "2.7"
 
+
+# whitelist
+branches:
+  only:
+    - master
+    - dev
+
 # command to install dependencies
 install:
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
