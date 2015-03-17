@@ -185,7 +185,8 @@ def plot(y):
     """Creates plots for interesting values in the simulation.
     :param y: The full solution array
     :type y: np.ndarray"""
-    x = np.arange(si.t0, testin.tf+si.dt, si.dt)
+    x = np.arange(si.t0.magnitude, testin.tf.magnitude+si.dt.magnitude,
+                  si.dt.magnitude)
     plot_power(x, y)
     plot_reactivity(x)
     plot_zetas(x, y)
