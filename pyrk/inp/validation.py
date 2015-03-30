@@ -36,10 +36,10 @@ def validate_num(valname, val):
         raise TypeError(msg)
 
 
-def validate_exists(valname, val):
+def validate_not_none(valname, val):
     if val is not None:
         return val
     else:
-        msg = valname + " must exist.\n"
+        msg = valname + " must be instantiated with a non null value.\n"
         msg += "The value provided was None"
         raise TypeError(msg)

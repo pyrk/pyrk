@@ -12,7 +12,7 @@ class Neutronics(object):
     neutronics subblock
     """
 
-    def __init__(self, iso, e, n_precursors, n_decay):
+    def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.

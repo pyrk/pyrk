@@ -15,8 +15,8 @@ class SimInfo(object):
         self.tf = validation.validate_ge("tf", tf, t0)
         self.dt = validation.validate_ge("dt", dt, 0*units.seconds)
         self.components = components
-        self.ne = validation.validate_exists("ne", ne)
-        self.th = validation.validate_exists("th", th)
+        self.ne = validation.validate_not_none("ne", ne)
+        self.th = validation.validate_not_none("th", th)
 
     def n_entries(self):
         to_ret = 1 + self.ne._n_pg + self.ne._n_dg + len(self.components)
