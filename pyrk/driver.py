@@ -6,12 +6,11 @@ scripts.
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.cm as cmx
-import matplotlib.colors as colors
-import os
 import logging
 log = logging.getLogger(__name__)
+fh = logging.FileHandler(filename='pyrk.log')
+fh.setLevel(level=logging.DEBUG)
+log.addHandler(fh)
 
 from scipy.integrate import ode
 
@@ -20,8 +19,8 @@ import thermal_hydraulics
 
 import testin
 from inp import sim_info
-
 from ur import units
+from utils import plotter
 
 
 log.info("Simulation starting.")
@@ -35,7 +34,7 @@ ne = neutronics.Neutronics(testin.fission_iso,
 th = thermal_hydraulics.ThermalHydraulics()
 
 si = sim_info.SimInfo(t0=testin.t0, tf=testin.tf, dt=testin.dt,
-                      components=th._params._components)
+                      components=th._params._components, ne=ne, th=th)
 n_components = len(si.components)
 n_entries = 1 + testin.n_pg + testin.n_dg + n_components
 
@@ -67,9 +66,10 @@ def update_th(t, y_n, y_th):
     :param y_th: The array that solves thermal hydraulics block at time t
     :type y_th: thp.thdarray.
     """
-    _temp[int(t*units.second/si.dt)][:] = units.Quantity(y_th, 'kelvin')
+    t_idx = int(t/si.dt.magnitude)
+    _temp[int(t_idx)][:] = units.Quantity(y_th, 'kelvin')
     n_n = len(y_n)
-    _y[int(t*units.second/si.dt)][n_n:] = y_th
+    _y[int(t_idx)][n_n:] = y_th
 
 
 def f_n(t, y, coeffs):
@@ -154,7 +154,7 @@ def solve():
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
     n = ode(f_n).set_integrator('dopri5')
     n.set_initial_value(y0_n(), si.t0.magnitude).set_f_params(testin.coeffs)
-    th = ode(f_th).set_integrator('dopri5')
+    th = ode(f_th).set_integrator('dopri5', nsteps=testin.nsteps)
     th.set_initial_value(y0_th(), si.t0.magnitude)
     while n.successful() and n.t < testin.tf.magnitude:
         n.integrate(n.t+si.dt.magnitude)
@@ -167,6 +167,8 @@ def solve():
     print("Final Temps : ", _temp)
     print("Precursor lambdas:")
     print(ne._pd.lambdas())
+    print("Delayed neutron frac:")
+    print(ne._pd.beta())
     print("Precursor betas:")
     print(ne._pd.betas())
     print("Decay kappas")
@@ -176,99 +178,7 @@ def solve():
     return _y
 
 
-def my_colors(num):
-    """Returns a nice looking color map"""
-    values = range(n_entries)
-    jet = plt.get_cmap('jet')
-    c_norm = colors.Normalize(vmin=0, vmax=values[-1])
-    scalar_map = cmx.ScalarMappable(norm=c_norm, cmap=jet)
-    color_val = scalar_map.to_rgba(values[num])
-    return color_val
-
-
-def plot(y):
-    """Creates plots for interesting values in the simulation.
-    :param y: The full solution array
-    :type y: np.ndarray"""
-    x = np.arange(si.t0.magnitude, testin.tf.magnitude+si.dt.magnitude,
-                  si.dt.magnitude)
-    plot_power(x, y)
-    plot_reactivity(x)
-    plot_zetas(x, y)
-    plot_omegas(x, y)
-    plot_temps_together(x, y)
-    plot_temps_separately(x, y)
-
-
-def plot_reactivity(x):
-    """Plots the reactivity
-    :param x: The time series
-    :type x: np.ndarray"""
-    plt.plot(x, ne._rho.values(), color=my_colors(1), marker='.')
-    plt.xlabel("Time [s]")
-    plt.ylabel("Reactivity [$Delta$k/k]")
-    plt.title("Reactivity [$Delta$k/k]")
-    saveplot("reactivity", plt)
-
-
-def plot_power(x, y):
-    power = y[:, 0]
-    plt.plot(x, power, color=my_colors(1), marker='.')
-    plt.xlabel("Time [s]")
-    plt.ylabel("Power [units]")
-    plt.title("Power [units]")
-    saveplot("power", plt)
-
-
-def plot_temps_together(x, y):
-    for name, num in si.components.iteritems():
-        idx = 1 + testin.n_pg + testin.n_dg + num
-        plt.plot(x, y[:, idx], label=name, color=my_colors(num), marker='.')
-    plt.xlabel("Time [s]")
-    plt.ylabel("Temperature [K]")
-    plt.title("Temperature of Each Component")
-    saveplot("temps", plt)
-
-
-def plot_temps_separately(x, y):
-    for name, num in si.components.iteritems():
-        idx = 1 + testin.n_pg + testin.n_dg + num
-        plt.plot(x, y[:, idx], label=name, color=my_colors(num), marker='.')
-        plt.xlabel("Time [s]")
-        plt.ylabel("Temperature [K]")
-        plt.title("Temperature of "+name)
-        saveplot(name+" Temp[K]", plt)
-
-
-def plot_zetas(x, y):
-    for num in range(0, testin.n_pg):
-        idx = num + 1
-        plt.plot(x, y[:, idx], color=my_colors(num), marker='.')
-    plt.xlabel(r'Time $[s]$')
-    plt.ylabel("Concentration of Neutron Precursors, $\zeta_i [\#/dr^3]$")
-    plt.title("Concentration of Neutron Precursors, $\zeta_i [\#/dr^3]$")
-    saveplot("zetas", plt)
-
-
-def plot_omegas(x, y):
-    for num in range(0, testin.n_dg):
-        idx = 1 + testin.n_pg + num
-        plt.plot(x, y[:, idx], color=my_colors(num), marker='.')
-    plt.xlabel(r'Time $[s]$')
-    plt.ylabel(r'Decay Heat Fractions, $\omega_i [\#/dr^3]$')
-    plt.title(r'Decay Heat Fractions, $\omega_i [\#/dr^3]$')
-    saveplot("omegas", plt)
-
-
-def saveplot(name, plt):
-    plotdir = 'images'
-    if not os.path.exists(plotdir):
-        os.makedirs(plotdir)
-    plt.savefig(str(plotdir+"/"+name+'.pdf'), bbox_inches='tight')
-    plt.savefig(str(plotdir+"/"+name+'.eps'), bbox_inches='tight')
-    plt.clf()
-
 """Run it as a script"""
 if __name__ == "__main__":
     sol = solve()
-    a = plot(sol)
+    a = plotter.plot(sol, si)

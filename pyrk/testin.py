@@ -1,9 +1,9 @@
 from ur import units
 
 
-t0 = 0.0000*units.seconds
-dt = 0.00001*units.seconds
-tf = 0.001*units.seconds
+t0 = 0.00*units.seconds
+dt = 0.001*units.seconds
+tf = 0.30*units.seconds
 
 alpha_f = -3.8*units.pcm/units.kelvin
 alpha_c = -1.8*units.pcm/units.kelvin
@@ -24,3 +24,6 @@ spectrum = "thermal"
 
 # numpy precision
 np_precision = 5
+
+# maximum number of internal steps that the ode solver will take
+nsteps = 1000

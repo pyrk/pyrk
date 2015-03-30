@@ -7,13 +7,20 @@ from ur import units
 class SimInfo(object):
     """This class holds information about a reactor kinetics simulation"""
 
-    def __init__(self, t0=0, tf=1, dt=1, components={}):
+    def __init__(self, t0=0, tf=1, dt=1, components={},
+                 ne=None, th=None):
         """This class holds information about a reactor kinetics simulation
         """
         self.t0 = validation.validate_ge("t0", t0, 0*units.seconds)
         self.tf = validation.validate_ge("tf", tf, t0)
         self.dt = validation.validate_ge("dt", dt, 0*units.seconds)
         self.components = components
+        self.ne = validation.validate_exists("ne", ne)
+        self.th = validation.validate_exists("th", th)
+
+    def n_entries(self):
+        to_ret = 1 + self.ne._n_pg + self.ne._n_dg + len(self.components)
+        return int(to_ret)
 
     def add_th_component(self, th_component):
         """Adds a thermal-hydralic component to this simulation.

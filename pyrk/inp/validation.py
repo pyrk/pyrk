@@ -1,5 +1,6 @@
 from ur import units
 
+
 def validate_ge(valname, val, llim):
     """Raises errors if the value is less than the lower limit (llim) or if it
     is of the wrong type"""
@@ -32,4 +33,13 @@ def validate_num(valname, val):
     else:
         msg = valname + " must be an integer or float.\n"
         msg += "The value provided was of type " + str(type(val))
+        raise TypeError(msg)
+
+
+def validate_exists(valname, val):
+    if val is not None:
+        return val
+    else:
+        msg = valname + " must exist.\n"
+        msg += "The value provided was None"
         raise TypeError(msg)

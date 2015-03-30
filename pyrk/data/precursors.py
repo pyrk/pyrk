@@ -14,7 +14,7 @@ class PrecursorData(object):
 
     def beta(self):
         """
-        The Big Beta is the sum of all betas? TODO: Double check.
+        The Big Beta is the fraction of all fission neutrons that are delayed.
         """
         return sum(self._betas)
 
@@ -32,7 +32,7 @@ class PrecursorData(object):
 
     def Lambda(self):
         """
-        TODO: get definition
+
         """
         return self._Lambda
 

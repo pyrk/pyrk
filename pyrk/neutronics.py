@@ -55,8 +55,10 @@ class Neutronics(object):
         :param t: time
         :type t: float.
         """
-        if t > 0*units.seconds and t < 0.1*units.seconds:
-            return 0.1
+        if t >= 0.1*units.seconds and t <= 0.2*units.seconds:
+            return 0.01
+        elif t >= 0.0*units.seconds:
+            return 0.0
         elif t < 0*units.seconds:
             raise ValueError("Negative times should not happen. Please check \
                     input")
@@ -120,6 +122,6 @@ class Neutronics(object):
             dtemp[key] = (temps[t_idx][idx] - temps[prev][idx])
             drho[key] = coeffs[key]*dtemp[key]
         drho["external"] = self.rho_ext(t)
-        to_ret = sum(drho.values())
+        to_ret = 0.0001*sum(drho.values())
         self._rho[t_idx] = to_ret
         return to_ret
