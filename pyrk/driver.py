@@ -6,11 +6,7 @@ scripts.
 """
 
 import numpy as np
-import logging
-log = logging.getLogger(__name__)
-fh = logging.FileHandler(filename='pyrk.log')
-fh.setLevel(level=logging.DEBUG)
-log.addHandler(fh)
+from utils.logger import logger
 
 from scipy.integrate import ode
 
@@ -23,7 +19,6 @@ from ur import units
 from utils import plotter
 
 
-log.info("Simulation starting.")
 np.set_printoptions(precision=testin.np_precision)
 
 ne = neutronics.Neutronics(testin.fission_iso,
@@ -180,5 +175,6 @@ def solve():
 
 """Run it as a script"""
 if __name__ == "__main__":
+    logger.info("Simulation starting.")
     sol = solve()
     a = plotter.plot(sol, si)

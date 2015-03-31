@@ -27,3 +27,6 @@ np_precision = 5
 
 # maximum number of internal steps that the ode solver will take
 nsteps = 1000
+
+# Thermal hydraulic params
+
