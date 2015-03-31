@@ -9,7 +9,7 @@ class THComponent(object):
     support of calculations related to the thermal_hydraulics subblock
     """
 
-    def __init__(self, name, vol=0, k=0, dm=None, T0=0, timesteps=0):
+    def __init__(self, name, vol=0, k=0, cp=0, dm=None, T0=0, timesteps=0):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.
@@ -19,6 +19,10 @@ class THComponent(object):
         :param vol: The volume of the component
         :param k: The thermal conductivity of the component
         :type k: float.
+        :param cp: specific heat capacity, $c_p$, in units of $J/kg-K$
+        :type cp: float, in units of $J/kg-K$
+        :param <++>: <++>
+        :type <++>: <++>
         :param dm: The density of the component
         :type dm: DensityModel object
         :param T0: The initial temperature of the component
@@ -50,25 +54,21 @@ class THComponent(object):
         return self.T[0, timestep]
 
     def rho(self, timestep):
-        """<+description+>
-        :param <++>: <++>
-        :type <++>: <++>
-        :param <++>: <++>
-        :type <++>: <++>
-        :param <++>: <++>
-        :type <++>: <++>
+        """The density of this component's materials
+        :param timestep: the timestep at which to query the temperature
+        :type timestep: int
+        :return: the density of this component
+        :rtype: float, in units of $kg/m^3$
         """
         ret = self.dm.rho(self.temp(timestep))
         return ret
 
     def update_temp(self, timestep, dtempdt):
         """Updates the temperature
-        :param <++>: <++>
-        :type <++>: <++>
-        :param <++>: <++>
-        :type <++>: <++>
-        :param <++>: <++>
-        :type <++>: <++>
+        :param timestep: the timestep at which to query the temperature
+        :type timestep: int
+        :param dtempdt: the change in temperature since the last timestep
+        :type float: float, units of kelvin
         """
         self.T[0, timestep] = self.T[0, timestep-1] + dtempdt
         return self.T[0, timestep]

@@ -162,8 +162,8 @@ def solve():
 
 def log_results():
     logger.info("\nReactivity : \n"+str(si.ne._rho))
-    logger.info("\nFinal Result : \n"+str(_y))
-    logger.info("\nFinal Temps : \n"+str(_temp))
+    logger.info("\nFinal Result : \n"+np.array_str(_y))
+    logger.info("\nFinal Temps : \n"+np.array_str(_temp.magnitude))
     logger.info("\nPrecursor lambdas: \n"+str(si.ne._pd.lambdas()))
     logger.info("\nDelayed neutron frac: \n"+str(si.ne._pd.beta()))
     logger.info("\nPrecursor betas: \n"+str(si.ne._pd.betas()))
