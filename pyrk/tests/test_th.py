@@ -18,7 +18,7 @@ T0 = 700*units.kelvin
 si = sim_info.SimInfo(t0=0*units.seconds, tf=10*units.seconds,
                       dt=0.1*units.seconds,
                       th=thermal_hydraulics.ThermalHydraulics())
-tester = th.THComponent(name, vol, k, dm, T0, si)
+tester = th.THComponent(name, vol, k, dm, T0, si.timesteps())
 
 
 def test_constructor():

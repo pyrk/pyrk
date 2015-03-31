@@ -98,7 +98,13 @@ class Neutronics(object):
     def dzetadt(self, t, power, zeta, j):
         """
         :param t: time
-        :type <++>: <++>
+        :type t: float, units of seconds
+        :param power: the reactor power at this timestep
+        :type pwer: float, in units of watts
+        :param zeta: $\zeta_j$, the concentration for precursor group j
+        :type zeta: float #TODO units?
+        :param j: the precursor group index
+        :type j: int
         """
         Lambda = self._pd.Lambda()
         lambda_j = self._pd.lambdas()[j]
@@ -106,9 +112,13 @@ class Neutronics(object):
         return beta_j*power/Lambda - lambda_j*zeta
 
     def dwdt(self, power, omega, k):
-        """Returns the change in decay heat for w_k at a certain power
-        :param <++>: <++>
-        :type <++>: <++>
+        """Returns the change in decay heat for $\omega_k$ at a certain power
+        :param power: the reactor power at this timestep
+        :type power: float, in units of watts
+        :param omega: $\omega_k$ for fission product decay heat group k
+        :type omega: float, in units of watts #TODO check
+        :param k: the fission product decay heat group index
+        :type k: int
         """
         kappa = self._dd.kappas()[k]
         p = power
@@ -116,7 +126,16 @@ class Neutronics(object):
         return kappa*p-lam*omega
 
     def reactivity(self, t, dt, temps, coeffs):
-        """Returns the reactivity, (units? TODO), at time t"""
+        """Returns the reactivity, (units? TODO), at time t
+        :param t: time
+        :type t: float, units of seconds
+        :param dt: timestep size, units of seconds
+        :type dt: float, units of seconds
+        :param temps: the temperatures for each component
+        :type temps: np.ndarray
+        :param coeffs: temperature coefficients of reactivity
+        :type coeffs: dict
+        """
         drho = {}
         dtemp = {}
         t_idx = int(t/dt)

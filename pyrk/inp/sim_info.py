@@ -30,7 +30,7 @@ class SimInfo(object):
         return ne
 
     def n_entries(self):
-        to_ret = 1 + self.ne._n_pg + self.ne._n_dg + len(self.components)
+        to_ret = 1 + self.n_pg + self.n_dg + len(self.components)
         return int(to_ret)
 
     def add_th_component(self, th_component):
@@ -48,3 +48,6 @@ class SimInfo(object):
 
     def timesteps(self):
         return (self.tf-self.t0)/self.dt + 1
+
+    def coeffs(self):
+        return self.ne._coeffs
