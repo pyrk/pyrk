@@ -47,5 +47,6 @@ class THComponent(object):
         ret = self.dm.rho(self.temp(timestep))
         return ret
 
-    def update_temp(self, timestep, temp):
-        self.T[0, timestep] = temp
+    def update_temp(self, timestep, dtempdt):
+        self.T[0, timestep] = self.T[0, timestep-1] + dtempdt
+        return self.T[0, timestep]

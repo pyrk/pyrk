@@ -10,7 +10,6 @@ from utils.logger import logger
 
 from scipy.integrate import ode
 
-import neutronics
 import thermal_hydraulics
 
 import testin
@@ -21,15 +20,16 @@ from utils import plotter
 
 np.set_printoptions(precision=testin.np_precision)
 
-ne = neutronics.Neutronics(testin.fission_iso,
-                           testin.spectrum,
-                           testin.n_pg,
-                           testin.n_dg)
-
 th = thermal_hydraulics.ThermalHydraulics()
 
 si = sim_info.SimInfo(t0=testin.t0, tf=testin.tf, dt=testin.dt,
-                      components=th._params._components, ne=ne, th=th)
+                      components=th._params._components,
+                      iso=testin.fission_iso,
+                      e=testin.spectrum,
+                      n_precursors=testin.n_pg,
+                      n_decay=testin.n_dg,
+                      th=th)
+
 n_components = len(si.components)
 n_entries = 1 + testin.n_pg + testin.n_dg + n_components
 
@@ -81,14 +81,14 @@ def f_n(t, y, coeffs):
     end_pg = testin.n_pg + 1
     f = np.zeros(shape=(n_n,), dtype=float)
     i = 0
-    f[i] = ne.dpdt(t*units.second, si.dt, _temp, coeffs, y[0], y[1:end_pg])
+    f[i] = si.ne.dpdt(t*units.second, si.dt, _temp, coeffs, y[0], y[1:end_pg])
     for j in range(0, testin.n_pg):
         i += 1
-        f[i] = ne.dzetadt(t, y[0], y[i], j)
+        f[i] = si.ne.dzetadt(t, y[0], y[i], j)
     assert(i == end_pg-1)
     for k in range(0, testin.n_dg):
         i += 1
-        f[i] = ne.dwdt(y[0], y[i], k)
+        f[i] = si.ne.dwdt(y[0], y[i], k)
     return f
 
 
@@ -156,20 +156,20 @@ def solve():
         update_n(n.t, n.y)
         th.integrate(th.t+si.dt.magnitude)
         update_th(n.t, n.y, th.y)
-    print("Reactivity : ", ne._rho)
-    print(ne._dd.lambdas())
+    logger.info("Reactivity : "+str(si.ne._rho))
+    print(si.ne._dd.lambdas())
     print("Final Result : ", _y)
     print("Final Temps : ", _temp)
     print("Precursor lambdas:")
-    print(ne._pd.lambdas())
+    print(si.ne._pd.lambdas())
     print("Delayed neutron frac:")
-    print(ne._pd.beta())
+    print(si.ne._pd.beta())
     print("Precursor betas:")
-    print(ne._pd.betas())
+    print(si.ne._pd.betas())
     print("Decay kappas")
-    print(ne._dd.kappas())
+    print(si.ne._dd.kappas())
     print("Decay lambdas")
-    print(ne._dd.lambdas())
+    print(si.ne._dd.lambdas())
     return _y
 
 

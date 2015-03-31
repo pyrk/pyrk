@@ -1,7 +1,6 @@
 from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 
-import neutronics
 import thermal_hydraulics
 import th
 from inp import sim_info
@@ -18,7 +17,6 @@ dm = density_model.DensityModel(a=0*units.kg/units.meter**3,
 T0 = 700*units.kelvin
 si = sim_info.SimInfo(t0=0*units.seconds, tf=10*units.seconds,
                       dt=0.1*units.seconds,
-                      ne=neutronics.Neutronics(),
                       th=thermal_hydraulics.ThermalHydraulics())
 tester = th.THComponent(name, vol, k, dm, T0, si)
 
@@ -38,8 +36,8 @@ def test_temp():
 def test_update_temp():
     assert_equal(tester.temp(0), T0)
     T1 = 10*units.kelvin
-    T2 = 100*units.kelvin
+    T2 = 20*units.kelvin
     tester.update_temp(1, T1)
-    assert_equal(tester.temp(1), T1)
+    assert_equal(tester.temp(1), T0+T1)
     tester.update_temp(2, T2)
-    assert_equal(tester.temp(2), T2)
+    assert_equal(tester.temp(2), T0+T1+T2)

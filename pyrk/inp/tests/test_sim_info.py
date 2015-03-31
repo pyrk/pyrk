@@ -15,9 +15,8 @@ def test_init_reasonable_sim():
     spectrum = "thermal"
     npg = 6
     ndg = 11
-    ne = neutronics.Neutronics(iso, spectrum, npg, ndg)
     th = thermal_hydraulics.ThermalHydraulics()
-    info = si.SimInfo(t0, tf, dt, {}, ne, th)
+    info = si.SimInfo(t0, tf, dt, {}, iso, spectrum, npg, ndg, th)
     assert_equal(t0, info.t0)
     assert_equal(tf, info.tf)
     assert_equal(t0, info.t0)

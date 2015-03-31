@@ -34,7 +34,7 @@ def plot_reactivity(x, si):
     """Plots the reactivity
     :param x: The time series
     :type x: np.ndarray"""
-    plt.plot(x, si.ne._rho.values(), color=my_colors(1, len(si.ne._rho)),
+    plt.plot(x, si.ne._rho, color=my_colors(1, len(si.ne._rho)),
              marker='.')
     plt.xlabel("Time [s]")
     plt.ylabel("Reactivity [$\Delta k/k$]")

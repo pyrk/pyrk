@@ -1,3 +1,6 @@
+# Licensed under a 3-clause BSD-style license
+import numpy as np
+
 from data import precursors as pr
 from data import decay_heat as dh
 
@@ -12,7 +15,8 @@ class Neutronics(object):
     neutronics subblock
     """
 
-    def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11):
+    def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
+                 n_steps=0):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
@@ -47,8 +51,8 @@ class Neutronics(object):
         self._dd = dh.DecayData(iso, e, n_decay)
         """_dd (DecayData): A data.decay_heat.DecayData object"""
 
-        self._rho = {0: 0}
-        """_rho (dict): A dictionary of times and reactivity values"""
+        self._rho = np.zeros(n_steps)
+        """_rho (ndarray): An array of reactivity values for each timestep."""
 
     def rho_ext(self, t):
         """

@@ -2,21 +2,32 @@
 
 from inp import validation
 from ur import units
+import neutronics
 
 
 class SimInfo(object):
     """This class holds information about a reactor kinetics simulation"""
 
     def __init__(self, t0=0, tf=1, dt=1, components={},
-                 ne=None, th=None):
+                 iso="u235", e="thermal", n_precursors=6, n_decay=11,
+                 th=None):
         """This class holds information about a reactor kinetics simulation
         """
         self.t0 = validation.validate_ge("t0", t0, 0*units.seconds)
         self.tf = validation.validate_ge("tf", tf, t0)
         self.dt = validation.validate_ge("dt", dt, 0*units.seconds)
         self.components = components
-        self.ne = validation.validate_not_none("ne", ne)
+        self.iso = iso
+        self.e = e
+        self.n_pg = n_precursors
+        self.n_dg = n_decay
+        self.ne = self.init_ne()
         self.th = validation.validate_not_none("th", th)
+
+    def init_ne(self):
+        ne = neutronics.Neutronics(self.iso, self.e, self.n_pg, self.n_dg,
+                                   self.timesteps())
+        return ne
 
     def n_entries(self):
         to_ret = 1 + self.ne._n_pg + self.ne._n_dg + len(self.components)
