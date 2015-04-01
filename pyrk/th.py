@@ -37,8 +37,8 @@ class THComponent(object):
         validation.validate_ge("k", k, 0*units.watt/units.meter/units.kelvin)
         self.dm = dm
         self.T0 = T0
-        self.T = units.Quantity(np.zeros(shape=(1, timesteps),
-                                         dtype=float), 'kelvin')
+        self.T = units.Quantity(np.zeros(shape=(timesteps), dtype=float),
+                                'kelvin')
         self.T[0] = T0
         self.timesteps = timesteps
 
@@ -51,7 +51,7 @@ class THComponent(object):
         """
         validation.validate_ge("timestep", timestep, 0)
         validation.validate_le("timestep", timestep, self.timesteps)
-        return self.T[0, timestep]
+        return self.T[timestep]
 
     def rho(self, timestep):
         """The density of this component's materials
@@ -70,5 +70,5 @@ class THComponent(object):
         :param dtempdt: the change in temperature since the last timestep
         :type float: float, units of kelvin
         """
-        self.T[0, timestep] = self.T[0, timestep-1] + dtempdt
-        return self.T[0, timestep]
+        self.T[timestep] = self.T[timestep-1] + dtempdt
+        return self.T[timestep]

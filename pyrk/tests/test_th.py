@@ -11,6 +11,7 @@ from ur import units
 name = "testname"
 vol = 20*units.meter**3
 k = 10*units.watt/units.meter/units.kelvin
+cp = 10*units.joule/units.kg/units.kelvin
 dm = density_model.DensityModel(a=0*units.kg/units.meter**3,
                                 b=100*units.kg/units.meter**3,
                                 model='constant')
@@ -18,7 +19,7 @@ T0 = 700*units.kelvin
 si = sim_info.SimInfo(t0=0*units.seconds, tf=10*units.seconds,
                       dt=0.1*units.seconds,
                       th=thermal_hydraulics.ThermalHydraulics())
-tester = th.THComponent(name, vol, k, dm, T0, si.timesteps())
+tester = th.THComponent(name, vol, k, cp, dm, T0, si.timesteps())
 
 
 def test_constructor():
