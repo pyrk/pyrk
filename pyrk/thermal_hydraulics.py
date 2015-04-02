@@ -38,9 +38,8 @@ class ThermalHydraulics(object):
         kf = self._params.k("fuel", tfuel)
         hf = self._params.h(set(["fuel", "cool"]))
         power_tot = self._params._power_tot
-        # heat_gen = (power_tot/vol/rho/cp)*((1-self._params._kappa)*power +
-        # sum(omegas))
-        heat_gen = (power_tot)*(power-sum(omegas))
+        heat_gen = (power_tot*power)*((1-self._params._kappa) + sum(omegas))
+        # heat_gen = (power_tot)*(power-sum(omegas))
         cond_mod = self.conduction(tfuel, tmod, rm, kf, amod)
         conv_cool = self.convection(tfuel, tcool, hf, afuel)
         S = heat_gen/(rho*cp*vol)

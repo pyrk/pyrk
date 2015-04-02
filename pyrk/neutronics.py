@@ -1,11 +1,12 @@
 # Licensed under a 3-clause BSD-style license
 import numpy as np
 
+
 from data import precursors as pr
 from data import decay_heat as dh
 
 from ur import units
-
+from utils.logger import logger
 
 component_names = {"fuel": 0, "cool": 1, "mod": 2, "refl": 3}
 
@@ -51,6 +52,9 @@ class Neutronics(object):
         self._dd = dh.DecayData(iso, e, n_decay)
         """_dd (DecayData): A data.decay_heat.DecayData object"""
 
+        self._n_steps = n_steps
+        """_n_steps: number of timesteps in the simulation."""
+
         self._rho = np.zeros(n_steps)
         """_rho (ndarray): An array of reactivity values for each timestep."""
 
@@ -60,9 +64,9 @@ class Neutronics(object):
         :type t: float.
         """
         if t >= 0.1*units.seconds and t <= 0.2*units.seconds:
-            return 0.01
+            return 0.0001*units.delta_k
         elif t >= 0.0*units.seconds:
-            return 0.0
+            return 0*units.delta_k
         elif t < 0*units.seconds:
             raise ValueError("Negative times should not happen. Please check \
                     input")
@@ -100,7 +104,7 @@ class Neutronics(object):
         :param t: time
         :type t: float, units of seconds
         :param power: the reactor power at this timestep
-        :type pwer: float, in units of watts
+        :type power: float, in units of watts
         :param zeta: $\zeta_j$, the concentration for precursor group j
         :type zeta: float #TODO units?
         :param j: the precursor group index
@@ -136,15 +140,21 @@ class Neutronics(object):
         :param coeffs: temperature coefficients of reactivity
         :type coeffs: dict
         """
-        drho = {}
+        rho = {}
         dtemp = {}
         t_idx = int(t/dt)
-        prev = 0 if (t_idx == 0) else (t_idx - 1)
+        if t_idx == 0:
+            prev = 0
+        else:
+            prev = t_idx - 1
         for key, alpha in coeffs.iteritems():
             idx = component_names[key]
             dtemp[key] = (temps[t_idx][idx] - temps[prev][idx])
-            drho[key] = coeffs[key]*dtemp[key]
-        drho["external"] = self.rho_ext(t)
-        to_ret = 0.0001*sum(drho.values())
+            rho[key] = (coeffs[key]*dtemp[key]).to('delta_k')
+            if t_idx == (self._n_steps - 1):
+                logger.info(str(t)+" "+str(key)+" "+str(dtemp[key]))
+                drho[key] = 0*units.delta_k # TODO BC is a bit broken here.
+        rho["external"] = self.rho_ext(t).to('delta_k')
+        to_ret = sum(drho.values())
         self._rho[t_idx] = to_ret
         return to_ret

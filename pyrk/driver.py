@@ -119,7 +119,7 @@ def y0():
     f[i] = 1.0  # real power is 236 MWth, but normalized is 1
     for j in range(0, si.n_pg):
         i += 1
-        f[i] = 0
+        f[i] = si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
     for k in range(0, si.n_dg):
         i += 1
         f[i] = 0

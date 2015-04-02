@@ -18,7 +18,7 @@ coeffs = {"fuel": alpha_f,
 # precursor groups
 n_pg = 6
 # decay heat groups
-n_dg = 11
+n_dg = 0
 fission_iso = "u235"
 spectrum = "thermal"
 
