@@ -1,6 +1,12 @@
+# Licensed under a 3-clause BSD-style license
+import numpy as np
+
+
 from data import precursors as pr
 from data import decay_heat as dh
 
+from ur import units
+from utils.logger import logger
 
 component_names = {"fuel": 0, "cool": 1, "mod": 2, "refl": 3}
 
@@ -10,7 +16,8 @@ class Neutronics(object):
     neutronics subblock
     """
 
-    def __init__(self, iso, e, n_precursors, n_decay):
+    def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
+                 n_steps=0):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
@@ -45,17 +52,22 @@ class Neutronics(object):
         self._dd = dh.DecayData(iso, e, n_decay)
         """_dd (DecayData): A data.decay_heat.DecayData object"""
 
-        self._rho = {0: 0}
-        """_rho (dict): A dictionary of times and reactivity values"""
+        self._n_steps = n_steps
+        """_n_steps: number of timesteps in the simulation."""
 
-    def rho_ext(self, t ):
+        self._rho = np.zeros(n_steps)
+        """_rho (ndarray): An array of reactivity values for each timestep."""
+
+    def rho_ext(self, t):
         """
         :param t: time
         :type t: float.
         """
-        if t > 0 and t < 0.1:
-            return 0.1
-        elif t < 0:
+        if t >= 0.1*units.seconds and t <= 0.2*units.seconds:
+            return 0.0001*units.delta_k
+        elif t >= 0.0*units.seconds:
+            return 0*units.delta_k
+        elif t < 0*units.seconds:
             raise ValueError("Negative times should not happen. Please check \
                     input")
         else:
@@ -82,25 +94,35 @@ class Neutronics(object):
         lams = self._pd.lambdas()
         Lambda = self._pd.Lambda()
         precursors = 0
-        for l in range(0, len(lams)):
-            precursors += lams[l]*zetas[l]
+        for j in range(0, len(lams)):
+            precursors += lams[j]*zetas[j]
         dp = power*(rho - beta)/Lambda + precursors
         return dp
 
     def dzetadt(self, t, power, zeta, j):
         """
-        :param <++>: <++>
-        :type <++>: <++>
+        :param t: time
+        :type t: float, units of seconds
+        :param power: the reactor power at this timestep
+        :type power: float, in units of watts
+        :param zeta: $\zeta_j$, the concentration for precursor group j
+        :type zeta: float #TODO units?
+        :param j: the precursor group index
+        :type j: int
         """
         Lambda = self._pd.Lambda()
-        lam = self._pd.lambdas()[j]
-        beta = self._pd.betas()[j]
-        return beta*power/Lambda - lam*zeta
+        lambda_j = self._pd.lambdas()[j]
+        beta_j = self._pd.betas()[j]
+        return beta_j*power/Lambda - lambda_j*zeta
 
     def dwdt(self, power, omega, k):
-        """Returns the change in decay heat for w_k at a certain power
-        :param <++>: <++>
-        :type <++>: <++>
+        """Returns the change in decay heat for $\omega_k$ at a certain power
+        :param power: the reactor power at this timestep
+        :type power: float, in units of watts
+        :param omega: $\omega_k$ for fission product decay heat group k
+        :type omega: float, in units of watts #TODO check
+        :param k: the fission product decay heat group index
+        :type k: int
         """
         kappa = self._dd.kappas()[k]
         p = power
@@ -108,15 +130,31 @@ class Neutronics(object):
         return kappa*p-lam*omega
 
     def reactivity(self, t, dt, temps, coeffs):
-        """Returns the reactivity, in dollars (or pcm? TODO), at time t"""
-        drho = {}
+        """Returns the reactivity, (units? TODO), at time t
+        :param t: time
+        :type t: float, units of seconds
+        :param dt: timestep size, units of seconds
+        :type dt: float, units of seconds
+        :param temps: the temperatures for each component
+        :type temps: np.ndarray
+        :param coeffs: temperature coefficients of reactivity
+        :type coeffs: dict
+        """
+        rho = {}
         dtemp = {}
         t_idx = int(t/dt)
+        if t_idx == 0:
+            prev = 0
+        else:
+            prev = t_idx - 1
         for key, alpha in coeffs.iteritems():
             idx = component_names[key]
-            dtemp[key] = (temps[t_idx][idx] - temps[0][idx])
-            drho[key] = coeffs[key]*dtemp[key]
-        drho["external"] = self.rho_ext(t)
+            dtemp[key] = (temps[t_idx][idx] - temps[prev][idx])
+            rho[key] = (coeffs[key]*dtemp[key]).to('delta_k')
+            if t_idx == (self._n_steps - 1):
+                logger.info(str(t)+" "+str(key)+" "+str(dtemp[key]))
+                drho[key] = 0*units.delta_k # TODO BC is a bit broken here.
+        rho["external"] = self.rho_ext(t).to('delta_k')
         to_ret = sum(drho.values())
         self._rho[t_idx] = to_ret
         return to_ret

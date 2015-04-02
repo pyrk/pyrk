@@ -1,3 +1,4 @@
+from ur import units
 
 
 def validate_ge(valname, val, llim):
@@ -27,9 +28,18 @@ def validate_le(valname, val, ulim):
 
 
 def validate_num(valname, val):
-    if isinstance(val, int) or isinstance(val, float):
+    if isinstance(val, (int, long, float, units.Quantity)):
         return val
     else:
         msg = valname + " must be an integer or float.\n"
         msg += "The value provided was of type " + str(type(val))
+        raise TypeError(msg)
+
+
+def validate_not_none(valname, val):
+    if val is not None:
+        return val
+    else:
+        msg = valname + " must be instantiated with a non null value.\n"
+        msg += "The value provided was None"
         raise TypeError(msg)

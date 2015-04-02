@@ -1,8 +1,10 @@
 import math
 
+from ur import units
+
 
 def vol_sphere(r):
-    assert(r >= 0)
+    assert(r >= 0*units.meter)
     return (4./3.)*math.pi*pow(r, 3)
 
 
@@ -12,30 +14,34 @@ class THParams(object):
     def __init__(self):
         self._components = {"fuel": 0, "cool": 1, "mod": 2, "refl": 3}
         # below from greenspan/cisneros
+        t_f = units.Quantity(730.0, units.degC)
+        t_c = units.Quantity(650.0, units.degC)
+        t_m = units.Quantity(700.0, units.degC)
+        t_r = units.Quantity(650.0, units.degC)
         self._init_temps = {
-            "fuel": 730.0 + 273.15,
-            "cool": 650.0 + 273.15,
-            "mod": 700.0 + 273.15,
-            "refl": 650.0 + 273.15
+            "fuel": t_f.to('K'),
+            "cool": t_c.to('K'),
+            "mod": t_m.to('K'),
+            "refl": t_r.to('K')
             }
         # the data below comes from design doc rev c
-        self._power_tot = 236000.0  # Wth
-        self._vol_tot_active = 4.16  # m^3
-        self._vol_tot_defuel = 1.03  # m^3
-        self._vol_tot_refl = 4.8  # m^3
+        self._power_tot = 236000.0*units.watt  # Wth
+        self._vol_tot_active = 4.16*units.meter**3  # m^3
+        self._vol_tot_defuel = 1.03*units.meter**3  # m^3
+        self._vol_tot_refl = 4.8*units.meter**3  # m^3
         self._pebble_porosity = 0.4  # [-]
         # self._vol_flow_rate = 976.0*0.3 # kg/s TODO 0.3 is nat circ guess
-        self._vel_cool = 2.  # m/s
-        self._t_inlet = 600.0
+        self._vel_cool = 2.*units.meter/units.second  # m/s
+        self._t_inlet = units.Quantity(600.0, units.degC)  # degrees C
         # [m] ... matrix(4mm) + coating(1mm)
-        self._thickness_fuel_matrix = 0.005
-        self._r_fuel = 0.03  # [m] ... matrix(4mm) + coating(1mm)
-        self._r_mod = 0.025
+        self._thickness_fuel_matrix = 0.005*units.meter
+        self._r_fuel = 0.03*units.meter  # [m] ... matrix(4mm) + coating(1mm)
+        self._r_mod = 0.025*units.meter
         self._pebble_r = self._r_fuel + self._r_mod
         self._kappa = 0.06  # TODO if you fix omegas, kappa ~ 0.06
-        self._core_height = 3.5  # [m] APPROXIMATELY (TODO look for actual)
-        self._core_inner_radius = 0.35  # m
-        self._core_outer_radius = 1.25  # m
+        self._core_height = 3.5*units.meter  # [m] (TODO currently approximate)
+        self._core_inner_radius = 0.35*units.meter  # m
+        self._core_outer_radius = 1.25*units.meter  # m
 
     def flow_area(self):
         inner = 2.0*math.pi*pow(self._core_inner_radius, 2)
@@ -99,7 +105,7 @@ class THParams(object):
         # /80rr012/80rr012_full.pdf
         # would prefer temperature dependent thermal conductivity?
         # [W/m-K]
-        return 1.0
+        return 1.0*units.watt/(units.meter*units.kelvin)  # W/m-K
 
     def k_fuel(self, t_fuel):
         """Thermal conductivitiy in W/m-K for the triso fuel layer"""
@@ -111,14 +117,14 @@ class THParams(object):
         # http://ac.els-cdn.com/0017931094903921/1-s2.0-0017931094903921-main.pdf
         # ?_tid=e7d08bac-b380-11e3-90e0-00000aacb35f&acdnat
         # =1395685377_d73165eba81bc145ccebc98c195abf36
-        k = 2
+        k = 2*units.watt/(units.meter*units.kelvin)  # W/m-K
         # 20 is what's assumed for the pbmr pebble bed...
         return k
 
     def k_graphite(self, t_graphite):
         """Thermal conductivitiy in W/m-K for the graphite moderator and the \
         reflector"""
-        return 0.26
+        return 0.26*units.watt/(units.meter*units.kelvin)  # W/m-K
 
     def rho(self, component, temp):
         """Density, as a function of temperature [kg/m^3]"""
@@ -147,17 +153,18 @@ class THParams(object):
         # critical point [K]
         # t_c = 4498.8
         # rho correlation [kg/m^3]
-        rho = 2415.6 - 0.49072*t_cool
+        rho = 2415.6 - 0.49072*t_cool.magnitude
+        rho = rho*units.kg/(units.meter**3)
         # at 650C, this is 1962
         return rho
 
     def rho_fuel(self, t_fuel):
-        # [kg/m^3]
-        rho = 1720.0  # from COMSOL model by Raluca Scarlat
+        # from COMSOL model by Raluca Scarlat
+        rho = 1720.0*units.kg/(units.meter**3)  # [kg/m^3]
         return rho
 
     def rho_graphite(self, t_graphite):
-        rho = 100
+        rho = 100*units.kg/(units.meter**3)  # [kg/m^3]
         return rho
 
     def cp(self, component):
@@ -174,30 +181,37 @@ class THParams(object):
             cool, mod, and refl.")
 
     def cp_fuel(self):
-        # [J/kg-K]
-        c_p = 1744  # From COMSOL model by Raluca Scarlat
+        # From COMSOL model by Raluca Scarlat
+        c_p = 1744*units.joule/(units.kg*units.kelvin)  # [J/kg-K]
         return c_p
 
     def cp_cool(self):
-        # [J/kg-K]
-        return 2350.0  # from www-ferp.ucsd.edu/LIB/PROPS/HTS.shtml
+        # from www-ferp.ucsd.edu/LIB/PROPS/HTS.shtml
+        return 2350.0*units.joule/(units.kg*units.kelvin)  # [J/kg-K]
 
     def cp_mod(self):
-        c_p = 1650.0
+        c_p = 1650.0*units.joule/(units.kg*units.kelvin)  # [J/kg-K]
         # Approximate:
         # http://www.sciencedirect.com/science/article/pii/0022369760900950
         return c_p
 
     def cp_refl(self):
-        c_p = 1650.0
+        c_p = 1650.0*units.joule/(units.kg*units.kelvin)  # [J/kg-K]
         # Approximate:
         # http://www.sciencedirect.com/science/article/pii/0022369760900950
         return c_p
 
-    def res(self, component1, component2):
+    def res_conv(self, component1, component2):
         A = self.area(set([component1, component2]))
         h = self.h(set([component1, component2]))
-        r_th = 1.0/h/A
+        r_th = 1.0/(h*A)
+        return r_th
+
+    def res_cond(self, component1, component2):
+        A = self.area(set([component1, component2]))
+        k = self.k(component1, 0*units.kelvin) # todo, fix temp
+        L = self.vol(component1)/A
+        r_th = L/(k*A)
         return r_th
 
     def area(self, components):
@@ -206,7 +220,7 @@ class THParams(object):
         elif components == set(["fuel", "cool"]):
             return 4.0*math.pi*pow(self._pebble_r, 2)
         elif components == set(["cool", "refl"]):
-            return 2*math.pi*self._core_height
+            return 2*math.pi*self._core_outer_radius*self._core_height
         else:
             raise KeyError("The only supported options for component set are \
             the pairs mod&fuel, fuel&cool, cool&refl")
@@ -224,5 +238,14 @@ class THParams(object):
         # Pe  =   Re*Pr
         # Nu  =   4.0+0.33*P2D^(3.8)*(Pe/100).^(0.86)+0.16*(P2D)^5
         # h   =   Nu.*conductivity_c(t_cool)/D_h
-        # TODO : placeholder :
-        return 4700
+        if components == set(["fuel", "cool"]):
+            # TODO : placeholder :
+            return 4700*units.joules/(units.second*units.kelvin*units.meter**2)
+        elif components == set(["cool", "refl"]):
+            # TODO : placeholder :
+            return 4700*units.joules/(units.second*units.kelvin*units.meter**2)
+        else:
+            msg = "fuel&cool and  cool&refl are supported. "
+            msg += "You have provided "
+            msg += str(components)
+            raise KeyError(msg)

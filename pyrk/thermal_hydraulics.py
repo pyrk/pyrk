@@ -1,4 +1,5 @@
 import th_params
+from ur import units
 
 
 class ThermalHydraulics(object):
@@ -10,10 +11,10 @@ class ThermalHydraulics(object):
         self._params = th_params.THParams()
 
     def dtempdt(self, component, temps, power, omegas, component_names):
-        tfuel = temps[component_names["fuel"]]
-        tcool = temps[component_names["cool"]]
-        tmod = temps[component_names["mod"]]
-        trefl = temps[component_names["refl"]]
+        tfuel = temps[component_names["fuel"]]*units.kelvin
+        tcool = temps[component_names["cool"]]*units.kelvin
+        tmod = temps[component_names["mod"]]*units.kelvin
+        trefl = temps[component_names["refl"]]*units.kelvin
         if component == "fuel":
             return self.dtempfueldt(power, omegas, tfuel, tcool, tmod)
         elif component == "cool":
@@ -27,7 +28,7 @@ class ThermalHydraulics(object):
                     refl keys")
 
     def dtempfueldt(self, power, omegas, tfuel, tcool, tmod):
-        # check this, it may not get things quite right...
+        # TODO check this, it may not get things quite right...
         rho = self._params.rho("fuel", tfuel)
         cp = self._params.cp("fuel")
         vol = self._params.vol("fuel")
@@ -35,14 +36,16 @@ class ThermalHydraulics(object):
         amod = self._params.area(set(["mod", "fuel"]))
         afuel = self._params.area(set(["fuel", "cool"]))
         kf = self._params.k("fuel", tfuel)
-        hf = self._params.h("fuel")
+        hf = self._params.h(set(["fuel", "cool"]))
         power_tot = self._params._power_tot
-        # heat_gen = (power_tot/vol/rho/cp)*((1-self._params._kappa)*power +
-        # sum(omegas))
-        heat_gen = (power_tot)*(power-sum(omegas))
+        heat_gen = (power_tot*power)*((1-self._params._kappa) + sum(omegas))
+        # heat_gen = (power_tot)*(power-sum(omegas))
         cond_mod = self.conduction(tfuel, tmod, rm, kf, amod)
         conv_cool = self.convection(tfuel, tcool, hf, afuel)
-        return (heat_gen - cond_mod - conv_cool)/(rho*cp*vol)
+        S = heat_gen/(rho*cp*vol)
+        Q = (- cond_mod - conv_cool)/(rho*cp*vol)
+        to_ret = S+Q
+        return to_ret
 
     def dtempcooldt(self, tfuel, tcool):
         h = self._params._core_height
@@ -50,25 +53,28 @@ class ThermalHydraulics(object):
         v = self._params._vel_cool
         rho = self._params.rho("cool", tcool)
         cp = self._params.cp("cool")
-        res = self._params.res("cool", "fuel")
-        convection = (2.0*v/h)*(tcool-tinlet)
+        res = self._params.res_conv("cool", "fuel")
+        conv = (2.0*v/h)*(tcool-tinlet)
         afuel = self._params.area(set(["fuel", "cool"]))  # this is one pebble?
         aflow = self._params.flow_area()  # this is the flow path cross section
-        conduction = (afuel/aflow)*(tfuel - tcool)/(rho*cp*res)
-        return conduction - convection
+        vol = self._params.vol("cool")
+        cond = (afuel/aflow)*(tfuel - tcool)/res/(rho*cp*vol)
+        return cond - conv
 
     def dtempmoddt(self, tfuel, tmod):
         rho = self._params.rho("mod", tmod)
         cp = self._params.cp("mod")
-        res_m = self._params.res("mod", "fuel")
-        f = (tmod-tfuel)/(rho*cp*res_m)
+        vol = self._params.vol("mod")
+        res = self._params.res_cond("mod", "fuel")
+        f = (tmod-tfuel)/res/(rho*cp*vol)
         return f
 
     def dtemprefldt(self, tcool, trefl):
         rho = self._params.rho("refl", trefl)
         cp = self._params.cp("refl")
-        res_m = self._params.res("refl", "cool")
-        f = (trefl - tcool)/(rho*cp*res_m)
+        vol = self._params.vol("refl")
+        res = self._params.res_conv("refl", "cool")
+        f = (trefl - tcool)/res/(rho*cp*vol)
         return f
 
     def convection(self, t_b, t_env, h, A):
@@ -83,7 +89,7 @@ class ThermalHydraulics(object):
         :type A: float.
         """
         num = (t_b-t_env)
-        denom = (h*A)
+        denom = (1.0/(h*A))
         return num/denom
 
     def conduction(self, t_b, t_env, L, k, A):
@@ -100,6 +106,5 @@ class ThermalHydraulics(object):
         :type A: float.
         """
         num = (t_b-t_env)
-        denom = (k*A)/L
+        denom = L/(k*A)
         return num/denom
-
