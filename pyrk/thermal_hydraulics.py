@@ -7,42 +7,41 @@ class ThermalHydraulics(object):
     thermal_hydraulics subblock
     """
 
-    def __init__(self):
+    def __init__(self, components):
         self._params = th_params.THParams()
+        self._components = components
 
-    def dtempdt(self, component, temps, power, omegas, component_names):
-        tfuel = temps[component_names["fuel"]]*units.kelvin
-        tcool = temps[component_names["cool"]]*units.kelvin
-        tmod = temps[component_names["mod"]]*units.kelvin
-        trefl = temps[component_names["refl"]]*units.kelvin
-        if component == "fuel":
-            return self.dtempfueldt(power, omegas, tfuel, tcool, tmod)
-        elif component == "cool":
-            return self.dtempcooldt(tfuel, tcool)
-        elif component == "mod":
-            return self.dtempmoddt(tfuel, tmod)
-        elif component == "refl":
-            return self.dtemprefldt(tfuel, trefl)
-        else:
-            raise KeyError("This work only supports fuel, cool, mod, and \
-                    refl keys")
+    def dtempdt(self, component, temps, power, omegas, t_idx):
+        to_ret = 0
+        if component.heatgen:
+            to_ret += heatgen(component, power)
+
+        b_idx = self._components.index(component.name)
+        for env, area in component.cond.iteritems():
+            env_idx = self._components.index(env)
+            to_ret += component.res*conduction(t_b = temps[b_idx],
+                                 t_env = temps[env_idx],
+                                 k = component.k,
+                                 L = component.vol/area,
+                                 A = area)
+        for env, d in component.conv.iteritems():
+            env_idx = self._components.index(env)
+            to_ret += component.res*convection(t_b = temps[b_idx],
+                                 t_env = temps[env_idx],
+                                 d['h'],
+                                 d['area'])
+        component.update_temp(timestep=t_idx, dtempdt=to_ret)
+        return to_ret
+
+    def heatgen(self, component, power):
+        return (component.power_tot*power)*((1-self._params._kappa) + sum(omegas))
 
     def dtempfueldt(self, power, omegas, tfuel, tcool, tmod):
         # TODO check this, it may not get things quite right...
-        rho = self._params.rho("fuel", tfuel)
-        cp = self._params.cp("fuel")
-        vol = self._params.vol("fuel")
-        rm = self._params.r("mod")
-        amod = self._params.area(set(["mod", "fuel"]))
-        afuel = self._params.area(set(["fuel", "cool"]))
-        kf = self._params.k("fuel", tfuel)
-        hf = self._params.h(set(["fuel", "cool"]))
-        power_tot = self._params._power_tot
-        heat_gen = (power_tot*power)*((1-self._params._kappa) + sum(omegas))
+        S = heat_gen/(rho*cp*vol)
         # heat_gen = (power_tot)*(power-sum(omegas))
         cond_mod = self.conduction(tfuel, tmod, rm, kf, amod)
         conv_cool = self.convection(tfuel, tcool, hf, afuel)
-        S = heat_gen/(rho*cp*vol)
         Q = (- cond_mod - conv_cool)/(rho*cp*vol)
         to_ret = S+Q
         return to_ret

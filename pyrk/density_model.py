@@ -45,17 +45,17 @@ class DensityModel(object):
     def constant(self, temp=0):
         # yes, we're ignoring the temperature here.
         """
-        Returns a*temp + b .
+        Returns a .
         :param temp: The temperature of the object
         :type temp: float.
         """
-        return self.b
+        return self.a
 
     def linear(self, temp):
         """
-        Returns a*temp + b .
+        Returns a + b*temp .
         :param temp: The temperature of the object
         :type temp: float.
         """
-        ret = self.a*temp + self.b
+        ret = self.a + self.b*temp
         return ret

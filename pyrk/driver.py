@@ -16,12 +16,12 @@ from ur import units
 from utils import plotter
 import testin
 
+np.set_printoptions(precision=5)
 
-np.set_printoptions(precision=testin.np_precision)
-
-th = thermal_hydraulics.ThermalHydraulics()
 
 infile = importlib.import_module("testin")
+
+th = thermal_hydraulics.ThermalHydraulics(testin.components)
 si = sim_info.SimInfo(t0=testin.t0,
                       tf=testin.tf,
                       dt=testin.dt,
@@ -107,8 +107,12 @@ def f_th(t, y_th):
     o_i = 1+si.n_pg
     o_f = 1+si.n_pg+si.n_dg
     omegas = _y[t_idx][o_i:o_f]
-    for name, num in si.components.iteritems():
-        f[num] = th.dtempdt(name, y_th, power, omegas, si.components)
+    for idx, comp in enumerate(th.components):
+        f[idx] = th.dtempdt(component=comp,
+                            temps=y_th,
+                            power=power,
+                            omegas=omegas,
+                            t_idx=t_idx)
     return f
 
 

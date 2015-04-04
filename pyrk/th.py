@@ -9,7 +9,8 @@ class THComponent(object):
     support of calculations related to the thermal_hydraulics subblock
     """
 
-    def __init__(self, name, vol=0, k=0, cp=0, dm=None, T0=0, timesteps=0):
+    def __init__(self, name=None, vol=0, k=0, cp=0, dm=None, T0=0,
+                 alpha_temp=0, timesteps=0, heatgen=False):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.
@@ -27,8 +28,12 @@ class THComponent(object):
         :type dm: DensityModel object
         :param T0: The initial temperature of the component
         :type T0: float.
+        :param alpha_temp: temperature coefficient of reactivity
+        :type alpha_temp: float
         :param timesteps: The number of timesteps in this simulation
         :type timesteps: int
+        :param heatgen: is this component a heat generator (fuel)
+        :type heatgen: bool
         """
         self.name = name
         self.vol = vol
@@ -40,7 +45,9 @@ class THComponent(object):
         self.T = units.Quantity(np.zeros(shape=(timesteps), dtype=float),
                                 'kelvin')
         self.T[0] = T0
+        self.alpha_temp = alpha_temp.to('delta_k/kelvin')
         self.timesteps = timesteps
+        self.heatgen = heatgen
 
     def temp(self, timestep):
         """The temperature of this component at the chosen timestep
@@ -72,3 +79,20 @@ class THComponent(object):
         """
         self.T[timestep] = self.T[timestep-1] + dtempdt
         return self.T[timestep]
+
+    def dtempdt(self, t, dt):
+        t_idx = int(t/dt)
+        if t_idx == 0:
+            prev = 0
+        else:
+            prev = t_idx - 1
+        return (self.T[t_idx] - self.T[prev])
+
+    def temp_reactivity(self, t, dt):
+        return self.alpha_temp*self.dtempdt(t, dt)
+
+    def add_convection(self, env=None, h, area):
+        self.conv[env] = {"h":h, "area":area}
+
+    def add_conduction(self, component=None, area):
+        self.cond[env] = area

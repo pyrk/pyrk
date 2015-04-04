@@ -88,7 +88,7 @@ class THParams(object):
     def k(self, component, temp):
         """Thermal conductivitiy in W/m-K"""
         if component == "fuel":
-            return self.k_fuel(temp)
+            return 2*units.watt/(units.meter*units.kelvin)  # W/m-K
         elif component == "cool":
             return self.k_cool(temp)
         elif component == "mod":
@@ -117,9 +117,8 @@ class THParams(object):
         # http://ac.els-cdn.com/0017931094903921/1-s2.0-0017931094903921-main.pdf
         # ?_tid=e7d08bac-b380-11e3-90e0-00000aacb35f&acdnat
         # =1395685377_d73165eba81bc145ccebc98c195abf36
-        k = 2*units.watt/(units.meter*units.kelvin)  # W/m-K
         # 20 is what's assumed for the pbmr pebble bed...
-        return k
+        return 2*units.watt/(units.meter*units.kelvin)  # W/m-K
 
     def k_graphite(self, t_graphite):
         """Thermal conductivitiy in W/m-K for the graphite moderator and the \
@@ -209,7 +208,7 @@ class THParams(object):
 
     def res_cond(self, component1, component2):
         A = self.area(set([component1, component2]))
-        k = self.k(component1, 0*units.kelvin) # todo, fix temp
+        k = self.k(component1, 0*units.kelvin)  # todo, fix temp
         L = self.vol(component1)/A
         r_th = L/(k*A)
         return r_th

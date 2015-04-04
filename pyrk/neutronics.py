@@ -6,9 +6,6 @@ from data import precursors as pr
 from data import decay_heat as dh
 
 from ur import units
-from utils.logger import logger
-
-component_names = {"fuel": 0, "cool": 1, "mod": 2, "refl": 3}
 
 
 class Neutronics(object):
@@ -73,14 +70,12 @@ class Neutronics(object):
         else:
             return 0
 
-    def dpdt(self, t, dt, temps, coeffs, power, zetas):
+    def dpdt(self, t, dt, components, power, zetas):
         """Calculates the power term. The first in the neutronics block.
         :param t: the time
         :type t: float.
         :param dt: the timestep
         :type dt: float.
-        :param temps: the temperatures for each component
-        :type temps: np.ndarray.
         :param coeffs: the temperature coefficients of reactivity for each
         component
         :type coeffs: dict.
@@ -89,7 +84,7 @@ class Neutronics(object):
         :param zetas: the current delayed neutron precursor populations, zeta_i
         :type zetas: np.ndarray.
         """
-        rho = self.reactivity(t, dt, temps, coeffs)
+        rho = self.reactivity(t, dt, components)
         beta = self._pd.beta()
         lams = self._pd.lambdas()
         Lambda = self._pd.Lambda()
@@ -129,32 +124,20 @@ class Neutronics(object):
         lam = self._dd.lambdas()[k]
         return kappa*p-lam*omega
 
-    def reactivity(self, t, dt, temps, coeffs):
+    def reactivity(self, t, dt, components):
         """Returns the reactivity, (units? TODO), at time t
         :param t: time
         :type t: float, units of seconds
         :param dt: timestep size, units of seconds
         :type dt: float, units of seconds
-        :param temps: the temperatures for each component
-        :type temps: np.ndarray
-        :param coeffs: temperature coefficients of reactivity
-        :type coeffs: dict
+        :param components: thermal hydraulic component objects
+        :type components: list of THComponent objects
         """
         rho = {}
-        dtemp = {}
         t_idx = int(t/dt)
-        if t_idx == 0:
-            prev = 0
-        else:
-            prev = t_idx - 1
-        for key, alpha in coeffs.iteritems():
-            idx = component_names[key]
-            dtemp[key] = (temps[t_idx][idx] - temps[prev][idx])
-            rho[key] = (coeffs[key]*dtemp[key]).to('delta_k')
-            if t_idx == (self._n_steps - 1):
-                logger.info(str(t)+" "+str(key)+" "+str(dtemp[key]))
-                drho[key] = 0*units.delta_k # TODO BC is a bit broken here.
+        for component in components:
+            rho[component.name] = component.temp_reactivity(t, dt)
         rho["external"] = self.rho_ext(t).to('delta_k')
-        to_ret = sum(drho.values())
+        to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret
         return to_ret
