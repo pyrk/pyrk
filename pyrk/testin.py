@@ -10,6 +10,7 @@ import math
 #
 #############################################
 
+# thermal conductivity
 # http://www.psfc.mit.edu/library1/catalog/reports/1980/80rr
 # /80rr012/80rr012_full.pdf
 # [W/m-K]
@@ -39,12 +40,12 @@ rho_cool = DensityModel(a=2415.6*units.kg/(units.meter**3),
                         b=0.49072*units.kg/(units.meter**3)/units.kelvin,
                         model="linear")
 
-# from COMSOL model by Raluca Scarlat
-rho_fuel = DensityModel(a=1720.0*units.kg/(units.meter**3),
+# from design report, for fuel kernels
+rho_fuel = DensityModel(a=10500.0*units.kg/(units.meter**3),
                         model="constant")
 
-# http://pbadupws.nrc.gov/docs/ML0117/ML011770379.pdf
-rho_graphite = DensityModel(a=1800*units.kg/(units.meter**3),
+# from design report, for reflector graphite
+rho_graphite = DensityModel(a=1740*units.kg/(units.meter**3),
                             model='constant')
 
 # From COMSOL model by Raluca Scarlat
@@ -69,15 +70,6 @@ t_c = units.Quantity(650.0, units.degC).to('K')
 t_m = units.Quantity(700.0, units.degC).to('K')
 t_r = units.Quantity(650.0, units.degC).to('K')
 # the data below comes from design doc rev c
-vol_tot_active = 4.16*units.meter**3  # m^3
-vol_tot_defuel = 1.03*units.meter**3  # m^3
-vol_tot_refl = 4.8*units.meter**3  # m^3
-pebble_porosity = 0.4  # [-]
-vol_fuel = 0
-vol_cool = 0
-vol_refl = 0
-vol_mod = 0
-# thermal conductivity
 
 # self._vol_flow_rate = 976.0*0.3 # kg/s TODO 0.3 is nat circ guess
 vel_cool = 2.*units.meter/units.second  # m/s
@@ -92,13 +84,33 @@ core_height = 3.5*units.meter  # [m] (TODO currently approximate)
 core_inner_radius = 0.35*units.meter  # m
 core_outer_radius = 1.25*units.meter  #
 
+
+def vol_sphere(r):
+    assert(r >= 0*units.meter)
+    return (4./3.)*math.pi*pow(r.to('meter'), 3)
+
+# volumes
 n_pebbles = 470000
+vol_tot_active = 4.16*units.meter**3  # m^3
+vol_tot_defuel = 1.03*units.meter**3  # m^3
+vol_tot_refl = 4.8*units.meter**3  # m^3
+pebble_porosity = 0.4  # [-]
+
+# vol of 4730 kernels per pebble, each 400 micrometer diameter
+vol_fuel = n_pebbles*4730*vol_sphere(200*units.micrometer)
+vol_mod = (vol_tot_defuel - vol_tot_active)*(1-pebble_porosity) - vol_fuel
+# from design report
+vol_cool = 7.20*units.meter**3
+mass_refl = 49250.0*units.kg
+vol_refl = mass_refl/rho_graphite.rho()
+
+
 a_mod = 4.0*math.pi*(r_mod**2)*n_pebbles*units.meter**2
-a_fuel =4.0*math.pi*(r_fuel**2)*n_pebbles*units.meter**2
+a_fuel = 4.0*math.pi*(r_fuel**2)*n_pebbles*units.meter**2
 a_refl = 2*math.pi*core_outer_radius*core_height*units.meter**2
 
-h_fuel = 4700 #TODO Placeholder
-h_refl = 4700 # TODO Placeholder
+h_mod = 600  # TODO implement h(T) model
+h_refl = 600  # TODO placeholder
 
 
 #############################################
@@ -118,6 +130,7 @@ dt = 0.001*units.seconds
 
 # Final Time
 tf = 0.30*units.seconds
+
 
 # Number of precursor groups
 n_pg = 6
@@ -142,7 +155,7 @@ fuel = th.THComponent(name="fuel",
                       dm=rho_fuel,
                       T0=t_f,
                       alpha_temp=alpha_f,
-                      timesteps=tf-t0/dt)
+                      timesteps=(tf-t0)/dt)
 
 cool = th.THComponent(name="cool",
                       vol=vol_cool,
@@ -151,7 +164,7 @@ cool = th.THComponent(name="cool",
                       dm=rho_cool,
                       T0=t_c,
                       alpha_temp=alpha_c,
-                      timesteps=tf-t0/dt)
+                      timesteps=(tf-t0)/dt)
 
 
 refl = th.THComponent(name="refl",
@@ -161,7 +174,7 @@ refl = th.THComponent(name="refl",
                       dm=rho_graphite,
                       T0=t_r,
                       alpha_temp=alpha_r,
-                      timesteps=tf-t0/dt)
+                      timesteps=(tf-t0)/dt)
 
 mod = th.THComponent(name="mod",
                      vol=vol_refl,
@@ -170,14 +183,14 @@ mod = th.THComponent(name="mod",
                      dm=rho_graphite,
                      T0=t_m,
                      alpha_temp=alpha_m,
-                     timesteps=tf-t0/dt)
+                     timesteps=(tf-t0)/dt)
 
 components = [fuel, cool, refl, mod]
 
 
 fuel.add_conduction('mod', area=a_mod)
 mod.add_conduction('fuel', area=a_mod)
-fuel.add_convection('cool', h=h_fuel, area=a_fuel)
-cool.add_convection('fuel', h=h_fuel, area=a_fuel)
+mod.add_convection('cool', h=h_mod, area=a_mod)
+cool.add_convection('mod', h=h_mod, area=a_mod)
 cool.add_convection('refl', h=h_refl, area=a_refl)
 refl.add_convection('cool', h=h_refl, area=a_refl)

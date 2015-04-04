@@ -48,6 +48,8 @@ class THComponent(object):
         self.alpha_temp = alpha_temp.to('delta_k/kelvin')
         self.timesteps = timesteps
         self.heatgen = heatgen
+        self.cond = {}
+        self.conv = {}
 
     def temp(self, timestep):
         """The temperature of this component at the chosen timestep
@@ -91,8 +93,8 @@ class THComponent(object):
     def temp_reactivity(self, t, dt):
         return self.alpha_temp*self.dtempdt(t, dt)
 
-    def add_convection(self, env=None, h, area):
-        self.conv[env] = {"h":h, "area":area}
+    def add_convection(self, env, h, area):
+        self.conv[env] = {"h": h, "area": area}
 
-    def add_conduction(self, component=None, area):
+    def add_conduction(self, env, area):
         self.cond[env] = area

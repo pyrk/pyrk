@@ -25,7 +25,7 @@ th = thermal_hydraulics.ThermalHydraulics(testin.components)
 si = sim_info.SimInfo(t0=testin.t0,
                       tf=testin.tf,
                       dt=testin.dt,
-                      components=th._params._components,
+                      components=testin.components,
                       iso=testin.fission_iso,
                       e=testin.spectrum,
                       n_precursors=testin.n_pg,
@@ -39,8 +39,8 @@ _y = np.zeros(shape=(si.timesteps(), si.n_entries()), dtype=float)
 _temp = units.Quantity(np.zeros(shape=(si.timesteps(), n_components),
                                 dtype=float), 'kelvin')
 
-for key, val in th._params._init_temps.iteritems():
-    _temp[0][si.components[key]] = val
+for idx, comp in enumerate(si.components):
+    _temp[0][idx] = comp.T0
 
 
 def update_n(t, y_n):
