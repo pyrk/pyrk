@@ -1,6 +1,7 @@
 from ur import units
 from density_model import DensityModel
 import th
+import math
 
 
 #############################################
@@ -37,7 +38,6 @@ k_graphite = 0.26*units.watt/(units.meter*units.kelvin)  # W/m-K
 rho_cool = DensityModel(a=2415.6*units.kg/(units.meter**3),
                         b=0.49072*units.kg/(units.meter**3)/units.kelvin,
                         model="linear")
-
 
 # from COMSOL model by Raluca Scarlat
 rho_fuel = DensityModel(a=1720.0*units.kg/(units.meter**3),
@@ -91,6 +91,15 @@ kappa = 0.06  # TODO if you fix omegas, kappa ~ 0.06
 core_height = 3.5*units.meter  # [m] (TODO currently approximate)
 core_inner_radius = 0.35*units.meter  # m
 core_outer_radius = 1.25*units.meter  #
+
+n_pebbles = 470000
+a_mod = 4.0*math.pi*(r_mod**2)*n_pebbles*units.meter**2
+a_fuel =4.0*math.pi*(r_fuel**2)*n_pebbles*units.meter**2
+a_refl = 2*math.pi*core_outer_radius*core_height*units.meter**2
+
+h_fuel = 4700 #TODO Placeholder
+h_refl = 4700 # TODO Placeholder
+
 
 #############################################
 #
@@ -172,5 +181,3 @@ fuel.add_convection('cool', h=h_fuel, area=a_fuel)
 cool.add_convection('fuel', h=h_fuel, area=a_fuel)
 cool.add_convection('refl', h=h_refl, area=a_refl)
 refl.add_convection('cool', h=h_refl, area=a_refl)
-
-
