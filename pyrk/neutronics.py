@@ -153,8 +153,8 @@ class Neutronics(object):
             rho[key] = (coeffs[key]*dtemp[key]).to('delta_k')
             if t_idx == (self._n_steps - 1):
                 logger.info(str(t)+" "+str(key)+" "+str(dtemp[key]))
-                drho[key] = 0*units.delta_k # TODO BC is a bit broken here.
+                rho[key] = 0*units.delta_k # TODO BC is a bit broken here.
         rho["external"] = self.rho_ext(t).to('delta_k')
-        to_ret = sum(drho.values())
+        to_ret = sum(rho.values())
         self._rho[t_idx] = to_ret
         return to_ret
