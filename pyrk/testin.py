@@ -78,7 +78,7 @@ t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 thickness_fuel_matrix = 0.005*units.meter
 r_fuel = 0.03*units.meter  # [m] ... matrix(4mm) + coating(1mm)
 r_mod = 0.025*units.meter
-pebble_r = r_fuel + r_mod
+r_pebble = r_fuel + r_mod
 kappa = 0.06  # TODO if you fix omegas, kappa ~ 0.06
 core_height = 3.5*units.meter  # [m] (TODO currently approximate)
 core_inner_radius = 0.35*units.meter  # m
@@ -95,18 +95,19 @@ vol_tot_active = 4.16*units.meter**3  # m^3
 vol_tot_defuel = 1.03*units.meter**3  # m^3
 vol_tot_refl = 4.8*units.meter**3  # m^3
 pebble_porosity = 0.4  # [-]
+n_particles_per_pebble = 4730
+r_particle = 200*units.micrometer
 
 # vol of 4730 kernels per pebble, each 400 micrometer diameter
-vol_fuel = n_pebbles*4730*vol_sphere(200*units.micrometer)
+vol_fuel = n_pebbles*n_particles_per_pebble*vol_sphere(r_particle)
 vol_mod = (vol_tot_defuel - vol_tot_active)*(1-pebble_porosity) - vol_fuel
 # from design report
 vol_cool = 7.20*units.meter**3
 mass_refl = 49250.0*units.kg
 vol_refl = mass_refl/rho_graphite.rho()
 
-
-a_mod = 4.0*math.pi*(r_mod**2)*n_pebbles
-a_fuel = 4.0*math.pi*(r_fuel**2)*n_pebbles
+a_mod = 4.0*math.pi*(r_pebble**2)*n_pebbles
+a_fuel = 4.0*math.pi*(r_particle**2)*n_pebbles*n_particles_per_pebble
 a_refl = 2*math.pi*core_outer_radius*core_height
 
 h_mod = 600*units.watt/units.kelvin/units.meter**2  # TODO implement h(T) model
@@ -187,7 +188,7 @@ mod = th.THComponent(name="mod",
 components = [fuel, cool, refl, mod]
 
 
-fuel.add_conduction('mod', area=a_mod)
+fuel.add_conduction('mod', area=a_fuel)
 mod.add_conduction('fuel', area=a_mod)
 mod.add_convection('cool', h=h_mod, area=a_mod)
 cool.add_convection('mod', h=h_mod, area=a_mod)

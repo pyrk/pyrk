@@ -48,6 +48,3 @@ class SimInfo(object):
 
     def timesteps(self):
         return (self.tf-self.t0)/self.dt + 1
-
-    def coeffs(self):
-        return self.ne._coeffs

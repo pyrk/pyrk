@@ -14,7 +14,7 @@ class Neutronics(object):
     """
 
     def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 n_steps=0):
+                 timesteps=0):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
@@ -28,6 +28,8 @@ class Neutronics(object):
         :type n_precursors: int.
         :param n_decay: The number of decay heat groups. 11 is supported.
         :type n_decay: int.
+        :param ext: External reactivity, a function of time
+        :type ext: function
         :returns: A Neutronics object that holds neutronics simulation info
         """
 
@@ -49,10 +51,10 @@ class Neutronics(object):
         self._dd = dh.DecayData(iso, e, n_decay)
         """_dd (DecayData): A data.decay_heat.DecayData object"""
 
-        self._n_steps = n_steps
-        """_n_steps: number of timesteps in the simulation."""
+        self._timesteps = timesteps
+        """_timesteps: number of timesteps in the simulation."""
 
-        self._rho = np.zeros(n_steps)
+        self._rho = np.zeros(timesteps)
         """_rho (ndarray): An array of reactivity values for each timestep."""
 
     def rho_ext(self, t):
@@ -137,9 +139,10 @@ class Neutronics(object):
         t_idx = int(t/dt)
         for component in components:
             rho[component.name] = component.temp_reactivity(t, dt)
-            if rho[component.name] > 4.0:
-                print component.name
         rho["external"] = self.rho_ext(t).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret
+        if t > 0.009*units.seconds and to_ret > 1*units.delta_k:
+            for key, val in rho.iteritems():
+                print key + " = " + str(val)
         return to_ret

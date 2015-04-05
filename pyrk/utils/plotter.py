@@ -20,8 +20,8 @@ def plot(y, si):
     """Creates plots for interesting values in the simulation.
     :param y: The full solution array
     :type y: np.ndarray"""
-    x = np.arange(si.t0.magnitude, si.tf.magnitude+si.dt.magnitude,
-                  si.dt.magnitude)
+    x = np.arange(start=si.t0.magnitude, stop=si.tf.magnitude+si.dt.magnitude,
+                  step=si.dt.magnitude)
     plot_power(x, y)
     plot_reactivity(x, si)
     plot_zetas(x, y, si)

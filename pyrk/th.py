@@ -53,6 +53,7 @@ class THComponent(object):
         self.heatgen = heatgen
         self.cond = {}
         self.conv = {}
+        self.prev_t_idx = 0
 
     def temp(self, timestep):
         """The temperature of this component at the chosen timestep
@@ -83,18 +84,18 @@ class THComponent(object):
         :type float: float, units of kelvin
         """
         self.T[timestep] = temp
+        self.prev_t_idx = timestep
         return self.T[timestep]
 
     def dtempdt(self, t, dt):
-        t_idx = int(t/dt)
-        if t_idx == 0:
-            prev = 0
+        if self.prev_t_idx == 0:
+            past = 0
         else:
-            prev = t_idx - 1
-        return (self.T[t_idx] - self.T[prev])
+            past = self.prev_t_idx - 1
+        return (self.T[self.prev_t_idx] - self.T[past])/dt
 
     def temp_reactivity(self, t, dt):
-        return self.alpha_temp*self.dtempdt(t, dt)
+        return self.alpha_temp*self.dtempdt(t, dt)*dt
 
     def add_convection(self, env, h, area):
         self.conv[env] = {
