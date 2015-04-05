@@ -78,9 +78,8 @@ class Neutronics(object):
         :type t: float.
         :param dt: the timestep
         :type dt: float.
-        :param coeffs: the temperature coefficients of reactivity for each
-        component
-        :type coeffs: dict.
+        :param components: the THComponents making up this reactor
+        :type components: list of THComponent objects
         :param power: the current reactor power in Watts (timestep t-1 ?)
         :type power: float.
         :param zetas: the current delayed neutron precursor populations, zeta_i

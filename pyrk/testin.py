@@ -2,6 +2,7 @@ from ur import units
 from density_model import DensityModel
 import th
 import math
+from flibe import Flibe
 
 
 #############################################
@@ -148,14 +149,13 @@ spectrum = "thermal"
 nsteps = 1000
 
 
-fuel = th.THComponent(name="fuel",
-                      vol=vol_fuel,
-                      k=k_fuel,
-                      cp=cp_fuel,
-                      dm=rho_fuel,
-                      T0=t_f,
-                      alpha_temp=alpha_f,
-                      timesteps=(tf-t0)/dt)
+fuel = Flibe(name="fuel",
+             vol=vol_fuel,
+             T0=t_f,
+             alpha_temp=alpha_f,
+             timesteps=(tf-t0)/dt,
+             heatgen=True,
+             power_tot=power_tot)
 
 cool = th.THComponent(name="cool",
                       vol=vol_cool,
@@ -189,7 +189,7 @@ components = [fuel, cool, refl, mod]
 
 
 fuel.add_conduction('mod', area=a_fuel)
-mod.add_conduction('fuel', area=a_mod)
+#mod.add_conduction('fuel', area=a_mod)
 mod.add_convection('cool', h=h_mod, area=a_mod)
 cool.add_convection('mod', h=h_mod, area=a_mod)
 cool.add_convection('refl', h=h_refl, area=a_refl)

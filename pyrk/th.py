@@ -10,7 +10,7 @@ class THComponent(object):
     """
 
     def __init__(self, name=None, vol=0, k=0, cp=0, dm=None, T0=0,
-                 alpha_temp=0, timesteps=0, heatgen=False):
+                 alpha_temp=0, timesteps=0, heatgen=False, power_tot=0):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.
@@ -51,6 +51,7 @@ class THComponent(object):
         self.alpha_temp = alpha_temp.to('delta_k/kelvin')
         self.timesteps = timesteps
         self.heatgen = heatgen
+        self.power_tot = power_tot
         self.cond = {}
         self.conv = {}
         self.prev_t_idx = 0
