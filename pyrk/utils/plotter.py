@@ -52,9 +52,9 @@ def plot_power(x, y):
 
 
 def plot_temps_together(x, y, si):
-    for name, num in si.components.iteritems():
+    for num, comp in enumerate(si.components):
         idx = 1 + si.ne._npg + si.ne._ndg + num
-        plt.plot(x, y[:, idx], label=name,
+        plt.plot(x, y[:, idx], label=comp.name,
                  color=my_colors(num, len(si.components)), marker='.')
     plt.xlabel("Time [s]")
     plt.ylabel("Temperature [K]")
@@ -63,14 +63,14 @@ def plot_temps_together(x, y, si):
 
 
 def plot_temps_separately(x, y, si):
-    for name, num in si.components.iteritems():
+    for num, comp in enumerate(si.components):
         idx = 1 + si.ne._npg + si.ne._ndg + num
-        plt.plot(x, y[:, idx], label=name,
+        plt.plot(x, y[:, idx], label=comp.name,
                  color=my_colors(num, len(si.components)), marker='.')
         plt.xlabel("Time [s]")
         plt.ylabel("Temperature [K]")
-        plt.title("Temperature of "+name)
-        saveplot(name+" Temp[K]", plt)
+        plt.title("Temperature of "+comp.name)
+        saveplot(comp.name+" Temp[K]", plt)
 
 
 def plot_zetas(x, y, si):

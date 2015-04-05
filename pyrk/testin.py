@@ -105,12 +105,12 @@ mass_refl = 49250.0*units.kg
 vol_refl = mass_refl/rho_graphite.rho()
 
 
-a_mod = 4.0*math.pi*(r_mod**2)*n_pebbles*units.meter**2
-a_fuel = 4.0*math.pi*(r_fuel**2)*n_pebbles*units.meter**2
-a_refl = 2*math.pi*core_outer_radius*core_height*units.meter**2
+a_mod = 4.0*math.pi*(r_mod**2)*n_pebbles
+a_fuel = 4.0*math.pi*(r_fuel**2)*n_pebbles
+a_refl = 2*math.pi*core_outer_radius*core_height
 
-h_mod = 600  # TODO implement h(T) model
-h_refl = 600  # TODO placeholder
+h_mod = 600*units.watt/units.kelvin/units.meter**2  # TODO implement h(T) model
+h_refl = 600*units.watt/units.kelvin/units.meter**2  # TODO placeholder
 
 
 #############################################
@@ -129,8 +129,7 @@ t0 = 0.00*units.seconds
 dt = 0.001*units.seconds
 
 # Final Time
-tf = 0.30*units.seconds
-
+tf = 0.01*units.seconds
 
 # Number of precursor groups
 n_pg = 6

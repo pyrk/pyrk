@@ -125,7 +125,7 @@ class Neutronics(object):
         return kappa*p-lam*omega
 
     def reactivity(self, t, dt, components):
-        """Returns the reactivity, (units? TODO), at time t
+        """Returns the reactivity, in $\Delta k$, at time t
         :param t: time
         :type t: float, units of seconds
         :param dt: timestep size, units of seconds
@@ -137,6 +137,8 @@ class Neutronics(object):
         t_idx = int(t/dt)
         for component in components:
             rho[component.name] = component.temp_reactivity(t, dt)
+            if rho[component.name] > 4.0:
+                print component.name
         rho["external"] = self.rho_ext(t).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret

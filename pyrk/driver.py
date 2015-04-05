@@ -36,12 +36,6 @@ n_components = len(si.components)
 
 _y = np.zeros(shape=(si.timesteps(), si.n_entries()), dtype=float)
 
-_temp = units.Quantity(np.zeros(shape=(si.timesteps(), n_components),
-                                dtype=float), 'kelvin')
-
-for idx, comp in enumerate(si.components):
-    _temp[0][idx] = comp.T0
-
 
 def update_n(t, y_n):
     """This function updates the neutronics block.
@@ -63,26 +57,24 @@ def update_th(t, y_n, y_th):
     :type y_th: thp.thdarray.
     """
     t_idx = int(t/si.dt.magnitude)
-    _temp[int(t_idx)][:] = units.Quantity(y_th, 'kelvin')
+    for idx, comp in enumerate(si.components):
+        comp.update_temp(t_idx, y_th[idx]*units.kelvin)
     n_n = len(y_n)
     _y[int(t_idx)][n_n:] = y_th
 
 
-def f_n(t, y, coeffs):
-    """Returns the neutronics solution at time t, based on temperature
-    coefficients of reactivity.
+def f_n(t, y):
+    """Returns the neutronics block solution at time t
     :param t: the time [s] at which the update is occuring.
     :type t: float.
     :param y: TODO
     :type y: np.ndarray
-    :param coeffs: a dictionary of component names and coefficients
-    :type coeffs: dict.
     """
     n_n = 1 + si.n_pg + si.n_dg
     end_pg = 1 + si.n_pg
     f = np.zeros(shape=(n_n,), dtype=float)
     i = 0
-    f[i] = si.ne.dpdt(t*units.second, si.dt, _temp, coeffs, y[0], y[1:end_pg])
+    f[i] = si.ne.dpdt(t*units.second, si.dt, si.components, y[0], y[1:end_pg])
     for j in range(0, si.n_pg):
         i += 1
         f[i] = si.ne.dzetadt(t, y[0], y[i], j)
@@ -109,7 +101,6 @@ def f_th(t, y_th):
     omegas = _y[t_idx][o_i:o_f]
     for idx, comp in enumerate(th.components):
         f[idx] = th.dtempdt(component=comp,
-                            temps=y_th,
                             power=power,
                             omegas=omegas,
                             t_idx=t_idx)
@@ -127,8 +118,8 @@ def y0():
     for k in range(0, si.n_dg):
         i += 1
         f[i] = 0
-    for name, num in si.components.iteritems():
-        f[i+num+1] = _temp[0][num].magnitude
+    for idx, comp in enumerate(si.components):
+        f[i+idx+1] = comp.T0.magnitude
     assert len(f) == si.n_entries()
     _y[0] = f
     return f
@@ -152,7 +143,7 @@ def y0_th():
 def solve():
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
     n = ode(f_n).set_integrator('dopri5')
-    n.set_initial_value(y0_n(), si.t0.magnitude).set_f_params(infile.coeffs)
+    n.set_initial_value(y0_n(), si.t0.magnitude)
     th = ode(f_th).set_integrator('dopri5', nsteps=si.timesteps())
     th.set_initial_value(y0_th(), si.t0.magnitude)
     while n.successful() and n.t < si.tf.magnitude:
@@ -160,14 +151,14 @@ def solve():
         update_n(n.t, n.y)
         th.integrate(th.t+si.dt.magnitude)
         update_th(n.t, n.y, th.y)
-
     return _y
 
 
 def log_results():
     logger.info("\nReactivity : \n"+str(si.ne._rho))
     logger.info("\nFinal Result : \n"+np.array_str(_y))
-    logger.info("\nFinal Temps : \n"+np.array_str(_temp.magnitude))
+    for comp in si.components:
+        logger.info("\n" + comp.name + ":\n" + np.array_str(comp.T.magnitude))
     logger.info("\nPrecursor lambdas: \n"+str(si.ne._pd.lambdas()))
     logger.info("\nDelayed neutron frac: \n"+str(si.ne._pd.beta()))
     logger.info("\nPrecursor betas: \n"+str(si.ne._pd.betas()))

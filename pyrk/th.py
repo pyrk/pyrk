@@ -36,13 +36,16 @@ class THComponent(object):
         :type heatgen: bool
         """
         self.name = name
-        self.vol = vol
+        self.vol = vol.to('meter**3')
         validation.validate_ge("vol", vol, 0*units.meter**3)
-        self.k = k
+        self.k = k.to('watt/meter/kelvin')
         validation.validate_ge("k", k, 0*units.watt/units.meter/units.kelvin)
+        self.cp = cp.to('joule/kg/kelvin')
+        validation.validate_ge("cp", cp, 0*units.joule/units.kg/units.kelvin)
         self.dm = dm
-        self.T0 = T0
-        self.T = units.Quantity(np.zeros(shape=(timesteps), dtype=float),
+        self.T0 = T0.to('kelvin')
+        validation.validate_num("T", T0)
+        self.T = units.Quantity(np.zeros(shape=(timesteps+1), dtype=float),
                                 'kelvin')
         self.T[0] = T0
         self.alpha_temp = alpha_temp.to('delta_k/kelvin')
@@ -72,14 +75,14 @@ class THComponent(object):
         ret = self.dm.rho(self.temp(timestep))
         return ret
 
-    def update_temp(self, timestep, dtempdt):
+    def update_temp(self, timestep, temp):
         """Updates the temperature
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
         :param dtempdt: the change in temperature since the last timestep
         :type float: float, units of kelvin
         """
-        self.T[timestep] = self.T[timestep-1] + dtempdt
+        self.T[timestep] = temp
         return self.T[timestep]
 
     def dtempdt(self, t, dt):
@@ -94,7 +97,10 @@ class THComponent(object):
         return self.alpha_temp*self.dtempdt(t, dt)
 
     def add_convection(self, env, h, area):
-        self.conv[env] = {"h": h, "area": area}
+        self.conv[env] = {
+            "h": h.to('joule/second/kelvin/meter**2'),
+            "area": area.to('meter**2')
+        }
 
     def add_conduction(self, env, area):
-        self.cond[env] = area
+        self.cond[env] = area.to('meter**2')
