@@ -1,6 +1,5 @@
 from ur import units
 
-
 def validate_ge(valname, val, llim):
     """Raises errors if the value is less than the lower limit (llim) or if it
     is of the wrong type"""
@@ -31,8 +30,10 @@ def validate_num(valname, val):
     if isinstance(val, (int, long, float, units.Quantity)):
         return val
     else:
-        msg = valname + " must be an integer or float.\n"
+        msg = valname + " must be an integer, long, float, or Quantity.\n"
         msg += "The value provided was of type " + str(type(val))
+        msg += " and value "
+        msg += str(val)
         raise TypeError(msg)
 
 

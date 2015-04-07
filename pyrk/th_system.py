@@ -1,7 +1,7 @@
 from ur import units
 
 
-class ThermalHydraulics(object):
+class THSystem(object):
     """This class handles calculations and data related to the
     thermal hydraulics subblock
     """

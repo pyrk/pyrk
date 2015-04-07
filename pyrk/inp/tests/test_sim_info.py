@@ -5,6 +5,7 @@ from pyrk.inp import sim_info as si
 
 from ur import units
 import th_system
+import th_component
 
 
 def test_init_reasonable_sim():
@@ -15,7 +16,9 @@ def test_init_reasonable_sim():
     spectrum = "thermal"
     npg = 6
     ndg = 11
-    th = th_system.THSystem()
+    kappa = 0.06
+    tester = th_component.THComponent()
+    th = th_system.THSystem(kappa, [tester])
     info = si.SimInfo(t0, tf, dt, {}, iso, spectrum, npg, ndg, th)
     assert_equal(t0, info.t0)
     assert_equal(tf, info.tf)

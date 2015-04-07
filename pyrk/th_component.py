@@ -9,8 +9,16 @@ class THComponent(object):
     support of calculations related to the thermal hydraulics subblock
     """
 
-    def __init__(self, name=None, vol=0, k=0, cp=0, dm=None, T0=0,
-                 alpha_temp=0, timesteps=0, heatgen=False, power_tot=0):
+    def __init__(self, name=None,
+                 vol=0*units.meter**3,
+                 k=0*units.watt/units.meter/units.kelvin,
+                 cp=0*units.joule/units.kg/units.kelvin,
+                 dm=None,
+                 T0=0*units.kelvin,
+                 alpha_temp=0*units.delta_k/units.kelvin,
+                 timesteps=0,
+                 heatgen=False,
+                 power_tot=0*units.watt):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.

@@ -15,11 +15,18 @@ cp = 10*units.joule/units.kg/units.kelvin
 dm = density_model.DensityModel(a=0*units.kg/units.meter**3,
                                 b=100*units.kg/units.meter**3,
                                 model='constant')
+
+kappa = 0
 T0 = 700*units.kelvin
-si = sim_info.SimInfo(t0=0*units.seconds, tf=10*units.seconds,
+t0 = 0*units.seconds
+tf = 10*units.seconds
+dt = 0.1*units.seconds
+timesteps = int((tf-t0)/dt)
+tester = th.THComponent(name, vol, k, cp, dm, T0, timesteps)
+si = sim_info.SimInfo(t0=0*units.seconds,
+                      tf=10*units.seconds,
                       dt=0.1*units.seconds,
-                      th=th_system.THSystem())
-tester = th.THComponent(name, vol, k, cp, dm, T0, si.timesteps())
+                      th=th_system.THSystem(kappa, tester))
 
 
 def test_constructor():
