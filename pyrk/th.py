@@ -90,7 +90,7 @@ class THComponent(object):
 
     def dtempdt(self, t, dt):
         if self.prev_t_idx == 0:
-            past = 0
+            return 0.0*units.kelvin/units.seconds
         else:
             past = self.prev_t_idx - 1
         return (self.T[self.prev_t_idx] - self.T[past])/dt
