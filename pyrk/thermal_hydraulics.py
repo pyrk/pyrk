@@ -1,17 +1,16 @@
-import th_params
-
+from ur import units
 
 class ThermalHydraulics(object):
     """This class handles calculations and data related to the
     thermal_hydraulics subblock
     """
 
-    def __init__(self, components):
-        self._params = th_params.THParams()
+    def __init__(self, kappa, components):
+        self.kappa = kappa
         self.components = components
 
     def dtempdt(self, component, power, omegas, t_idx):
-        to_ret = 0
+        to_ret = 0*units.kelvin/units.second
         cap = (component.rho(t_idx)*component.cp*component.vol)
         if component.heatgen:
             to_ret += self.heatgen(component, power, omegas)/cap
@@ -42,8 +41,8 @@ class ThermalHydraulics(object):
         raise KeyError(msg)
 
     def heatgen(self, component, power, omegas):
-        return (component.power_tot*power)*((1-self._params._kappa) +
-                                            sum(omegas))
+        return (component.power_tot)*((1-self.kappa)*power +
+                                      sum(omegas))
 
     def convection(self, t_b, t_env, h, A):
         """

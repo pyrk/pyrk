@@ -21,7 +21,7 @@ np.set_printoptions(precision=5)
 
 infile = importlib.import_module("testin")
 
-th = thermal_hydraulics.ThermalHydraulics(testin.components)
+th = thermal_hydraulics.ThermalHydraulics(testin.kappa, testin.components)
 si = sim_info.SimInfo(t0=testin.t0,
                       tf=testin.tf,
                       dt=testin.dt,

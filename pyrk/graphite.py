@@ -3,7 +3,7 @@ from th import THComponent
 from density_model import DensityModel
 
 
-class Flibe(THComponent):
+class Graphite(THComponent):
     """This class represents a component of the system it has material and
     geometric properties essential to thermal modeling and heat transfer in
     support of calculations related to the thermal_hydraulics subblock
@@ -39,21 +39,16 @@ class Flibe(THComponent):
                              power_tot=power_tot)
 
     def thermal_conductivity(self):
-        """FLiBe thermal conductivity in [W/m-K]
-        (based on http://www.psfc.mit.edu/library1/catalog/reports/
-        1980/80rr/80rr012/80rr012_full.pdf)
-        and found in the Andreades et. al Technical Description (pbfhr design
-        report)
+        """Graphite thermal conductivity in [W/m-K]
         """
-        return 1.0*units.watt/(units.meter*units.kelvin)
+        return 0.26*units.watt/(units.meter*units.kelvin)
 
     def specific_heat_capacity(self):
         """Specific heat capacity
-        from www-ferp.ucsd.edu/LIB/PROPS/HTS.shtml
+
         """
-        return 2350.0*units.joule/(units.kg*units.kelvin)
+        return 1650.0*units.joule/(units.kg*units.kelvin)
 
     def density(self):
-        return DensityModel(a=2415.6*units.kg/(units.meter**3),
-                            b=0.49072*units.kg/(units.meter**3)/units.kelvin,
-                            model="linear")
+        return DensityModel(a=1740.*units.kg/(units.meter**3),
+                            model="constant")

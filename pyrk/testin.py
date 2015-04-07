@@ -3,6 +3,7 @@ from density_model import DensityModel
 import th
 import math
 from flibe import Flibe
+from graphite import Graphite
 
 
 #############################################
@@ -80,10 +81,15 @@ thickness_fuel_matrix = 0.005*units.meter
 r_fuel = 0.03*units.meter  # [m] ... matrix(4mm) + coating(1mm)
 r_mod = 0.025*units.meter
 r_pebble = r_fuel + r_mod
-kappa = 0.06  # TODO if you fix omegas, kappa ~ 0.06
+kappa = 0.00  # TODO if you fix omegas, kappa ~ 0.06
 core_height = 3.5*units.meter  # [m] (TODO currently approximate)
 core_inner_radius = 0.35*units.meter  # m
 core_outer_radius = 1.25*units.meter  #
+
+
+def area_sphere(r):
+    assert(r >= 0*units.meter)
+    return (4.0)*math.pi*pow(r.to('meter'), 2)
 
 
 def vol_sphere(r):
@@ -92,6 +98,7 @@ def vol_sphere(r):
 
 # volumes
 n_pebbles = 470000
+n_graph_peb = 218000
 vol_tot_active = 4.16*units.meter**3  # m^3
 vol_tot_defuel = 1.03*units.meter**3  # m^3
 vol_tot_refl = 4.8*units.meter**3  # m^3
@@ -101,17 +108,17 @@ r_particle = 200*units.micrometer
 
 # vol of 4730 kernels per pebble, each 400 micrometer diameter
 vol_fuel = n_pebbles*n_particles_per_pebble*vol_sphere(r_particle)
-vol_mod = (vol_tot_defuel - vol_tot_active)*(1-pebble_porosity) - vol_fuel
+vol_mod = (n_pebbles+n_graph_peb)*(vol_sphere(r_pebble)) - vol_fuel
 # from design report
 vol_cool = 7.20*units.meter**3
 mass_refl = 49250.0*units.kg
 vol_refl = mass_refl/rho_graphite.rho()
 
-a_mod = 4.0*math.pi*(r_pebble**2)*n_pebbles
-a_fuel = 4.0*math.pi*(r_particle**2)*n_pebbles*n_particles_per_pebble
+a_mod = area_sphere(r_pebble)*n_pebbles
+a_fuel = area_sphere(r_particle)*n_pebbles*n_particles_per_pebble
 a_refl = 2*math.pi*core_outer_radius*core_height
 
-h_mod = 600*units.watt/units.kelvin/units.meter**2  # TODO implement h(T) model
+h_mod = 4700*units.watt/units.kelvin/units.meter**2  # TODO implement h(T) model
 h_refl = 600*units.watt/units.kelvin/units.meter**2  # TODO placeholder
 
 
@@ -131,7 +138,7 @@ t0 = 0.00*units.seconds
 dt = 0.001*units.seconds
 
 # Final Time
-tf = 0.01*units.seconds
+tf = 7.0*units.seconds
 
 # Number of precursor groups
 n_pg = 6
@@ -149,48 +156,42 @@ spectrum = "thermal"
 nsteps = 1000
 
 
-fuel = Flibe(name="fuel",
-             vol=vol_fuel,
-             T0=t_f,
-             alpha_temp=alpha_f,
-             timesteps=(tf-t0)/dt,
-             heatgen=True,
-             power_tot=power_tot)
-
-cool = th.THComponent(name="cool",
-                      vol=vol_cool,
+fuel = th.THComponent(name="fuel",
+                      vol=vol_fuel,
                       k=k_cool,
                       cp=cp_cool,
                       dm=rho_cool,
-                      T0=t_c,
-                      alpha_temp=alpha_c,
-                      timesteps=(tf-t0)/dt)
+                      T0=t_f,
+                      alpha_temp=alpha_f,
+                      timesteps=(tf-t0)/dt,
+                      heatgen=True,
+                      power_tot=power_tot)
+
+cool = Flibe(name="cool",
+             vol=vol_cool,
+             T0=t_c,
+             alpha_temp=alpha_c,
+             timesteps=(tf-t0)/dt)
 
 
-refl = th.THComponent(name="refl",
-                      vol=vol_refl,
-                      k=k_graphite,
-                      cp=cp_graphite,
-                      dm=rho_graphite,
-                      T0=t_r,
-                      alpha_temp=alpha_r,
-                      timesteps=(tf-t0)/dt)
+refl = Graphite(name="refl",
+                vol=vol_refl,
+                T0=t_r,
+                alpha_temp=alpha_r,
+                timesteps=(tf-t0)/dt)
 
-mod = th.THComponent(name="mod",
-                     vol=vol_refl,
-                     k=k_fuel,
-                     cp=cp_fuel,
-                     dm=rho_graphite,
-                     T0=t_m,
-                     alpha_temp=alpha_m,
-                     timesteps=(tf-t0)/dt)
+mod = Graphite(name="mod",
+               vol=vol_mod,
+               T0=t_m,
+               alpha_temp=alpha_m,
+               timesteps=(tf-t0)/dt)
 
 components = [fuel, cool, refl, mod]
 
 
-fuel.add_conduction('mod', area=a_fuel)
+#fuel.add_conduction('mod', area=a_fuel)
 #mod.add_conduction('fuel', area=a_mod)
-mod.add_convection('cool', h=h_mod, area=a_mod)
-cool.add_convection('mod', h=h_mod, area=a_mod)
-cool.add_convection('refl', h=h_refl, area=a_refl)
-refl.add_convection('cool', h=h_refl, area=a_refl)
+#mod.add_convection('cool', h=h_mod, area=a_mod)
+#cool.add_convection('mod', h=h_mod, area=a_mod)
+#cool.add_convection('refl', h=h_refl, area=a_refl)
+#refl.add_convection('cool', h=h_refl, area=a_refl)

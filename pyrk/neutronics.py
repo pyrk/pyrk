@@ -63,7 +63,7 @@ class Neutronics(object):
         :type t: float.
         """
         if t >= 0.1*units.seconds and t <= 0.2*units.seconds:
-            return 0.0001*units.delta_k
+            return 0.0000*units.delta_k
         elif t >= 0.0*units.seconds:
             return 0*units.delta_k
         elif t < 0*units.seconds:
@@ -141,7 +141,4 @@ class Neutronics(object):
         rho["external"] = self.rho_ext(t).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret
-        if t > 0.009*units.seconds and to_ret > 1*units.delta_k:
-            for key, val in rho.iteritems():
-                print key + " = " + str(val)
         return to_ret
