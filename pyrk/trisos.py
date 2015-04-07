@@ -6,7 +6,7 @@ from density_model import DensityModel
 class Triso(THComponent):
     """This class represents a component of the system it has material and
     geometric properties essential to thermal modeling and heat transfer in
-    support of calculations related to the thermal_hydraulics subblock
+    support of calculations related to the thermal hydraulics subblock
     """
     def __init__(self, name=None, vol=0, T0=0,
                  alpha_temp=0, timesteps=0, heatgen=False, power_tot=0):

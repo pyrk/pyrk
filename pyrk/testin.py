@@ -1,6 +1,6 @@
 from ur import units
 from density_model import DensityModel
-import th
+import th_component as th
 import math
 from flibe import Flibe
 from graphite import Graphite

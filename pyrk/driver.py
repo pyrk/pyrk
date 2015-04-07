@@ -9,7 +9,7 @@ import numpy as np
 from scipy.integrate import ode
 import importlib
 
-import thermal_hydraulics
+import th_system
 from utils.logger import logger
 from inp import sim_info
 from ur import units
@@ -21,7 +21,7 @@ np.set_printoptions(precision=5)
 
 infile = importlib.import_module("testin")
 
-th = thermal_hydraulics.ThermalHydraulics(testin.kappa, testin.components)
+th = th_system.THSystem(testin.kappa, testin.components)
 si = sim_info.SimInfo(t0=testin.t0,
                       tf=testin.tf,
                       dt=testin.dt,

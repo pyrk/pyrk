@@ -3,7 +3,7 @@ from ur import units
 
 class ThermalHydraulics(object):
     """This class handles calculations and data related to the
-    thermal_hydraulics subblock
+    thermal hydraulics subblock
     """
 
     def __init__(self, kappa, components):

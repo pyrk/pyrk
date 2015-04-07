@@ -6,7 +6,7 @@ from ur import units
 class THComponent(object):
     """This class represents a component of the system it has material and
     geometric properties essential to thermal modeling and heat transfer in
-    support of calculations related to the thermal_hydraulics subblock
+    support of calculations related to the thermal hydraulics subblock
     """
 
     def __init__(self, name=None, vol=0, k=0, cp=0, dm=None, T0=0,

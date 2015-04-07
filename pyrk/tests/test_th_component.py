@@ -1,8 +1,8 @@
 from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 
-import thermal_hydraulics
-import th
+import th_system
+import th_component as th
 from inp import sim_info
 import density_model
 from ur import units
@@ -18,7 +18,7 @@ dm = density_model.DensityModel(a=0*units.kg/units.meter**3,
 T0 = 700*units.kelvin
 si = sim_info.SimInfo(t0=0*units.seconds, tf=10*units.seconds,
                       dt=0.1*units.seconds,
-                      th=thermal_hydraulics.ThermalHydraulics())
+                      th=th_system.THSystem())
 tester = th.THComponent(name, vol, k, cp, dm, T0, si.timesteps())
 
 
