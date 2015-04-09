@@ -14,22 +14,21 @@ from utils.logger import logger
 from inp import sim_info
 from ur import units
 from utils import plotter
-import testin
 
 np.set_printoptions(precision=5)
 
 
-infile = importlib.import_module("testin")
+infile = importlib.import_module("input")
 
-th = th_system.THSystem(testin.kappa, testin.components)
-si = sim_info.SimInfo(t0=testin.t0,
-                      tf=testin.tf,
-                      dt=testin.dt,
-                      components=testin.components,
-                      iso=testin.fission_iso,
-                      e=testin.spectrum,
-                      n_precursors=testin.n_pg,
-                      n_decay=testin.n_dg,
+th = th_system.THSystem(infile.kappa, infile.components)
+si = sim_info.SimInfo(t0=infile.t0,
+                      tf=infile.tf,
+                      dt=infile.dt,
+                      components=infile.components,
+                      iso=infile.fission_iso,
+                      e=infile.spectrum,
+                      n_precursors=infile.n_pg,
+                      n_decay=infile.n_dg,
                       th=th)
 
 n_components = len(si.components)
