@@ -1,21 +1,36 @@
 from ur import units
 
+
 def validate_ge(valname, val, llim):
     """Raises errors if the value is less than the lower limit (llim) or if it
-    is of the wrong type"""
+    is of the wrong type
+    :param valname: the name of the value being validated
+    :type valname: string
+    :param val: the value to be validated
+    :type val: should be a number (or pint.Quantity)
+    :param llim: the lower limit of acceptable value for val
+    :type llim: the same type as val
+    """
     if validate_num(valname, val) < llim:
         msg = valname + " must be greater than or equal to "
         msg += str(llim) + ".\n"
         msg += "The value provided was : "
         msg += str(val)
         raise ValueError(msg)
-
-    return val
+    else:
+        return val
 
 
 def validate_le(valname, val, ulim):
     """Raises errors if the value is greater than the upper limit (ulim) or if it
-    is of the wrong type"""
+    is of the wrong type
+    :param valname: the name of the value being validated
+    :type valname: string
+    :param val: the value to be validated
+    :type val: should be a number (or pint.Quantity)
+    :param ulim: the upper limit of acceptable value for val
+    :type ulim: the same type as val
+    """
     if validate_num(valname, val) > ulim:
         msg = valname + " must be less than or equal to "
         msg += str(ulim) + ".\n"
@@ -27,6 +42,12 @@ def validate_le(valname, val, ulim):
 
 
 def validate_num(valname, val):
+    """Checks that val is a number
+    :param valname: the name of the value being validated
+    :type valname: string
+    :param val: the value to be validated
+    :type val: should be a number (or pint.Quantity)
+    """
     if isinstance(val, (int, long, float, units.Quantity)):
         return val
     else:
@@ -38,6 +59,12 @@ def validate_num(valname, val):
 
 
 def validate_not_none(valname, val):
+    """Checks that val is not None
+    :param valname: the name of the value being validated
+    :type valname: string
+    :param val: the value to be validated
+    :type val: any
+    """
     if val is not None:
         return val
     else:

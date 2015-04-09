@@ -1,7 +1,7 @@
 import numpy as np
 from inp import validation
 from ur import units
-
+from density_model import DensityModel
 
 class THComponent(object):
     """This class represents a component of the system it has material and
@@ -13,7 +13,7 @@ class THComponent(object):
                  vol=0*units.meter**3,
                  k=0*units.watt/units.meter/units.kelvin,
                  cp=0*units.joule/units.kg/units.kelvin,
-                 dm=None,
+                 dm=DensityModel(),
                  T0=0*units.kelvin,
                  alpha_temp=0*units.delta_k/units.kelvin,
                  timesteps=0,

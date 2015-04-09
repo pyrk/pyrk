@@ -7,20 +7,15 @@ import th_component
 from ur import units
 
 
-components = [th_component.THComponent(), th_component.THComponent()]
-
-
 def test_dtempfueldt_returns_numbers():
+    timesteps = 0
+    components = [th_component.THComponent(timesteps=timesteps),
+                  th_component.THComponent(timesteps=timesteps)]
     T = 750.0
     th = th_system.THSystem(0, components)
     p = 1.0000002
     omegas = np.array([0, 0, 0])
-    temps = np.zeros(shape=(len(components)))
-    i = 0
-    for c in components:
-        temps[i] = T
-        i += 1
 
     for c in components:
-        obs = th.dtempdt(c, temps, p, omegas, components)
+        obs = th.dtempdt(c, p, omegas, timesteps)
         assert(obs + T*units.kelvin/units.second > 0*units.kelvin/units.second)
