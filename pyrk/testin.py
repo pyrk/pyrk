@@ -189,9 +189,9 @@ mod = Graphite(name="mod",
 components = [fuel, cool, refl, mod]
 
 
-#fuel.add_conduction('mod', area=a_fuel)
-#mod.add_conduction('fuel', area=a_mod)
-#mod.add_convection('cool', h=h_mod, area=a_mod)
-#cool.add_convection('mod', h=h_mod, area=a_mod)
-#cool.add_convection('refl', h=h_refl, area=a_refl)
-#refl.add_convection('cool', h=h_refl, area=a_refl)
+fuel.add_conduction('mod', area=a_fuel)
+mod.add_conduction('fuel', area=a_mod)
+mod.add_convection('cool', h=h_mod, area=a_mod)
+cool.add_convection('mod', h=h_mod, area=a_mod)
+cool.add_convection('refl', h=h_refl, area=a_refl)
+refl.add_convection('cool', h=h_refl, area=a_refl)

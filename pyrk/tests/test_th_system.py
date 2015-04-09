@@ -3,15 +3,16 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
 
 import numpy as np
 import th_system
+import th_component
 from ur import units
 
 
-components = {"fuel": 0, "cool": 1, "mod": 2, "refl": 3}
+components = [th_component.THComponent(), th_component.THComponent()]
 
 
 def test_dtempfueldt_returns_numbers():
     T = 750.0
-    th = th_system.THSystem()
+    th = th_system.THSystem(0, components)
     p = 1.0000002
     omegas = np.array([0, 0, 0])
     temps = np.zeros(shape=(len(components)))

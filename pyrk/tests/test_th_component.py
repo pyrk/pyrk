@@ -22,7 +22,8 @@ t0 = 0*units.seconds
 tf = 10*units.seconds
 dt = 0.1*units.seconds
 timesteps = int((tf-t0)/dt)
-tester = th.THComponent(name, vol, k, cp, dm, T0, timesteps)
+tester = th.THComponent(name=name, vol=vol, k=k, cp=cp, dm=dm, T0=T0,
+                        timesteps=timesteps)
 si = sim_info.SimInfo(t0=0*units.seconds,
                       tf=10*units.seconds,
                       dt=0.1*units.seconds,
@@ -46,6 +47,6 @@ def test_update_temp():
     T1 = 10*units.kelvin
     T2 = 20*units.kelvin
     tester.update_temp(1, T1)
-    assert_equal(tester.temp(1), T0+T1)
+    assert_equal(tester.temp(1), T1)
     tester.update_temp(2, T2)
-    assert_equal(tester.temp(2), T0+T1+T2)
+    assert_equal(tester.temp(2), T2)

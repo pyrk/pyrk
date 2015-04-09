@@ -89,7 +89,7 @@ class THComponent(object):
         """Updates the temperature
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
-        :param dtempdt: the change in temperature since the last timestep
+        :param temp: the new tempterature
         :type float: float, units of kelvin
         """
         self.T[timestep] = temp
