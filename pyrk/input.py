@@ -12,12 +12,6 @@ from graphite import Graphite
 #
 #############################################
 
-# thermal conductivity
-# http://www.psfc.mit.edu/library1/catalog/reports/1980/80rr
-# /80rr012/80rr012_full.pdf
-# [W/m-K]
-k_cool = 1.0*units.watt/(units.meter*units.kelvin)  # W/m-K
-
 # [W/m-K]
 # in the pbmr, they use zehner-schlunder to approximate k_eff for the
 # pebble bed:
@@ -31,17 +25,6 @@ k_fuel = 2*units.watt/(units.meter*units.kelvin)  # W/m-K
 
 k_graphite = 0.26*units.watt/(units.meter*units.kelvin)  # W/m-K
 
-# http://aries.ucsd.edu/raffray/publications/FST/TOFE_15_Zaghloul.pdf
-# it is valid between the melting point and the critical point
-# melting point [K]
-# t_m = 732.2
-# critical point [K]
-# t_c = 4498.8
-# rho correlation [kg/m^3]
-rho_cool = DensityModel(a=2415.6*units.kg/(units.meter**3),
-                        b=0.49072*units.kg/(units.meter**3)/units.kelvin,
-                        model="linear")
-
 # from design report, for fuel kernels
 rho_fuel = DensityModel(a=10500.0*units.kg/(units.meter**3),
                         model="constant")
@@ -52,9 +35,6 @@ rho_graphite = DensityModel(a=1740*units.kg/(units.meter**3),
 
 # From COMSOL model by Raluca Scarlat
 cp_fuel = 1744*units.joule/(units.kg*units.kelvin)  # [J/kg-K]
-
-# from www-ferp.ucsd.edu/LIB/PROPS/HTS.shtml
-cp_cool = 2350.0*units.joule/(units.kg*units.kelvin)  # [J/kg-K]
 
 # Approximate:
 # http://www.sciencedirect.com/science/article/pii/0022369760900950

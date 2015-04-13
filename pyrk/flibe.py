@@ -54,6 +54,16 @@ class Flibe(THComponent):
         return 2350.0*units.joule/(units.kg*units.kelvin)
 
     def density(self):
+        """
+        FLiBe density as a funciton of T. [kg/m^3]
+        based on
+        http://aries.ucsd.edu/raffray/publications/FST/TOFE_15_Zaghloul.pdf
+        it is valid between the melting point and the critical point
+        melting point [K]
+        t_m = 732.2
+        critical point [K]
+        t_c = 4498.8
+        """
         return DensityModel(a=2415.6*units.kg/(units.meter**3),
                             b=0.49072*units.kg/(units.meter**3)/units.kelvin,
                             model="linear")
