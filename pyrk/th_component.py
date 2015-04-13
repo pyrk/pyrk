@@ -3,6 +3,7 @@ from inp import validation
 from ur import units
 from density_model import DensityModel
 
+
 class THComponent(object):
     """This class represents a component of the system it has material and
     geometric properties essential to thermal modeling and heat transfer in
@@ -96,15 +97,20 @@ class THComponent(object):
         self.prev_t_idx = timestep
         return self.T[timestep]
 
-    def dtempdt(self, t, dt):
-        if self.prev_t_idx == 0:
-            return 0.0*units.kelvin/units.seconds
+    def dtemp(self, t, dt):
+        t_idx = int(t/dt)
+        if abs(self.prev_t_idx-t_idx) > 1:
+            msg = "Previous index does not match current"
+            msg += str(self.prev_t_idx)
+            msg += str(t_idx)
+            raise ValueError(msg)
+        if prev_t_idx == 0:
+            return 0.0*units.kelvin
         else:
-            past = self.prev_t_idx - 1
-        return (self.T[self.prev_t_idx] - self.T[past])/dt
+            return (self.T[self.prev_t_idx] - self.T[self.prev_t_idx-1])
 
     def temp_reactivity(self, t, dt):
-        return self.alpha_temp*self.dtempdt(t, dt)*dt
+        return self.alpha_temp*self.dtemp(t, dt)
 
     def add_convection(self, env, h, area):
         self.conv[env] = {
