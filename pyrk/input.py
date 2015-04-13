@@ -58,9 +58,6 @@ vel_cool = 2.*units.meter/units.second  # m/s
 t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 # [m] ... matrix(4mm) + coating(1mm)
 thickness_fuel_matrix = 0.005*units.meter
-r_fuel = 0.03*units.meter  # [m] ... matrix(4mm) + coating(1mm)
-r_mod = 0.025*units.meter
-r_pebble = r_fuel + r_mod
 kappa = 0.00  # TODO if you fix omegas, kappa ~ 0.06
 core_height = 3.5*units.meter  # [m] (TODO currently approximate)
 core_inner_radius = 0.35*units.meter  # m
@@ -79,11 +76,8 @@ def vol_sphere(r):
 # volumes
 n_pebbles = 470000
 n_graph_peb = 218000
-vol_tot_active = 4.16*units.meter**3  # m^3
-vol_tot_defuel = 1.03*units.meter**3  # m^3
-vol_tot_refl = 4.8*units.meter**3  # m^3
-pebble_porosity = 0.4  # [-]
 n_particles_per_pebble = 4730
+r_pebble = 0.015*units.meter  # [m] diam = 3cm
 r_particle = 200*units.micrometer
 
 # vol of 4730 kernels per pebble, each 400 micrometer diameter
@@ -91,7 +85,9 @@ vol_fuel = n_pebbles*n_particles_per_pebble*vol_sphere(r_particle)
 vol_mod = (n_pebbles+n_graph_peb)*(vol_sphere(r_pebble)) - vol_fuel
 # from design report
 vol_cool = 7.20*units.meter**3
-mass_refl = 49250.0*units.kg
+mass_inner_refl = 43310.0*units.kg
+mass_outer_refl = 5940.0*units.kg
+mass_refl = mass_inner_refl + mass_outer_refl
 vol_refl = mass_refl/rho_graphite.rho()
 
 a_mod = area_sphere(r_pebble)*n_pebbles
@@ -118,7 +114,7 @@ t0 = 0.00*units.seconds
 dt = 0.001*units.seconds
 
 # Final Time
-tf = 7.0*units.seconds
+tf = 3.0*units.seconds
 
 # Number of precursor groups
 n_pg = 6
