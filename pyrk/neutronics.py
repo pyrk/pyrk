@@ -1,6 +1,6 @@
 # Licensed under a 3-clause BSD-style license
 import numpy as np
-
+from inp import validation as v
 
 from data import precursors as pr
 from data import decay_heat as dh
@@ -33,16 +33,16 @@ class Neutronics(object):
         :returns: A Neutronics object that holds neutronics simulation info
         """
 
-        self._iso = iso
+        self._iso = v.validate_supported("iso", iso, ['u235', 'pu239'])
         """_iso (str): Fissioning isotope. 'u235' or 'pu239' are supported."""
 
-        self._e = e
+        self._e = v.validate_supported("e", e, ['thermal', 'fast'])
         """_e (str): Energy spectrum 'thermal' or 'fast' are supported."""
 
-        self._npg = n_precursors
+        self._npg = v.validate_supported("n_precursors", n_precursors, [6])
         """_npg (int): Number of neutron precursor groups. 6 is supported."""
 
-        self._ndg = n_decay
+        self._ndg = v.validate_supported("n_decay", n_decay, [11])
         """_ndg (int): Number of decay heat groups. 11 is supported."""
 
         self._pd = pr.PrecursorData(iso, e, n_precursors)
@@ -51,7 +51,7 @@ class Neutronics(object):
         self._dd = dh.DecayData(iso, e, n_decay)
         """_dd (DecayData): A data.decay_heat.DecayData object"""
 
-        self._timesteps = timesteps
+        self._timesteps = v.validate_ge("timesteps", timesteps, 0)
         """_timesteps: number of timesteps in the simulation."""
 
         self._rho = np.zeros(timesteps)

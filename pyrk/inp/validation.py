@@ -37,7 +37,6 @@ def validate_le(valname, val, ulim):
         msg += "The value provided was : "
         msg += str(val)
         raise ValueError(msg)
-
     return val
 
 
@@ -71,3 +70,14 @@ def validate_not_none(valname, val):
         msg = valname + " must be instantiated with a non null value.\n"
         msg += "The value provided was None"
         raise TypeError(msg)
+
+
+def validate_supported(valname, val, supported):
+    if val in supported:
+        return val
+    else:
+        msg = valname + " must be instantiated with a value in the list:\n"
+        msg += str(supported)
+        msg += "\nThe value provided was "
+        msg += str(val)
+        raise ValueError(msg)
