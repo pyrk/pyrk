@@ -138,9 +138,9 @@ nsteps = 1000
 
 fuel = th.THComponent(name="fuel",
                       vol=vol_fuel,
-                      k=k_cool,
-                      cp=cp_cool,
-                      dm=rho_cool,
+                      k=k_fuel,
+                      cp=cp_fuel,
+                      dm=rho_fuel,
                       T0=t_f,
                       alpha_temp=alpha_f,
                       timesteps=(tf-t0)/dt,
