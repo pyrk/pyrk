@@ -39,10 +39,10 @@ class Neutronics(object):
         self._e = v.validate_supported("e", e, ['thermal', 'fast'])
         """_e (str): Energy spectrum 'thermal' or 'fast' are supported."""
 
-        self._npg = v.validate_supported("n_precursors", n_precursors, [6])
+        self._npg = v.validate_supported("n_precursors", n_precursors, [6, 0])
         """_npg (int): Number of neutron precursor groups. 6 is supported."""
 
-        self._ndg = v.validate_supported("n_decay", n_decay, [11])
+        self._ndg = v.validate_supported("n_decay", n_decay, [11, 0])
         """_ndg (int): Number of decay heat groups. 11 is supported."""
 
         self._pd = pr.PrecursorData(iso, e, n_precursors)
@@ -62,8 +62,8 @@ class Neutronics(object):
         :param t: time
         :type t: float.
         """
-        if t >= 0.1*units.seconds and t <= 0.2*units.seconds:
-            return 0.0000*units.delta_k
+        if t >= 0.0*units.seconds and t <= 200.0*units.seconds:
+            return 0.0*units.delta_k
         elif t >= 0.0*units.seconds:
             return 0*units.delta_k
         elif t < 0*units.seconds:
