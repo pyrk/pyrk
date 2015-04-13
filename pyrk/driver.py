@@ -17,7 +17,6 @@ from utils import plotter
 
 np.set_printoptions(precision=5)
 
-
 infile = importlib.import_module("input")
 
 th = th_system.THSystem(infile.kappa, infile.components)
@@ -53,7 +52,7 @@ def update_th(t, y_n, y_th):
     :param t: the time [s] at which the update is occuring.
     :type t: float.
     :param y_th: The array that solves thermal hydraulics block at time t
-    :type y_th: thp.thdarray.
+    :type y_th: np.ndarray.
     """
     t_idx = int(t/si.dt.magnitude)
     for idx, comp in enumerate(si.components):
