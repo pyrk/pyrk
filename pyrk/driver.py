@@ -9,7 +9,6 @@ import numpy as np
 from scipy.integrate import ode
 import importlib
 
-import th_system
 from utils.logger import logger
 from inp import sim_info
 from ur import units
@@ -19,7 +18,6 @@ np.set_printoptions(precision=5)
 
 infile = importlib.import_module("input")
 
-th = th_system.THSystem(infile.kappa, infile.components)
 si = sim_info.SimInfo(t0=infile.t0,
                       tf=infile.tf,
                       dt=infile.dt,
@@ -28,11 +26,11 @@ si = sim_info.SimInfo(t0=infile.t0,
                       e=infile.spectrum,
                       n_precursors=infile.n_pg,
                       n_decay=infile.n_dg,
-                      th=th)
+                      kappa=infile.kappa)
 
 n_components = len(si.components)
 
-_y = np.zeros(shape=(si.timesteps(), si.n_entries()), dtype=float)
+_y = np.zeros(shape=(si.timer.timesteps(), si.n_entries()), dtype=float)
 
 
 def update_n(t, y_n):
@@ -42,7 +40,7 @@ def update_n(t, y_n):
     :param y_n: The array that solves the neutronics block at time t
     :type y_n: np.ndarray.
     """
-    t_idx = int(t/si.dt.magnitude)
+    t_idx = si.timer.t_idx(t*units.seconds)
     n_n = len(y_n)
     _y[t_idx][:n_n] = y_n
 
@@ -54,11 +52,11 @@ def update_th(t, y_n, y_th):
     :param y_th: The array that solves thermal hydraulics block at time t
     :type y_th: np.ndarray.
     """
-    t_idx = int(t/si.dt.magnitude)
+    t_idx = si.timer.t_idx(t*units.seconds)
     for idx, comp in enumerate(si.components):
         comp.update_temp(t_idx, y_th[idx]*units.kelvin)
     n_n = len(y_n)
-    _y[int(t_idx)][n_n:] = y_th
+    _y[t_idx][n_n:] = y_th
 
 
 def f_n(t, y):
@@ -72,7 +70,7 @@ def f_n(t, y):
     end_pg = 1 + si.n_pg
     f = np.zeros(shape=(n_n,), dtype=float)
     i = 0
-    f[i] = si.ne.dpdt(t*units.second, si.dt, si.components, y[0], y[1:end_pg])
+    f[i] = si.ne.dpdt(si.timer.ts, si.components, y[0], y[1:end_pg])
     for j in range(0, si.n_pg):
         i += 1
         f[i] = si.ne.dzetadt(t, y[0], y[i], j)
@@ -90,18 +88,18 @@ def f_th(t, y_th):
     :param y: TODO
     :type y: np.ndarray
     """
-    t_idx = int(t/si.dt.magnitude)
+    t_idx = si.timer.t_idx(t*units.seconds)
     f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),
                        'kelvin / second')
     power = _y[t_idx][0]
     o_i = 1+si.n_pg
     o_f = 1+si.n_pg+si.n_dg
     omegas = _y[t_idx][o_i:o_f]
-    for idx, comp in enumerate(th.components):
-        f[idx] = th.dtempdt(component=comp,
-                            power=power,
-                            omegas=omegas,
-                            t_idx=t_idx)
+    for idx, comp in enumerate(si.components):
+        f[idx] = si.th.dtempdt(component=comp,
+                               power=power,
+                               omegas=omegas,
+                               t_idx=t_idx)
     return f
 
 
@@ -141,14 +139,15 @@ def y0_th():
 def solve():
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
     n = ode(f_n).set_integrator('dopri5')
-    n.set_initial_value(y0_n(), si.t0.magnitude)
-    th = ode(f_th).set_integrator('dopri5', nsteps=si.timesteps())
-    th.set_initial_value(y0_th(), si.t0.magnitude)
-    while n.successful() and n.t <= si.tf.magnitude:
-        n.integrate(n.t+si.dt.magnitude)
+    n.set_initial_value(y0_n(), si.timer.t0.magnitude)
+    th = ode(f_th).set_integrator('dopri5', nsteps=infile.nsteps)
+    th.set_initial_value(y0_th(), si.timer.t0.magnitude)
+    while n.successful() and n.t <= si.timer.tf.magnitude:
+        n.integrate(n.t+si.timer.dt.magnitude)
         update_n(n.t, n.y)
-        th.integrate(th.t+si.dt.magnitude)
+        th.integrate(th.t+si.timer.dt.magnitude)
         update_th(n.t, n.y, th.y)
+        si.timer.advance_timestep()
     return _y
 
 

@@ -97,20 +97,14 @@ class THComponent(object):
         self.prev_t_idx = timestep
         return self.T[timestep]
 
-    def dtemp(self, t, dt):
-        t_idx = int(t/dt)
-        if abs(self.prev_t_idx-t_idx) > 1:
-            msg = "Previous index does not match current"
-            msg += str(self.prev_t_idx)
-            msg += str(t_idx)
-            raise ValueError(msg)
-        if prev_t_idx == 0:
+    def dtemp(self):
+        if self.prev_t_idx == 0:
             return 0.0*units.kelvin
         else:
             return (self.T[self.prev_t_idx] - self.T[self.prev_t_idx-1])
 
-    def temp_reactivity(self, t, dt):
-        return self.alpha_temp*self.dtemp(t, dt)
+    def temp_reactivity(self):
+        return self.alpha_temp*self.dtemp()
 
     def add_convection(self, env, h, area):
         self.conv[env] = {

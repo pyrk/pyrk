@@ -5,8 +5,6 @@ from inp import validation as v
 from data import precursors as pr
 from data import decay_heat as dh
 
-from ur import units
-
 
 class Neutronics(object):
     """This class handles calculations and data related to the
@@ -14,7 +12,7 @@ class Neutronics(object):
     """
 
     def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 timesteps=0):
+                 timesteps=0, rho_ext=None):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
@@ -57,22 +55,11 @@ class Neutronics(object):
         self._rho = np.zeros(timesteps)
         """_rho (ndarray): An array of reactivity values for each timestep."""
 
-    def rho_ext(self, t):
-        """
-        :param t: time
-        :type t: float.
-        """
-        if t >= 0.0*units.seconds and t <= 200.0*units.seconds:
-            return 0.0*units.delta_k
-        elif t >= 0.0*units.seconds:
-            return 0*units.delta_k
-        elif t < 0*units.seconds:
-            raise ValueError("Negative times should not happen. Please check \
-                    input")
-        else:
-            return 0
+        self._rho_ext = rho_ext.reactivity
+        """_rho_ext (ReactivityInsertion): Reactivity function from the
+        reactivity insertion model"""
 
-    def dpdt(self, t, dt, components, power, zetas):
+    def dpdt(self, t_idx, components, power, zetas):
         """Calculates the power term. The first in the neutronics block.
         :param t: the time
         :type t: float.
@@ -85,7 +72,7 @@ class Neutronics(object):
         :param zetas: the current delayed neutron precursor populations, zeta_i
         :type zetas: np.ndarray.
         """
-        rho = self.reactivity(t, dt, components)
+        rho = self.reactivity(t_idx, components)
         beta = self._pd.beta()
         lams = self._pd.lambdas()
         Lambda = self._pd.Lambda()
@@ -125,7 +112,7 @@ class Neutronics(object):
         lam = self._dd.lambdas()[k]
         return kappa*p-lam*omega
 
-    def reactivity(self, t, dt, components):
+    def reactivity(self, t_idx, components):
         """Returns the reactivity, in $\Delta k$, at time t
         :param t: time
         :type t: float, units of seconds
@@ -135,10 +122,9 @@ class Neutronics(object):
         :type components: list of THComponent objects
         """
         rho = {}
-        t_idx = int(t/dt)
         for component in components:
-            rho[component.name] = component.temp_reactivity(t, dt)
-        rho["external"] = self.rho_ext(t).to('delta_k')
+            rho[component.name] = component.temp_reactivity()
+        rho["external"] = self._rho_ext(t_idx=t_idx).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret
         return to_ret

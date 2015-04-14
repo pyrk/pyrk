@@ -1,32 +1,40 @@
 # Licensed under a 3-clause BSD style license - see LICENSE
 
-from inp import validation
-from ur import units
+import timer
 import neutronics
+import reactivity_insertion as ri
+import th_system
 
 
 class SimInfo(object):
     """This class holds information about a reactor kinetics simulation"""
 
-    def __init__(self, t0=0, tf=1, dt=1, components={},
+    def __init__(self, t0=0.0, tf=1.0, dt=1.0, components={},
                  iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 th=None):
+                 kappa=0.0, rho_ext=None):
         """This class holds information about a reactor kinetics simulation
         """
-        self.t0 = validation.validate_ge("t0", t0, 0*units.seconds)
-        self.tf = validation.validate_ge("tf", tf, t0)
-        self.dt = validation.validate_ge("dt", dt, 0*units.seconds)
+        self.timer = timer.Timer(t0, tf, dt)
         self.components = components
         self.iso = iso
         self.e = e
         self.n_pg = n_precursors
         self.n_dg = n_decay
+        self.rho_ext = self.init_rho_ext(rho_ext)
         self.ne = self.init_ne()
-        self.th = validation.validate_not_none("th", th)
+        self.th = th_system.THSystem(kappa=kappa, components=components)
+
+    def init_rho_ext(self, rho_ext):
+        if rho_ext is None:
+            rho_ext = ri.ReactivityInsertion(self.timer)
+        return rho_ext
 
     def init_ne(self):
-        ne = neutronics.Neutronics(self.iso, self.e, self.n_pg, self.n_dg,
-                                   self.timesteps())
+        ne = neutronics.Neutronics(iso=self.iso, e=self.e,
+                                   n_precursors=self.n_pg,
+                                   n_decay=self.n_dg,
+                                   timesteps=self.timer.timesteps(),
+                                   rho_ext=self.rho_ext)
         return ne
 
     def n_entries(self):
@@ -45,6 +53,4 @@ class SimInfo(object):
             raise ValueError(msg)
         else:
             self.components[th_component.name] = th_component
-
-    def timesteps(self):
-        return (self.tf-self.t0)/self.dt + 1
+            return th_component
