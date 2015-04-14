@@ -57,6 +57,7 @@ def plot_temps_together(x, y, si):
         idx = 1 + si.ne._npg + si.ne._ndg + num
         plt.plot(x, y[:, idx], label=comp.name,
                  color=my_colors(num, len(si.components)), marker='.')
+    plt.legend()
     plt.xlabel("Time [s]")
     plt.ylabel("Temperature [K]")
     plt.title("Temperature of Each Component")
@@ -71,23 +72,28 @@ def plot_temps_separately(x, y, si):
         plt.xlabel("Time [s]")
         plt.ylabel("Temperature [K]")
         plt.title("Temperature of "+comp.name)
+        plt.legend()
         saveplot(comp.name+" Temp[K]", plt)
 
 
 def plot_zetas(x, y, si):
     for num in range(0, si.ne._npg):
         idx = num + 1
-        plt.plot(x, y[:, idx], color=my_colors(num, si.ne._npg), marker='.')
+        plt.plot(x, y[:, idx], color=my_colors(num, si.ne._npg), marker='.',
+                 label="i = "+str(idx))
     plt.xlabel(r'Time $[s]$')
     plt.ylabel("Concentration of Neutron Precursors, $\zeta_i [\#/dr^3]$")
     plt.title("Concentration of Neutron Precursors, $\zeta_i [\#/dr^3]$")
+    plt.legend()
     saveplot("zetas", plt)
 
 
 def plot_omegas(x, y, si):
     for num in range(0, si.ne._ndg):
         idx = 1 + si.ne._npg + num
-        plt.plot(x, y[:, idx], color=my_colors(num, si.ne._ndg), marker='.')
+        plt.plot(x, y[:, idx], color=my_colors(num, si.ne._ndg), marker='.',
+                 label="i = "+str(idx))
+    plt.legend()
     plt.xlabel(r'Time $[s]$')
     plt.ylabel(r'Decay Heat Fractions, $\omega_i [\#/dr^3]$')
     plt.title(r'Decay Heat Fractions, $\omega_i [\#/dr^3]$')
