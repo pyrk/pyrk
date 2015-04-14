@@ -57,6 +57,14 @@ def update_th(t, y_n, y_th):
     _y[t_idx][n_n:] = y_th
 
 
+def update_f(t, y):
+    idx = 1+si.n_pg+si.n_dg
+    y_n = y[:idx]
+    y_th = y[idx:]
+    update_n(t, y_n)
+    update_th(t, y_n, y_th)
+
+
 def f_n(t, y):
     """Returns the neutronics block solution at time t
     :param t: the time [s] at which the update is occuring.
@@ -101,6 +109,13 @@ def f_th(t, y_th):
     return f
 
 
+def f(t, y):
+    i_th = 1+si.n_pg+si.n_dg
+    y_th = y[i_th:]
+    to_ret = np.concatenate((f_n(t, y), f_th(t, y_th)))
+    return to_ret
+
+
 def y0():
     """The initial conditions for y"""
     i = 0
@@ -136,17 +151,11 @@ def y0_th():
 
 def solve():
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
-    n = ode(f_n).set_integrator('dopri5')
-    n.set_initial_value(y0_n(), si.timer.t0.magnitude)
-    th = ode(f_th).set_integrator('dopri5', nsteps=infile.nsteps)
-    th.set_initial_value(y0_th(), si.timer.t0.magnitude)
-    while (n.successful()
-           and n.t < si.timer.tf.magnitude
-           and th.t < si.timer.tf.magnitude):
-        n.integrate(n.t+si.timer.dt.magnitude)
-        update_n(n.t, n.y)
-        th.integrate(th.t+si.timer.dt.magnitude)
-        update_th(th.t, n.y, th.y)
+    eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps)
+    eqn.set_initial_value(y0(), si.timer.t0.magnitude)
+    while (eqn.successful() and eqn.t < si.timer.tf.magnitude):
+        eqn.integrate(eqn.t+si.timer.dt.magnitude)
+        update_f(eqn.t, eqn.y)
         si.timer.advance_timestep()
     return _y
 
