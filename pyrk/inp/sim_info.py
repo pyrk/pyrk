@@ -1,23 +1,21 @@
 # Licensed under a 3-clause BSD style license - see LICENSE
 
-import timer
+from timer import Timer
 import neutronics
 import reactivity_insertion as ri
 import th_system
-from ur import units
 
 class SimInfo(object):
     """This class holds information about a reactor kinetics simulation"""
 
-    def __init__(self, t0=0.0*units.seconds,
-                 tf=1.0*units.seconds,
-                 dt=1.0*units.seconds,
+    def __init__(self,
+                 timer=Timer(),
                  components={},
                  iso="u235", e="thermal", n_precursors=6, n_decay=11,
                  kappa=0.0, rho_ext=None):
         """This class holds information about a reactor kinetics simulation
         """
-        self.timer = timer.Timer(t0, tf, dt)
+        self.timer = timer
         self.components = components
         self.iso = iso
         self.e = e
@@ -36,7 +34,7 @@ class SimInfo(object):
         ne = neutronics.Neutronics(iso=self.iso, e=self.e,
                                    n_precursors=self.n_pg,
                                    n_decay=self.n_dg,
-                                   timesteps=self.timer.timesteps(),
+                                   timer=self.timer,
                                    rho_ext=self.rho_ext)
         return ne
 

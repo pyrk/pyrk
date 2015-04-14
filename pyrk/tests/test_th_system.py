@@ -8,14 +8,13 @@ from ur import units
 
 
 def test_dtempfueldt_returns_numbers():
-    timesteps = 0
-    components = [th_component.THComponent(timesteps=timesteps),
-                  th_component.THComponent(timesteps=timesteps)]
+    components = [th_component.THComponent(),
+                  th_component.THComponent()]
     T = 750.0
     th = th_system.THSystem(0, components)
     p = 1.0000002
     omegas = np.array([0, 0, 0])
 
     for c in components:
-        obs = th.dtempdt(c, p, omegas, timesteps)
+        obs = th.dtempdt(c, p, omegas, 0)
         assert(obs + T*units.kelvin/units.second > 0*units.kelvin/units.second)

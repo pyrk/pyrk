@@ -6,7 +6,7 @@ import th_component as th
 from inp import sim_info
 import density_model
 from ur import units
-
+from timer import Timer
 
 name = "testname"
 vol = 20*units.meter**3
@@ -15,19 +15,15 @@ cp = 10*units.joule/units.kg/units.kelvin
 dm = density_model.DensityModel(a=0*units.kg/units.meter**3,
                                 b=100*units.kg/units.meter**3,
                                 model='constant')
-
 kappa = 0
 T0 = 700*units.kelvin
 t0 = 0*units.seconds
 tf = 10*units.seconds
 dt = 0.1*units.seconds
-timesteps = int((tf-t0)/dt)
+ti = Timer(t0=t0, tf=tf, dt=dt)
 tester = th.THComponent(name=name, vol=vol, k=k, cp=cp, dm=dm, T0=T0,
-                        timesteps=timesteps)
-si = sim_info.SimInfo(t0=0*units.seconds,
-                      tf=10*units.seconds,
-                      dt=0.1*units.seconds,
-                      th=th_system.THSystem(kappa, tester))
+                        timer=ti)
+si = sim_info.SimInfo(kappa=kappa, timer=ti)
 
 
 def test_constructor():

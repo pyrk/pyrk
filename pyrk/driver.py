@@ -18,9 +18,7 @@ np.set_printoptions(precision=5)
 
 infile = importlib.import_module("input")
 
-si = sim_info.SimInfo(t0=infile.t0,
-                      tf=infile.tf,
-                      dt=infile.dt,
+si = sim_info.SimInfo(timer=infile.ti,
                       components=infile.components,
                       iso=infile.fission_iso,
                       e=infile.spectrum,
@@ -144,7 +142,7 @@ def solve():
     th.set_initial_value(y0_th(), si.timer.t0.magnitude)
     while (n.successful()
            and n.t < si.timer.tf.magnitude
-           and n.t < si.timer.tf.magnitude):
+           and th.t < si.timer.tf.magnitude):
         n.integrate(n.t+si.timer.dt.magnitude)
         update_n(n.t, n.y)
         th.integrate(th.t+si.timer.dt.magnitude)

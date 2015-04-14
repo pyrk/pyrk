@@ -4,7 +4,8 @@ from inp import validation as v
 
 from data import precursors as pr
 from data import decay_heat as dh
-
+from reactivity_insertion import ReactivityInsertion
+from timer import Timer
 
 class Neutronics(object):
     """This class handles calculations and data related to the
@@ -12,7 +13,7 @@ class Neutronics(object):
     """
 
     def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 timesteps=0, rho_ext=None):
+                 timer=Timer(), rho_ext=None):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
@@ -49,15 +50,22 @@ class Neutronics(object):
         self._dd = dh.DecayData(iso, e, n_decay)
         """_dd (DecayData): A data.decay_heat.DecayData object"""
 
-        self._timesteps = v.validate_ge("timesteps", timesteps, 0)
-        """_timesteps: number of timesteps in the simulation."""
+        self._timer = timer
+        """_timer: the time instance object"""
 
-        self._rho = np.zeros(timesteps)
+        self._rho = np.zeros(self._timer.timesteps())
         """_rho (ndarray): An array of reactivity values for each timestep."""
 
-        self._rho_ext = rho_ext.reactivity
+        self._rho_ext = self.init_rho_ext(rho_ext).reactivity
         """_rho_ext (ReactivityInsertion): Reactivity function from the
         reactivity insertion model"""
+
+    def init_rho_ext(self, rho_ext):
+        if rho_ext is not None:
+            return rho_ext
+        else:
+            rho_ext = ReactivityInsertion(self._timer)
+            return rho_ext
 
     def dpdt(self, t_idx, components, power, zetas):
         """Calculates the power term. The first in the neutronics block.

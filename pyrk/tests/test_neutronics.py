@@ -10,7 +10,6 @@ def test_default_constructor():
     assert_equal(ne._e, "thermal")
     assert_equal(ne._npg, 6)
     assert_equal(ne._ndg, 11)
-    assert_equal(ne._timesteps, 0)
 
 
 def test_malformed_constructor():
@@ -18,4 +17,3 @@ def test_malformed_constructor():
     assert_raises(ValueError, neutronics.Neutronics, e="epithermal")
     assert_raises(ValueError, neutronics.Neutronics, n_precursors=99)
     assert_raises(ValueError, neutronics.Neutronics, n_decay=99)
-    assert_raises(ValueError, neutronics.Neutronics, timesteps=-2)
