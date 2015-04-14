@@ -142,11 +142,13 @@ def solve():
     n.set_initial_value(y0_n(), si.timer.t0.magnitude)
     th = ode(f_th).set_integrator('dopri5', nsteps=infile.nsteps)
     th.set_initial_value(y0_th(), si.timer.t0.magnitude)
-    while n.successful() and n.t <= si.timer.tf.magnitude:
+    while (n.successful()
+           and n.t < si.timer.tf.magnitude
+           and n.t < si.timer.tf.magnitude):
         n.integrate(n.t+si.timer.dt.magnitude)
         update_n(n.t, n.y)
         th.integrate(th.t+si.timer.dt.magnitude)
-        update_th(n.t, n.y, th.y)
+        update_th(th.t, n.y, th.y)
         si.timer.advance_timestep()
     return _y
 

@@ -1,6 +1,7 @@
 from ur import units
 from th_component import THComponent
 from density_model import DensityModel
+from timer import Timer
 
 
 class Graphite(THComponent):
@@ -9,7 +10,7 @@ class Graphite(THComponent):
     support of calculations related to the thermal hydraulics subblock
     """
     def __init__(self, name=None, vol=0, T0=0,
-                 alpha_temp=0, timesteps=0, heatgen=False, power_tot=0):
+                 alpha_temp=0, timer=Timer(), heatgen=False, power_tot=0):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.
@@ -21,8 +22,8 @@ class Graphite(THComponent):
         :type T0: float.
         :param alpha_temp: temperature coefficient of reactivity
         :type alpha_temp: float
-        :param timesteps: The number of timesteps in this simulation
-        :type timesteps: int
+        :param timer: The timer instance for the sim
+        :type timer: Timer object
         :param heatgen: is this component a heat generator (fuel)
         :type heatgen: bool
         """
@@ -34,7 +35,7 @@ class Graphite(THComponent):
                              dm=self.density(),
                              T0=T0,
                              alpha_temp=alpha_temp,
-                             timesteps=timesteps,
+                             timer=timer,
                              heatgen=heatgen,
                              power_tot=power_tot)
 

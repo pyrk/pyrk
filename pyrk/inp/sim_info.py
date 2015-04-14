@@ -4,12 +4,15 @@ import timer
 import neutronics
 import reactivity_insertion as ri
 import th_system
-
+from ur import units
 
 class SimInfo(object):
     """This class holds information about a reactor kinetics simulation"""
 
-    def __init__(self, t0=0.0, tf=1.0, dt=1.0, components={},
+    def __init__(self, t0=0.0*units.seconds,
+                 tf=1.0*units.seconds,
+                 dt=1.0*units.seconds,
+                 components={},
                  iso="u235", e="thermal", n_precursors=6, n_decay=11,
                  kappa=0.0, rho_ext=None):
         """This class holds information about a reactor kinetics simulation

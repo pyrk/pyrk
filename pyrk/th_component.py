@@ -2,6 +2,7 @@ import numpy as np
 from inp import validation
 from ur import units
 from density_model import DensityModel
+from timer import Timer
 
 
 class THComponent(object):
@@ -17,7 +18,7 @@ class THComponent(object):
                  dm=DensityModel(),
                  T0=0*units.kelvin,
                  alpha_temp=0*units.delta_k/units.kelvin,
-                 timesteps=0,
+                 timer=Timer(),
                  heatgen=False,
                  power_tot=0*units.watt):
         """Initalizes a thermal hydraulic component.
@@ -39,8 +40,8 @@ class THComponent(object):
         :type T0: float.
         :param alpha_temp: temperature coefficient of reactivity
         :type alpha_temp: float
-        :param timesteps: The number of timesteps in this simulation
-        :type timesteps: int
+        :param timer: The timer instance for the sim
+        :type timer: Timer object
         :param heatgen: is this component a heat generator (fuel)
         :type heatgen: bool
         """
@@ -54,11 +55,11 @@ class THComponent(object):
         self.dm = dm
         self.T0 = T0.to('kelvin')
         validation.validate_num("T", T0)
-        self.T = units.Quantity(np.zeros(shape=(timesteps+1), dtype=float),
-                                'kelvin')
+        self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
+                                         dtype=float), 'kelvin')
         self.T[0] = T0
         self.alpha_temp = alpha_temp.to('delta_k/kelvin')
-        self.timesteps = timesteps
+        self.timer = timer
         self.heatgen = heatgen
         self.power_tot = power_tot
         self.cond = {}
@@ -73,7 +74,7 @@ class THComponent(object):
         :rtype: float, in units of kelvin
         """
         validation.validate_ge("timestep", timestep, 0)
-        validation.validate_le("timestep", timestep, self.timesteps)
+        validation.validate_le("timestep", timestep, self.timer.timesteps())
         return self.T[timestep]
 
     def rho(self, timestep):

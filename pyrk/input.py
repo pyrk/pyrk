@@ -4,7 +4,7 @@ import th_component as th
 import math
 from flibe import Flibe
 from graphite import Graphite
-
+from timer import Timer
 
 #############################################
 #
@@ -63,6 +63,14 @@ core_height = 3.5*units.meter  # [m] (TODO currently approximate)
 core_inner_radius = 0.35*units.meter  # m
 core_outer_radius = 1.25*units.meter  #
 
+# Initial time
+t0 = 0.00*units.seconds
+
+# Timestep
+dt = 0.001*units.seconds
+
+# Final Time
+tf = 1.0*units.seconds
 
 def area_sphere(r):
     assert(r >= 0*units.meter)
@@ -98,6 +106,7 @@ h_mod = 4700*units.watt/units.kelvin/units.meter**2  # TODO implement h(T) model
 h_refl = 600*units.watt/units.kelvin/units.meter**2  # TODO placeholder
 
 
+
 #############################################
 #
 # Required Input
@@ -107,14 +116,8 @@ h_refl = 600*units.watt/units.kelvin/units.meter**2  # TODO placeholder
 # Total power, Watts, thermal
 power_tot = 236000.0*units.watt
 
-# Initial time
-t0 = 0.00*units.seconds
-
-# Timestep
-dt = 0.001*units.seconds
-
-# Final Time
-tf = 3.0*units.seconds
+# Timer instance, based on t0, tf, dt
+ti = Timer(t0=t0, tf=tf, dt=dt)
 
 # Number of precursor groups
 n_pg = 6
@@ -139,7 +142,7 @@ fuel = th.THComponent(name="fuel",
                       dm=rho_fuel,
                       T0=t_f,
                       alpha_temp=alpha_f,
-                      timesteps=(tf-t0)/dt,
+                      timer=ti,
                       heatgen=True,
                       power_tot=power_tot)
 
@@ -147,20 +150,20 @@ cool = Flibe(name="cool",
              vol=vol_cool,
              T0=t_c,
              alpha_temp=alpha_c,
-             timesteps=(tf-t0)/dt)
+             timer=ti)
 
 
 refl = Graphite(name="refl",
                 vol=vol_refl,
                 T0=t_r,
                 alpha_temp=alpha_r,
-                timesteps=(tf-t0)/dt)
+                timer=ti)
 
 mod = Graphite(name="mod",
                vol=vol_mod,
                T0=t_m,
                alpha_temp=alpha_m,
-               timesteps=(tf-t0)/dt)
+               timer=ti)
 
 components = [fuel, cool, refl, mod]
 
