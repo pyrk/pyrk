@@ -14,7 +14,7 @@ from inp import sim_info
 from ur import units
 from utils import plotter
 
-np.set_printoptions(precision=5,threshold=np.inf)
+np.set_printoptions(precision=5, threshold=np.inf)
 
 infile = importlib.import_module("input")
 
