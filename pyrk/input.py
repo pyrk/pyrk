@@ -67,10 +67,10 @@ core_outer_radius = 1.25*units.meter  #
 t0 = 0.00*units.seconds
 
 # Timestep
-dt = 0.001*units.seconds
+dt = 0.01*units.seconds
 
 # Final Time
-tf = 10.0*units.seconds
+tf = 2.0*units.seconds
 
 def area_sphere(r):
     assert(r >= 0*units.meter)
