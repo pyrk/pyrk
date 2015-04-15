@@ -36,4 +36,4 @@ class Timer(object):
         return self.ts
 
     def current_time(self):
-        return self.current_t
+        return self.t(self.ts)
