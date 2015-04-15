@@ -70,7 +70,7 @@ t0 = 0.00*units.seconds
 dt = 0.001*units.seconds
 
 # Final Time
-tf = 10.0*units.seconds
+tf = 1.0*units.seconds
 
 def area_sphere(r):
     assert(r >= 0*units.meter)
@@ -114,7 +114,7 @@ h_refl = 600*units.watt/units.kelvin/units.meter**2  # TODO placeholder
 #############################################
 
 # Total power, Watts, thermal
-power_tot = 236000.0*units.watt
+power_tot = 236000000.0*units.watt
 
 # Timer instance, based on t0, tf, dt
 ti = Timer(t0=t0, tf=tf, dt=dt)
