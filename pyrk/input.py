@@ -67,10 +67,10 @@ core_outer_radius = 1.25*units.meter  #
 t0 = 0.00*units.seconds
 
 # Timestep
-dt = 0.001*units.seconds
+dt = 0.005*units.seconds
 
 # Final Time
-tf = 1.0*units.seconds
+tf = 10.0*units.seconds
 
 def area_sphere(r):
     assert(r >= 0*units.meter)
@@ -130,6 +130,9 @@ fission_iso = "u235"
 
 # Spectrum
 spectrum = "thermal"
+
+# Feedbacks, False to turn reactivity feedback off. True otherwise.
+feedback = False
 
 # maximum number of internal steps that the ode solver will take
 nsteps = 1000
