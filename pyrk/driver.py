@@ -24,7 +24,8 @@ si = sim_info.SimInfo(timer=infile.ti,
                       e=infile.spectrum,
                       n_precursors=infile.n_pg,
                       n_decay=infile.n_dg,
-                      kappa=infile.kappa)
+                      kappa=infile.kappa,
+                      feedback=infile.feedback)
 
 n_components = len(si.components)
 

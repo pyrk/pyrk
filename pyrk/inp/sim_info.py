@@ -12,7 +12,7 @@ class SimInfo(object):
                  timer=Timer(),
                  components={},
                  iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 kappa=0.0, rho_ext=None):
+                 kappa=0.0, rho_ext=None, feedback=False):
         """This class holds information about a reactor kinetics simulation
         """
         self.timer = timer
@@ -22,6 +22,7 @@ class SimInfo(object):
         self.n_pg = n_precursors
         self.n_dg = n_decay
         self.rho_ext = self.init_rho_ext(rho_ext)
+        self.feedback = feedback
         self.ne = self.init_ne()
         self.th = th_system.THSystem(kappa=kappa, components=components)
 
@@ -35,7 +36,8 @@ class SimInfo(object):
                                    n_precursors=self.n_pg,
                                    n_decay=self.n_dg,
                                    timer=self.timer,
-                                   rho_ext=self.rho_ext)
+                                   rho_ext=self.rho_ext,
+                                   feedback=self.feedback)
         return ne
 
     def n_entries(self):

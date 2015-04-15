@@ -13,7 +13,7 @@ class Neutronics(object):
     """
 
     def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 timer=Timer(), rho_ext=None):
+                 timer=Timer(), rho_ext=None, feedback=False):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
@@ -59,6 +59,9 @@ class Neutronics(object):
         self._rho_ext = self.init_rho_ext(rho_ext).reactivity
         """_rho_ext (ReactivityInsertion): Reactivity function from the
         reactivity insertion model"""
+
+        self.feedback =  feedback
+        """feedback (bool): False if no reactivity feedbacks, true otherwise"""
 
     def init_rho_ext(self, rho_ext):
         if rho_ext is not None:
@@ -130,8 +133,9 @@ class Neutronics(object):
         :type components: list of THComponent objects
         """
         rho = {}
-        for component in components:
-            rho[component.name] = component.temp_reactivity()
+        if self.feedback:
+            for component in components:
+                rho[component.name] = component.temp_reactivity()
         rho["external"] = self._rho_ext(t_idx=t_idx).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret
