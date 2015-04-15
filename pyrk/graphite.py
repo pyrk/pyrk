@@ -9,8 +9,13 @@ class Graphite(THComponent):
     geometric properties essential to thermal modeling and heat transfer in
     support of calculations related to the thermal hydraulics subblock
     """
-    def __init__(self, name=None, vol=0, T0=0,
-                 alpha_temp=0, timer=Timer(), heatgen=False, power_tot=0):
+    def __init__(self, name=None,
+                 vol=0.0*units.meter**3,
+                 T0=0.0*units.kelvin,
+                 alpha_temp=0.0*units.delta_k/units.kelvin,
+                 timer=Timer(),
+                 heatgen=False,
+                 power_tot=0):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.
