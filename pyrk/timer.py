@@ -31,7 +31,11 @@ class Timer(object):
     def timesteps(self):
         return int((self.tf-self.t0)/self.dt + 1)
 
-    def advance_timestep(self, time):
+    def advance_one_timestep(self):
+        self.advance_time(self.t(self.ts+1))
+        return self.ts
+
+    def advance_time(self, time):
         new_ts = self.t_idx(time)
         old_ts = self.ts
         if (abs(new_ts - old_ts) > 1):
