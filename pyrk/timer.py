@@ -21,7 +21,7 @@ class Timer(object):
     def idx_from_t(self, time, t0, dt):
         num = float(time.magnitude) - float(t0.magnitude)
         denom = float(dt.magnitude)
-        return round(num/denom)
+        return int(round(num/denom))
 
     def t(self, t_idx):
         """given the index of t, a dimensionless int, this returns the time in
