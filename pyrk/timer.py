@@ -1,4 +1,3 @@
-import math
 from inp import validation
 from ur import units
 import logging
@@ -14,23 +13,39 @@ class Timer(object):
         self.tf = validation.validate_ge("tf", tf, t0)
         self.dt = validation.validate_ge("dt", dt, 0*units.seconds)
         self.ts = 0
-        self.current_t = self.t0
 
-    def t_idx(self, t):
+    def t_idx(self, time):
         """given the actual time, in seconds, this returns the index of t."""
-        return int(math.floor((t-self.t0)/self.dt))
+        return self.idx_from_t(time=time, t0=self.t0, dt=self.dt)
+
+    def idx_from_t(self, time, t0, dt):
+        num = float(time.magnitude) - float(t0.magnitude)
+        denom = float(dt.magnitude)
+        return round(num/denom)
 
     def t(self, t_idx):
         """given the index of t, a dimensionless int, this returns the time in
         seconds"""
-        return self.t0 + self.dt*t_idx
+        return self.t0 + self.dt*float(t_idx)
 
     def timesteps(self):
         return int((self.tf-self.t0)/self.dt + 1)
 
-    def advance_timestep(self):
-        self.ts += 1
-        return validation.validate_le("current time", self.t(self.ts), self.tf)
+    def advance_timestep(self, time):
+        new_ts = self.t_idx(time)
+        old_ts = self.ts
+        if (abs(new_ts - old_ts) > 1):
+            msg = "At timestep "
+            msg += str(self.ts)
+            msg += ", which translates to time ("
+            msg += str(self.t(self.ts))
+            msg += ") the new timestep ("
+            msg += str(new_ts)
+            msg += ") was more than one step greater than the old timestep: "
+            msg += str(old_ts)
+            raise RuntimeError(msg)
+        self.ts = new_ts
+        return validation.validate_le("current time", time, self.tf)
 
     def current_timestep(self):
         return self.ts

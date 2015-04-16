@@ -144,11 +144,11 @@ def solve():
     while (n.successful()
            and n.t < si.timer.tf.magnitude
            and th.t < si.timer.tf.magnitude):
+        si.timer.advance_timestep(n.t*units.seconds+si.timer.dt)
         n.integrate(n.t+si.timer.dt.magnitude)
         update_n(n.t, n.y)
         th.integrate(th.t+si.timer.dt.magnitude)
         update_th(th.t, n.y, th.y)
-        si.timer.advance_timestep()
     return _y
 
 
