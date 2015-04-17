@@ -21,4 +21,4 @@ def test_constructor():
     assert_equal(tester.k, k_flibe)
     assert_equal(tester.cp, cp_flibe)
     assert_equal(tester.rho(T0), rho_at_time_zero)
-    assert_equal(tester.rho(0), rho_at_temp_zero)
+    assert_equal(tester.rho(0*units.kelvin), rho_at_temp_zero)
