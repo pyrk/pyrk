@@ -3,7 +3,7 @@ from inp import validation
 from ur import units
 from density_model import DensityModel
 from timer import Timer
-
+from material import Material
 
 class THComponent(object):
     """This class represents a component of the system it has material and
@@ -12,10 +12,8 @@ class THComponent(object):
     """
 
     def __init__(self, name=None,
+                 mat=Material()
                  vol=0*units.meter**3,
-                 k=0*units.watt/units.meter/units.kelvin,
-                 cp=0*units.joule/units.kg/units.kelvin,
-                 dm=DensityModel(),
                  T0=0*units.kelvin,
                  alpha_temp=0*units.delta_k/units.kelvin,
                  timer=Timer(),
@@ -28,14 +26,7 @@ class THComponent(object):
         :param name: The name of the component (i.e., "fuel" or "cool")
         :type name: str.
         :param vol: The volume of the component
-        :param k: The thermal conductivity of the component
-        :type k: float.
-        :param cp: specific heat capacity, $c_p$, in units of $J/kg-K$
-        :type cp: float, in units of $J/kg-K$
-        :param <++>: <++>
-        :type <++>: <++>
-        :param dm: The density of the component
-        :type dm: DensityModel object
+        :type vol: float meter**3
         :param T0: The initial temperature of the component
         :type T0: float.
         :param alpha_temp: temperature coefficient of reactivity
@@ -48,11 +39,9 @@ class THComponent(object):
         self.name = name
         self.vol = vol.to('meter**3')
         validation.validate_ge("vol", vol, 0*units.meter**3)
-        self.k = k.to('watt/meter/kelvin')
-        validation.validate_ge("k", k, 0*units.watt/units.meter/units.kelvin)
-        self.cp = cp.to('joule/kg/kelvin')
-        validation.validate_ge("cp", cp, 0*units.joule/units.kg/units.kelvin)
-        self.dm = dm
+        self.k = mat.k
+        self.cp = mat.cp
+        self.dm = mat.dm
         self.T0 = T0.to('kelvin')
         validation.validate_num("T", T0)
         self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
