@@ -49,7 +49,7 @@ def test_default_t_idx():
     assert_equal(default.t_idx(0.0*units.seconds), 0)
     assert_equal(default.t_idx(1.0*units.seconds), 1)
     assert_equal(default.timesteps(), 2)
-    assert_equal(default.advance_timestep(1.0*units.seconds), 1.0*units.seconds)
+    assert_equal(default.advance_time(1.0*units.seconds), 1.0*units.seconds)
 
 
 def test_long_sim_t_idx():
@@ -58,7 +58,7 @@ def test_long_sim_t_idx():
     assert_equal(long_sim.t_idx(large), long_sim.timesteps()-1)
     assert_equal(long_sim.timesteps(), large/small+1)
     for i in range(1, 5):
-        assert_equal(long_sim.advance_timestep(i*small), i*small)
+        assert_equal(long_sim.advance_time(i*small), i*small)
         assert_equal(long_sim.current_time(), i*small)
 
 
@@ -68,7 +68,7 @@ def test_all_ints_t_idx():
     assert_equal(all_ints.t_idx(ten), all_ints.timesteps()-1)
     assert_equal(all_ints.timesteps(), 11)
     for i in range(1, 10):
-        assert_equal(all_ints.advance_timestep(i*one), i*one)
+        assert_equal(all_ints.advance_time(i*one), i*one)
         assert_equal(all_ints.current_time(), i*one)
 
 
@@ -79,7 +79,7 @@ def test_short_sim_t_idx():
     assert_equal(short_sim.timesteps(), one/ptone+1)
     for i in np.linspace(start=0, stop=1, num=11):
         t = i*units.seconds
-        assert_equal(short_sim.advance_timestep(t), t)
+        assert_equal(short_sim.advance_time(t), t)
         assert_equal(short_sim.current_time(), t)
 
 
@@ -87,7 +87,7 @@ def test_troublemaker():
     for i in range(0, 50):
         time = i*0.005*units.seconds
         assert_equal(trouble.t(trouble.t_idx(time)), time)
-        assert_equal(trouble.advance_timestep(time), time)
+        assert_equal(trouble.advance_time(time), time)
 
 
 def test_idx_from_t():
