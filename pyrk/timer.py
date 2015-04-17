@@ -29,7 +29,7 @@ class Timer(object):
         return self.t0 + self.dt*float(t_idx)
 
     def timesteps(self):
-        return int((self.tf-self.t0)/self.dt + 1)
+        return self.t_idx(self.tf) + 1
 
     def advance_one_timestep(self):
         self.advance_time(self.t(self.ts+1))
