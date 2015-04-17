@@ -1,42 +1,29 @@
 from ur import units
-from th_component import THComponent
 from density_model import DensityModel
-from timer import Timer
+from material import Material
 
-class Flibe(THComponent):
-    """This class represents a component of the system it has material and
-    geometric properties essential to thermal modeling and heat transfer in
-    support of calculations related to the thermal hydraulics subblock
+
+class Flibe(Material):
+    """This class represents flibe materials. It inherits from the material
+    class and has attributes related to flibe.
     """
-    def __init__(self, name=None, vol=0, T0=0,
-                 alpha_temp=0, timer=Timer(), heatgen=False, power_tot=0):
-        """Initalizes a thermal hydraulic component.
-        A thermal-hydraulic component will be treated as one "lump" in the
-        lumped capacitance model.
+    def __init__(self, name="flibe"):
+        """Initalizes a material
 
         :param name: The name of the component (i.e., "fuel" or "cool")
         :type name: str.
-        :param vol: The volume of the component
-        :param T0: The initial temperature of the component
-        :type T0: float.
-        :param alpha_temp: temperature coefficient of reactivity
-        :type alpha_temp: float
-        :param timer: The timer instance for the sim
-        :type timer: Timer object
-        :param heatgen: is this component a heat generator (fuel)
-        :type heatgen: bool
+        :param k: The thermal conductivity of the component
+        :type k: float.
+        :param cp: specific heat capacity, $c_p$, in units of $J/kg-K$
+        :type cp: float, in units of $J/kg-K$
+        :param dm: The density of the component
+        :type dm: DensityModel object
         """
-        THComponent.__init__(self,
-                             name=name,
-                             vol=vol,
-                             k=self.thermal_conductivity(),
-                             cp=self.specific_heat_capacity(),
-                             dm=self.density(),
-                             T0=T0,
-                             alpha_temp=alpha_temp,
-                             timer=timer,
-                             heatgen=heatgen,
-                             power_tot=power_tot)
+        Material.__init__(self,
+                          name=name,
+                          k=self.thermal_conductivity(),
+                          cp=self.specific_heat_capacity(),
+                          dm=self.density())
 
     def thermal_conductivity(self):
         """FLiBe thermal conductivity in [W/m-K]
