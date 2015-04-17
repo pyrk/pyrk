@@ -12,7 +12,7 @@ class THComponent(object):
     """
 
     def __init__(self, name=None,
-                 mat=Material()
+                 mat=Material(),
                  vol=0*units.meter**3,
                  T0=0*units.kelvin,
                  alpha_temp=0*units.delta_k/units.kelvin,

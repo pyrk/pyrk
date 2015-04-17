@@ -5,6 +5,7 @@ import math
 from flibe import Flibe
 from graphite import Graphite
 from timer import Timer
+from material import Material
 
 #############################################
 #
@@ -72,6 +73,7 @@ dt = 0.005*units.seconds
 # Final Time
 tf = 10.0*units.seconds
 
+
 def area_sphere(r):
     assert(r >= 0*units.meter)
     return (4.0)*math.pi*pow(r.to('meter'), 2)
@@ -106,7 +108,6 @@ h_mod = 4700*units.watt/units.kelvin/units.meter**2  # TODO implement h(T) model
 h_refl = 600*units.watt/units.kelvin/units.meter**2  # TODO placeholder
 
 
-
 #############################################
 #
 # Required Input
@@ -138,35 +139,40 @@ feedback = False
 nsteps = 1000
 
 
+fuel_mat = Material(name="kernel",
+                    k=k_fuel,
+                    cp=cp_fuel,
+                    dm=rho_fuel)
+
 fuel = th.THComponent(name="fuel",
+                      mat=fuel_mat,
                       vol=vol_fuel,
-                      k=k_fuel,
-                      cp=cp_fuel,
-                      dm=rho_fuel,
                       T0=t_f,
                       alpha_temp=alpha_f,
                       timer=ti,
                       heatgen=True,
                       power_tot=power_tot)
 
-cool = Flibe(name="cool",
-             vol=vol_cool,
-             T0=t_c,
-             alpha_temp=alpha_c,
-             timer=ti)
+cool = th.THComponent(name="cool",
+                      mat=Flibe(name="flibe"),
+                      vol=vol_cool,
+                      T0=t_c,
+                      alpha_temp=alpha_c,
+                      timer=ti)
 
+refl = th.THComponent(name="refl",
+                      mat=Graphite(name="reflgraphite"),
+                      vol=vol_refl,
+                      T0=t_r,
+                      alpha_temp=alpha_r,
+                      timer=ti)
 
-refl = Graphite(name="refl",
-                vol=vol_refl,
-                T0=t_r,
-                alpha_temp=alpha_r,
-                timer=ti)
-
-mod = Graphite(name="mod",
-               vol=vol_mod,
-               T0=t_m,
-               alpha_temp=alpha_m,
-               timer=ti)
+mod = th.THComponent(name="mod",
+                     mat=Graphite(name="pebgraphite"),
+                     vol=vol_mod,
+                     T0=t_m,
+                     alpha_temp=alpha_m,
+                     timer=ti)
 
 components = [fuel, cool, refl, mod]
 
