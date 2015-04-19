@@ -45,26 +45,24 @@ class Graphite(THComponent):
                              power_tot=power_tot)
 
     def thermal_conductivity(self):
-        """Graphite thermal conductivity in [W/m-K]
-
+        """
+        Graphite thermal conductivity in [W/m-K]
         For H451 nuclear grade graphite:
 
         Parallel to forming axis:
-            150 W/m-K
+        150 W/m-K
         Perpendicular to forming axis:
-            135 W/m-K
+        135 W/m-K
 
-        Burchell, T.D. 2001. “Nuclear Graphite and Radiation Effects.” In
+        Burchell, T.D. 2001. ``Nuclear Graphite and Radiation Effects.'' In
         Encyclopedia of Materials: Science and Technology (Second Edition),
-        edited by K.H. Jürgen Buschow, Robert W. Cahn, Merton C. Flemings,
+        edited by K.H. Jurgen Buschow, Robert W. Cahn, Merton C. Flemings,
         Bernhard Ilschner, Edward J. Kramer, Subhash Mahajan, and Patrick
-        Veyssière, 6310–19. Oxford: Elsevier.
-        http://www.sciencedirect.com/science/article/pii/B0080431526011207.
-
+        Veyssiere, 6310-19. Oxford: Elsevier.
+        http://www.sciencedirect.com/science/article/pii/B0080431526011207
 
         Also noted in:
-            http://www.osti.gov/scitech/servlets/purl/714896/
-
+        http://www.osti.gov/scitech/servlets/purl/714896/
         """
         return 0.26*units.watt/(units.meter*units.kelvin)
 
@@ -84,8 +82,8 @@ class Graphite(THComponent):
 
 
         Ortensi, J., M. A. Pope, G. Strydom, R. S. Sen, M. D. DeHart, H.
-        D. Gougar, C. Ellis, et al. 2011. “Prismatic Core Coupled
-        Transient Benchmark.” Transactions of the American Nuclear Society
+        D. Gougar, C. Ellis, et al. 2011. ``Prismatic Core Coupled
+        Transient Benchmark.'' Transactions of the American Nuclear Society
         104: 854.
         """
         return 1650.0*units.joule/(units.kg*units.kelvin)
@@ -99,7 +97,7 @@ class Graphite(THComponent):
 
         Andreades, C., A.T. Cisneros, J.K. Choi, A.Y.K Chong, David L.
         Krumwiede, Lakshana Huddar, Kathryn D. Huff, et al. 2014. Technical
-        Description of the `Mark 1’ Pebble-Bed, Fluoride-Salt-Cooled,
+        Description of the Mark 1 Pebble-Bed, Fluoride-Salt-Cooled,
         High-Temperature Reactor Power Plant. Thermal Hydraulics Group
         UCBTH-14-002. FHR Project. Berkeley, CA: University of California,
         Berkeley, Department of Nuclear Engineering.
