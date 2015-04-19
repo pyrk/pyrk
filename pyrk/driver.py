@@ -145,9 +145,9 @@ def solve():
            and n.t < si.timer.tf.magnitude
            and th.t < si.timer.tf.magnitude):
         si.timer.advance_one_timestep()
-        n.integrate(n.t+si.timer.dt.magnitude)
+        n.integrate(si.timer.current_time().magnitude)
         update_n(n.t, n.y)
-        th.integrate(th.t+si.timer.dt.magnitude)
+        th.integrate(si.timer.current_time().magnitude)
         update_th(th.t, n.y, th.y)
     return _y
 

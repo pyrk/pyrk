@@ -13,17 +13,14 @@ from timer import Timer
 #############################################
 
 # [W/m-K]
-# in the pbmr, they use zehner-schlunder to approximate k_eff for the
-# pebble bed:
-# http://www.sciencedirect.com/science/article/pii/S0029549306000185
-# here is a paper on that approximation:
-# http://ac.els-cdn.com/0017931094903921/1-s2.0-0017931094903921-main.pdf
-# ?_tid=e7d08bac-b380-11e3-90e0-00000aacb35f&acdnat
-# =1395685377_d73165eba81bc145ccebc98c195abf36
-# 20 is what's assumed for the pbmr pebble bed...
-k_fuel = 2*units.watt/(units.meter*units.kelvin)  # W/m-K
-
-k_graphite = 0.26*units.watt/(units.meter*units.kelvin)  # W/m-K
+# triso kernels
+# Powers and Wirth:
+# http://www.sciencedirect.com/science/article/pii/S0022311510003284
+# Petti, Martin, Phelip et al
+# http://www.sciencedirect.com/science/article/pii/S0022311510003284#bib9
+# A first order, constant value approximation was made
+# based on Petti, Martin, Phelip, Fig 1.11
+k_fuel = 2.5*units.watt/(units.meter*units.kelvin)  # W/m-K
 
 # from design report, for fuel kernels
 rho_fuel = DensityModel(a=10500.0*units.kg/(units.meter**3),
@@ -72,6 +69,7 @@ dt = 0.005*units.seconds
 # Final Time
 tf = 1.0*units.seconds
 
+
 def area_sphere(r):
     assert(r >= 0*units.meter)
     return (4.0)*math.pi*pow(r.to('meter'), 2)
@@ -104,7 +102,6 @@ a_refl = 2*math.pi*core_outer_radius*core_height
 
 h_mod = 4700*units.watt/units.kelvin/units.meter**2  # TODO implement h(T) model
 h_refl = 600*units.watt/units.kelvin/units.meter**2  # TODO placeholder
-
 
 
 #############################################
