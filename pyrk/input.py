@@ -70,7 +70,7 @@ t0 = 0.00*units.seconds
 dt = 0.005*units.seconds
 
 # Final Time
-tf = 10.0*units.seconds
+tf = 1.0*units.seconds
 
 def area_sphere(r):
     assert(r >= 0*units.meter)

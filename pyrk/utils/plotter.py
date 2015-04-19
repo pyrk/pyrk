@@ -1,5 +1,4 @@
 # Licensed under a 3-clause BSD-style license - see LiCENSE.rst
-import numpy as np
 import os
 import matplotlib.pyplot as plt
 import matplotlib.cm as cmx
@@ -20,9 +19,7 @@ def plot(y, si):
     """Creates plots for interesting values in the simulation.
     :param y: The full solution array
     :type y: np.ndarray"""
-    x = np.arange(start=si.timer.t0.magnitude,
-                  stop=si.timer.tf.magnitude+si.timer.dt.magnitude,
-                  step=si.timer.dt.magnitude)
+    x = si.timer.series.magnitude
     plot_power(x, y)
     plot_reactivity(x, si)
     plot_zetas(x, y, si)

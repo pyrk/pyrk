@@ -1,3 +1,4 @@
+import numpy as np
 from inp import validation
 from ur import units
 import logging
@@ -12,6 +13,10 @@ class Timer(object):
         self.t0 = validation.validate_ge("t0", t0, 0*units.seconds)
         self.tf = validation.validate_ge("tf", tf, t0)
         self.dt = validation.validate_ge("dt", dt, 0*units.seconds)
+        self.series = units.Quantity(np.linspace(start=t0.magnitude,
+                                                 stop=tf.magnitude,
+                                                 num=self.timesteps()),
+                                     'seconds')
         self.ts = 0
 
     def t_idx(self, time):
