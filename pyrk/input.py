@@ -1,42 +1,16 @@
 from ur import units
-from density_model import DensityModel
 import th_component as th
 import math
 from flibe import Flibe
 from graphite import Graphite
+from kernel import Kernel
 from timer import Timer
-from material import Material
 
 #############################################
 #
 # User Workspace
 #
 #############################################
-
-# [W/m-K]
-# triso kernels
-# Powers and Wirth:
-# http://www.sciencedirect.com/science/article/pii/S0022311510003284
-# Petti, Martin, Phelip et al
-# http://www.sciencedirect.com/science/article/pii/S0022311510003284#bib9
-# A first order, constant value approximation was made
-# based on Petti, Martin, Phelip, Fig 1.11
-k_fuel = 2.5*units.watt/(units.meter*units.kelvin)  # W/m-K
-
-# from design report, for fuel kernels
-rho_fuel = DensityModel(a=10500.0*units.kg/(units.meter**3),
-                        model="constant")
-
-# from design report, for reflector graphite
-rho_graphite = DensityModel(a=1740*units.kg/(units.meter**3),
-                            model='constant')
-
-# From COMSOL model by Raluca Scarlat
-cp_fuel = 1744*units.joule/(units.kg*units.kelvin)  # [J/kg-K]
-
-# Approximate:
-# http://www.sciencedirect.com/science/article/pii/0022369760900950
-cp_graphite = 1650.0*units.joule/(units.kg*units.kelvin)  # [J/kg-K]
 
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
@@ -65,10 +39,10 @@ core_outer_radius = 1.25*units.meter  #
 t0 = 0.00*units.seconds
 
 # Timestep
-dt = 0.005*units.seconds
+dt = 0.001*units.seconds
 
 # Final Time
-tf = 1.0*units.seconds
+tf = 0.2*units.seconds
 
 
 
@@ -96,7 +70,8 @@ vol_cool = 7.20*units.meter**3
 mass_inner_refl = 43310.0*units.kg
 mass_outer_refl = 5940.0*units.kg
 mass_refl = mass_inner_refl + mass_outer_refl
-vol_refl = mass_refl/rho_graphite.rho()
+rho_refl = 1740.0*units.kg/units.meter**3
+vol_refl = mass_refl/rho_refl
 
 a_mod = area_sphere(r_pebble)*n_pebbles
 a_fuel = area_sphere(r_particle)*n_pebbles*n_particles_per_pebble
@@ -137,13 +112,8 @@ feedback = False
 nsteps = 1000
 
 
-fuel_mat = Material(name="kernel",
-                    k=k_fuel,
-                    cp=cp_fuel,
-                    dm=rho_fuel)
-
 fuel = th.THComponent(name="fuel",
-                      mat=fuel_mat,
+                      mat=Kernel(name="fuelkernel"),
                       vol=vol_fuel,
                       T0=t_f,
                       alpha_temp=alpha_f,
