@@ -24,8 +24,10 @@ def plot(y, si):
     x = si.timer.series.magnitude
     plot_power(x, y)
     plot_reactivity(x, si)
+    plot_power_w_reactivity(x=x, y=y, si=si)
     plot_zetas(x, y, si)
-    plot_omegas(x, y, si)
+    if si.ne._ndg > 0:
+        plot_omegas(x, y, si)
     plot_temps_together(x, y, si)
     plot_temps_separately(x, y, si)
 
@@ -49,6 +51,19 @@ def plot_power(x, y):
     plt.ylabel("Power [units]")
     plt.title("Power [units]")
     saveplot("power", plt)
+
+
+def plot_power_w_reactivity(x, si, y):
+    power = y[:, 0]
+    rho = si.ne._rho
+    plt.plot(x, power, color=my_colors(0, 2), marker='.', label="Power")
+    plt.plot(x, rho, color=my_colors(1, 2), marker='.',
+             label="External Reactivity")
+    plt.legend()
+    plt.xlabel("Time [s]")
+    plt.ylabel("Power and Reactivity [$\Delta k$]")
+    plt.title("Power and Reactivity [$\Delta k$]")
+    saveplot("pow_and_rho", plt)
 
 
 def plot_temps_together(x, y, si):
