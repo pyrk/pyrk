@@ -8,31 +8,16 @@ scripts.
 import numpy as np
 from scipy.integrate import ode
 import importlib
+import argparse
 
 from utils.logger import logger
 from inp import sim_info
 from ur import units
 from utils import plotter
 
-np.set_printoptions(precision=5, threshold=np.inf)
-
-infile = importlib.import_module("input")
-
-si = sim_info.SimInfo(timer=infile.ti,
-                      components=infile.components,
-                      iso=infile.fission_iso,
-                      e=infile.spectrum,
-                      n_precursors=infile.n_pg,
-                      n_decay=infile.n_dg,
-                      kappa=infile.kappa,
-                      feedback=infile.feedback)
-
-n_components = len(si.components)
-
-_y = np.zeros(shape=(si.timer.timesteps(), si.n_entries()), dtype=float)
 
 
-def update_n(t, y_n):
+def update_n(t, y, y_n):
     """This function updates the neutronics block.
 
     :param t: the time [s] at which the update is occuring.
@@ -139,10 +124,11 @@ def y0_th():
     return y
 
 
-def solve():
+def solve(si, y, infile):
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
     n = ode(f_n).set_integrator('dopri5')
-    n.set_initial_value(y0_n(), si.timer.t0.magnitude)
+    n.set_initial_value(y0_n(), si.timer.
+                        t0.magnitude)
     th = ode(f_th).set_integrator('dopri5', nsteps=infile.nsteps)
     th.set_initial_value(y0_th(), si.timer.t0.magnitude)
     while (n.successful()
@@ -167,16 +153,44 @@ def log_results():
     logger.info("\nDecay kappas: \n"+str(si.ne._dd.kappas()))
     logger.info("\nDecay lambdas: \n"+str(si.ne._dd.lambdas()))
 
-
-"""Run it as a script"""
-if __name__ == "__main__":
+def print_logo():
     with open('logo.txt', 'r') as logo:
         logger.critical("\nWelcome to PyRK.\n" +
                         "(c) Kathryn D. Huff\n" +
                         "Your simulation is starting.\n" +
                         "Perhaps it's time for a coffee.\n" +
                         logo.read())
-    sol = solve()
-    log_results()
+
+def main(args):
+    np.set_printoptions(precision=5, threshold=np.inf)
+
+    infile = importlib.import_module(args.infile)
+
+    si = sim_info.SimInfo(timer=infile.ti,
+                          components=infile.components,
+                          iso=infile.fission_iso,
+                          e=infile.spectrum,
+                          n_precursors=infile.n_pg,
+                          n_decay=infile.n_dg,
+                          kappa=infile.kappa,
+                          feedback=infile.feedback)
+    print_logo()
+
+
+    _y = np.zeros(shape=(si.timer.timesteps(), si.n_entries()), dtype=float)
+    n_components = len(si.components)
+
+    sol = solve(si=si, y=_y, infile=infile)
+    log_results(si, _y)
     plotter.plot(sol, si)
     logger.critical("\nSimulation succeeded.\n")
+
+
+
+"""Run it as a script"""
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description = 'Say hello')
+    parser.add_argument('name', help='your name, enter it')
+    args = parser.parse_args()
+    main(args.name)
+
