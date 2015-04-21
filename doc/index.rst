@@ -7,12 +7,26 @@
 PyRK
 ====
 
-Contents:
+.. image:: logo
+
+    .. image:: images/logo.png
+       :width: 25 %
+       :target: images/logo.png
+       :alt: PyRK logo
+
+
+PyRK is a python package for reactor kinetics. It uses a point reactor kinetics
+model and provides an object oriented simulation environment intended for
+transient simulations for reactors. It should perk you right up, like a good
+cup of coffee.
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
 
    pyrk
+   tutorial
+   authors
+   pubs
 
 
 Indices and tables
@@ -22,3 +36,7 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+.. _GitHub project site: https://github.com/pyrk
+
+.. _github: https://github.com/pyrk/pyrk

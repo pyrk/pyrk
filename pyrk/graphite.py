@@ -5,19 +5,13 @@ from density_model import DensityModel
 
 class Graphite(Material):
     """This class represents graphite materials. It inherits from the material
-    class and has attributes related to graphite.
+    class and has attributes intrinsic to graphite.
     """
     def __init__(self, name="graphite"):
         """Initalizes a material
 
-        :param name: The name of the component (i.e., "fuel" or "cool")
+        :param name: The name of the material (i.e., "fuel" or "cool")
         :type name: str.
-        :param k: The thermal conductivity of the component
-        :type k: float.
-        :param cp: specific heat capacity, $c_p$, in units of $J/kg-K$
-        :type cp: float, in units of $J/kg-K$
-        :param dm: The density of the component
-        :type dm: DensityModel object
         """
         Material.__init__(self,
                           name=name,

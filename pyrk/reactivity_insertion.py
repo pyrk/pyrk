@@ -8,12 +8,18 @@ class ReactivityInsertion(object):
     The default is no external reactivity insertion:
 
 
-    rho = 0  __________________________________
+     rho = 0  __________________________________
 
 
              t0                                tf
     """
     def __init__(self, timer):
+        """
+        Creates a reactivity insertion object for driving the transient.
+
+        :param timer: the timer object for the simulation
+        :type timer: Timer
+        """
         self.timer = timer
         self.vals = [self.f(t_idx) for t_idx in range(timer.timesteps())]
 
@@ -25,17 +31,17 @@ class ReactivityInsertion(object):
 
 
 class StepReactivityInsertion(ReactivityInsertion):
-    """Returns a Heaviside step function.
+    """Returns a Heaviside step function::
 
 
-    rho_final               _____________________
-                           |
-                           |
-                           |
-                           |
-                           |
-                           |
-    rho_init ______________|
+     rho_final               _____________________
+                            |
+                            |
+                            |
+                            |
+                            |
+                            |
+     rho_init ______________|
 
                            t_step
     """
@@ -44,7 +50,17 @@ class StepReactivityInsertion(ReactivityInsertion):
                  t_step=1.0*units.seconds,
                  rho_init=0.0*units.delta_k,
                  rho_final=1.0*units.delta_k):
-        """Returns a Heaviside step function.
+        """Returns a Heaviside step function as the reactivity insertion object
+        for driving the transient.
+
+        :param timer: the timer object for the simulation
+        :type timer: Timer
+        :param t_step: The time at which the step occurs
+        :type t_step: float, seconds
+        :param rho_init: Initial reactivity (before t_step)
+        :type rho_init: float, units of delta_k
+        :param rho_final: Final reactivity (after t_step)
+        :type rho_final: float, units of delta_k
         """
         self.rho_init = rho_init
         self.rho_final = rho_final
@@ -60,20 +76,20 @@ class StepReactivityInsertion(ReactivityInsertion):
 
 class ImpulseReactivityInsertion(ReactivityInsertion):
     """
-    Returns an impulse with a width
+    Returns an impulse with a width::
 
 
-    rho_max                 ________________
-                           |                |
-                           |                |
-                           |                |
-                           |                |
-                           |                |
-                           |                |
-                           |                |
-    rho_init ______________|                |___________
+     rho_max                 ________________
+                            |                |
+                            |                |
+                            |                |
+                            |                |
+                            |                |
+                            |                |
+                            |                |
+     rho_init ______________|                |___________
 
-                           t_start         t_end
+                            t_start         t_end
     """
     def __init__(self,
                  timer,
@@ -98,18 +114,18 @@ class ImpulseReactivityInsertion(ReactivityInsertion):
 
 class RampReactivityInsertion(ReactivityInsertion):
     """
-    Returns a ramp
+    Returns a ramp::
 
-    rho_rise
-                                  /|
-                                 / |
-                                /  |
-                               /   |
-    rho_final                 /    |__________
+     rho_rise
+                                   /|
+                                  / |
+                                 /  |
+                                /   |
+     rho_final                 /    |__________
+                              /
                              /
-                            /
-    rho_init ______________/
-                        t_start    t_end
+     rho_init ______________/
+                         t_start    t_end
     """
     def __init__(self,
                  timer,

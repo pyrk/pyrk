@@ -1,31 +1,18 @@
 pyrk package
 ============
 
-Subpackages
------------
+Module contents
+---------------
 
-.. toctree::
-
-    pyrk.data
-    pyrk.db
-    pyrk.inp
-    pyrk.utils
-
-Submodules
-----------
+.. automodule:: pyrk
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 pyrk.driver module
 ------------------
 
 .. automodule:: pyrk.driver
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pyrk.kinetics module
---------------------
-
-.. automodule:: pyrk.kinetics
     :members:
     :undoc-members:
     :show-inheritance:
@@ -38,59 +25,60 @@ pyrk.neutronics module
     :undoc-members:
     :show-inheritance:
 
-pyrk.reactivity_external module
--------------------------------
+pyrk.reactivity_insertion module
+----------------------------------
 
-.. automodule:: pyrk.reactivity_external
+.. automodule:: pyrk.reactivity_insertion
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyrk.state module
------------------
-
-.. automodule:: pyrk.state
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pyrk.testin module
-------------------
-
-.. automodule:: pyrk.testin
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pyrk.th_params module
----------------------
+pyrk.th_component module
+-------------------------
 
 .. automodule:: pyrk.th_params
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyrk.thermal_hydraulics module
-------------------------------
+pyrk.th_system module
+-----------------------
 
 .. automodule:: pyrk.thermal_hydraulics
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyrk.version module
--------------------
+pyrk.material module
+---------------------
 
-.. automodule:: pyrk.version
+.. automodule:: pyrk.material
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyrk.graphite module
+---------------------
+
+.. automodule:: pyrk.graphite
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-Module contents
----------------
+pyrk.flibe module
+------------------
 
-.. automodule:: pyrk
+.. automodule:: pyrk.flibe
     :members:
     :undoc-members:
     :show-inheritance:
+
+pyrk.kernel module
+--------------------
+
+.. automodule:: pyrk.kernel
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

@@ -14,6 +14,7 @@ class DensityModel(object):
                  model="linear"):
         """
         Initializes the DensityModel object.
+
         :param model: The keyword for a model type.
         :type model: string
         :param a: first coefficient of the model
@@ -41,6 +42,7 @@ class DensityModel(object):
     def rho(self, temp=0*units.kelvin):
         """
         Returns the density based on the temperature and the irradiation.
+
         :param temp: the temperature
         :type temp: float.
         """
@@ -49,7 +51,8 @@ class DensityModel(object):
     def constant(self, temp=0*units.kelvin):
         # yes, we're ignoring the temperature here.
         """
-        Returns a .
+        Returns a constant density, a.
+
         :param temp: The temperature of the object
         :type temp: float.
         """
@@ -57,7 +60,8 @@ class DensityModel(object):
 
     def linear(self, temp=0.0*units.kelvin):
         """
-        Returns a + b*temp .
+        Returns a linear dependence on temperature ($ a + b*temp$) .
+
         :param temp: The temperature of the object
         :type temp: float. units of kelvin
         """
