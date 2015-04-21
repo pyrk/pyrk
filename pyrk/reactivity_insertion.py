@@ -13,6 +13,7 @@ class ReactivityInsertion(object):
 
              t0                                tf
     """
+
     def __init__(self, timer):
         """
         Creates a reactivity insertion object for driving the transient.
