@@ -26,8 +26,8 @@ class Neutronics(object):
         :type n_precursors: int.
         :param n_decay: The number of decay heat groups. 11 is supported.
         :type n_decay: int.
-        :param ext: External reactivity, a function of time
-        :type ext: function
+        :param rho_ext: External reactivity, a function of time
+        :type rho_ext: function
         :returns: A Neutronics object that holds neutronics simulation info
         """
 

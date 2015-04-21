@@ -57,11 +57,12 @@ def validate_num(valname, val):
             if isinstance(val.magnitude, (int, long, float, units.Quantity)):
                 return val
         except AttributeError:
-            msg = valname + " must be an integer, long, float, or Quantity.\n"
-            msg += "The value provided was of type " + str(type(val))
-            msg += " and value "
-            msg += str(val)
-            raise TypeError(msg)
+                pass
+    msg = valname + " must be an integer, long, float, or Quantity.\n"
+    msg += "The value provided was of type " + str(type(val))
+    msg += " and value "
+    msg += str(val)
+    raise TypeError(msg)
 
 
 def validate_not_none(valname, val):
