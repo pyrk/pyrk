@@ -1,55 +1,52 @@
-pyrk package
+PyRK package
 ============
-
-Module contents
----------------
 
 .. automodule:: pyrk
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyrk.driver module
-------------------
+pyrk.driver
+-------------
 
 .. automodule:: pyrk.driver
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyrk.neutronics module
-----------------------
+pyrk.neutronics
+-----------------
 
 .. automodule:: pyrk.neutronics
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyrk.reactivity_insertion module
-----------------------------------
+pyrk.reactivity_insertion
+--------------------------
 
 .. automodule:: pyrk.reactivity_insertion
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyrk.th_component module
--------------------------
+pyrk.th_component
+-------------------
 
-.. automodule:: pyrk.th_params
+.. automodule:: pyrk.th_component
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyrk.th_system module
------------------------
+pyrk.th_system
+----------------
 
-.. automodule:: pyrk.thermal_hydraulics
+.. automodule:: pyrk.th_system
     :members:
     :undoc-members:
     :show-inheritance:
 
-pyrk.material module
+pyrk.material
 ---------------------
 
 .. automodule:: pyrk.material
@@ -57,7 +54,7 @@ pyrk.material module
     :undoc-members:
     :show-inheritance:
 
-pyrk.graphite module
+pyrk.graphite
 ---------------------
 
 .. automodule:: pyrk.graphite
@@ -66,7 +63,7 @@ pyrk.graphite module
     :show-inheritance:
 
 
-pyrk.flibe module
+pyrk.flibe
 ------------------
 
 .. automodule:: pyrk.flibe
@@ -74,7 +71,7 @@ pyrk.flibe module
     :undoc-members:
     :show-inheritance:
 
-pyrk.kernel module
+pyrk.kernel
 --------------------
 
 .. automodule:: pyrk.kernel

@@ -29,7 +29,7 @@ class Graphite(Material):
         Perpendicular to forming axis:
         135 W/m-K
 
-        Burchell, T.D. 2001. ``Nuclear Graphite and Radiation Effects.'' In
+        Burchell, T.D. 2001. ''Nuclear Graphite and Radiation Effects.'' In
         Encyclopedia of Materials: Science and Technology (Second Edition),
         edited by K.H. Jurgen Buschow, Robert W. Cahn, Merton C. Flemings,
         Bernhard Ilschner, Edward J. Kramer, Subhash Mahajan, and Patrick
@@ -48,16 +48,17 @@ class Graphite(Material):
 
         The temperature dependent model arrived at in Ortensi et al is :
 
-        cp = (0.54212
-             - (2.42667E-06)*T
-             - (9.02725E+01)*pow(T,-1)
-             - (4.34493E+04)*pow(T,-2)
-             + (1.59309E+07)*pow(T,-3)
-             - (1.43688E+09)*pow(T,-4))*4184
+        .. math::
+            cp = (0.54212
+                - (2.42667E-06)*T
+                - (9.02725E+01)*pow(T,-1)
+                - (4.34493E+04)*pow(T,-2)
+                + (1.59309E+07)*pow(T,-3)
+                - (1.43688E+09)*pow(T,-4))*4184
 
 
         Ortensi, J., M. A. Pope, G. Strydom, R. S. Sen, M. D. DeHart, H.
-        D. Gougar, C. Ellis, et al. 2011. ``Prismatic Core Coupled
+        D. Gougar, C. Ellis, et al. 2011. ''Prismatic Core Coupled
         Transient Benchmark.'' Transactions of the American Nuclear Society
         104: 854.
         """

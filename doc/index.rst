@@ -7,12 +7,9 @@
 PyRK
 ====
 
-.. image:: logo
-
-    .. image:: images/logo.png
-       :width: 25 %
-       :target: images/logo.png
-       :alt: PyRK logo
+.. image:: images/logo.png
+   :width: 25 %
+   :alt: PyRK logo
 
 
 PyRK is a python package for reactor kinetics. It uses a point reactor kinetics
@@ -26,7 +23,6 @@ cup of coffee.
    pyrk
    tutorial
    authors
-   pubs
 
 
 Indices and tables

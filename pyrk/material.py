@@ -17,9 +17,9 @@ class Material(object):
         :type name: str.
         :param k: The thermal conductivity of the component
         :type k: float.
-        :param cp: specific heat capacity, $c_p$, in units of $J/kg-K$
-        :type cp: float, in units of $J/kg-K$
-        :param dm: The density of the component
+        :param cp: specific heat capacity, :math:`c_p`, in :math:`J/kg-K`
+        :type cp: float, pint.unit.Quantity :math:`J/kg-K`
+        :param dm: The density of the material
         :type dm: DensityModel object
         """
         self.name = name
@@ -30,11 +30,13 @@ class Material(object):
         self.dm = dm
 
     def rho(self, temp):
-        """The density of this component's materials
+        """
+        The density of this material as a function of temperature.
+
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
         :return: the density of this component
-        :rtype: float, in units of $kg/m^3$
+        :rtype: float, in units of :math:`kg/m^3`
         """
         ret = self.dm.rho(temp)
         return ret

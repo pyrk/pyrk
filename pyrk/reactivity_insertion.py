@@ -5,8 +5,7 @@ class ReactivityInsertion(object):
     """This is the default reactivity insertion object class from whence all
     others are derived.
 
-    The default is no external reactivity insertion:
-
+    The default is no external reactivity insertion::
 
      rho = 0  __________________________________
 
@@ -32,7 +31,8 @@ class ReactivityInsertion(object):
 
 
 class StepReactivityInsertion(ReactivityInsertion):
-    """Returns a Heaviside step function::
+    """
+    Returns a Heaviside step function::
 
 
      rho_final               _____________________

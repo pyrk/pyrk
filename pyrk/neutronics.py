@@ -18,7 +18,6 @@ class Neutronics(object):
         Creates a Neutronics object that holds the neutronics simulation
         information.
 
-
         :param iso: The fissioning isotope. 'u235' or 'pu239' are supported.
         :type iso: str.
         :param e: The energy spectrum 'thermal' or 'fast' are supported.
