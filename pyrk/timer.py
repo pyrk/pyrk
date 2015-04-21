@@ -8,11 +8,13 @@ log = logging.getLogger(__name__)
 class Timer(object):
     """This class holds information about time"""
 
-    def __init__(self, t0=0.0*units.seconds, tf=1.0*units.seconds,
+    def __init__(self,
+                 t0=0.0*units.seconds,
+                 tf=1.0*units.seconds,
                  dt=1.0*units.seconds):
-        self.t0 = validation.validate_ge("t0", t0, 0*units.seconds)
+        self.t0 = validation.validate_ge("t0", t0, 0.0*units.seconds)
         self.tf = validation.validate_ge("tf", tf, t0)
-        self.dt = validation.validate_ge("dt", dt, 0*units.seconds)
+        self.dt = validation.validate_ge("dt", dt, 0.0*units.seconds)
         self.series = units.Quantity(np.linspace(start=t0.magnitude,
                                                  stop=tf.magnitude,
                                                  num=self.timesteps()),
