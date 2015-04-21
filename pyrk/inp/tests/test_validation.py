@@ -2,6 +2,7 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 
 from pyrk.inp import validation as v
+from pyrk.ur import units
 
 
 def test_ge_wrong_type():
@@ -9,6 +10,13 @@ def test_ge_wrong_type():
     valname = "testval"
     llim = 0
     assert_raises(TypeError, v.validate_ge, valname, val, llim)
+
+
+def test_ge_Quantity_type():
+    val = 10*units.meter
+    valname = "testval"
+    llim = 0*units.meter
+    assert_equal(v.validate_ge(valname, val, llim), val)
 
 
 def test_ge_right_type():
@@ -58,3 +66,9 @@ def test_le_both_large():
     valname = "testval"
     ulim = val
     assert_equal(v.validate_le(valname, val, ulim), val)
+
+
+def test_num_Quantity_type():
+    val = 10*units.meter
+    valname = "testval"
+    assert_equal(v.validate_num(valname, val), val)
