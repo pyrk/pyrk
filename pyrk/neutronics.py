@@ -13,11 +13,10 @@ class Neutronics(object):
     """
 
     def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 timer=Timer(), rho_ext=None):
+                 timer=Timer(), rho_ext=None, feedback=False):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
-
 
         :param iso: The fissioning isotope. 'u235' or 'pu239' are supported.
         :type iso: str.
@@ -27,8 +26,8 @@ class Neutronics(object):
         :type n_precursors: int.
         :param n_decay: The number of decay heat groups. 11 is supported.
         :type n_decay: int.
-        :param ext: External reactivity, a function of time
-        :type ext: function
+        :param rho_ext: External reactivity, a function of time
+        :type rho_ext: function
         :returns: A Neutronics object that holds neutronics simulation info
         """
 
@@ -60,12 +59,13 @@ class Neutronics(object):
         """_rho_ext (ReactivityInsertion): Reactivity function from the
         reactivity insertion model"""
 
+        self.feedback =  feedback
+        """feedback (bool): False if no reactivity feedbacks, true otherwise"""
+
     def init_rho_ext(self, rho_ext):
-        if rho_ext is not None:
-            return rho_ext
-        else:
+        if rho_ext is None:
             rho_ext = ReactivityInsertion(self._timer)
-            return rho_ext
+        return rho_ext
 
     def dpdt(self, t_idx, components, power, zetas):
         """Calculates the power term. The first in the neutronics block.
@@ -130,8 +130,9 @@ class Neutronics(object):
         :type components: list of THComponent objects
         """
         rho = {}
-        for component in components:
-            rho[component.name] = component.temp_reactivity()
+        if self.feedback:
+            for component in components:
+                rho[component.name] = component.temp_reactivity()
         rho["external"] = self._rho_ext(t_idx=t_idx).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret

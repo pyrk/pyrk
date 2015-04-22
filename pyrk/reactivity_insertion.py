@@ -3,8 +3,23 @@ from ur import units
 
 class ReactivityInsertion(object):
     """This is the default reactivity insertion object class from whence all
-    others are derived."""
+    others are derived.
+
+    The default is no external reactivity insertion::
+
+     rho = 0  __________________________________
+
+
+             t0                                tf
+    """
+
     def __init__(self, timer):
+        """
+        Creates a reactivity insertion object for driving the transient.
+
+        :param timer: the timer object for the simulation
+        :type timer: Timer
+        """
         self.timer = timer
         self.vals = [self.f(t_idx) for t_idx in range(timer.timesteps())]
 
@@ -15,33 +30,43 @@ class ReactivityInsertion(object):
         return self.vals[t_idx]
 
 
-class StepReactivity(ReactivityInsertion):
-    """Returns a Heaviside step function.
+class StepReactivityInsertion(ReactivityInsertion):
+    """
+    Returns a Heaviside step function::
 
 
-    rho_final               _____________________
-                           |
-                           |
-                           |
-                           |
-                           |
-                           |
-    rho_init ______________|
+     rho_final               _____________________
+                            |
+                            |
+                            |
+                            |
+                            |
+                            |
+     rho_init ______________|
 
                            t_step
     """
-
     def __init__(self,
                  timer,
                  t_step=1.0*units.seconds,
                  rho_init=0.0*units.delta_k,
                  rho_final=1.0*units.delta_k):
-        """Returns a Heaviside step function.
+        """Returns a Heaviside step function as the reactivity insertion object
+        for driving the transient.
+
+        :param timer: the timer object for the simulation
+        :type timer: Timer
+        :param t_step: The time at which the step occurs
+        :type t_step: float, seconds
+        :param rho_init: Initial reactivity (before t_step)
+        :type rho_init: float, units of delta_k
+        :param rho_final: Final reactivity (after t_step)
+        :type rho_final: float, units of delta_k
         """
-        ReactivityInsertion.__init__(self, timer=timer)
-        self.rho_init = rho_init
-        self.rho_final = rho_final
+        self.rho_init = rho_init.to('delta_k')
+        self.rho_final = rho_final.to('delta_k')
         self.t_step = t_step
+        ReactivityInsertion.__init__(self, timer=timer)
 
     def f(self, x):
         if x < self.timer.t_idx(self.t_step):
@@ -52,20 +77,20 @@ class StepReactivity(ReactivityInsertion):
 
 class ImpulseReactivityInsertion(ReactivityInsertion):
     """
-    Returns an impulse with a width
+    Returns an impulse with a width::
 
 
-    rho_max                 ________________
-                           |                |
-                           |                |
-                           |                |
-                           |                |
-                           |                |
-                           |                |
-                           |                |
-    rho_init ______________|                |___________
+     rho_max                 ________________
+                            |                |
+                            |                |
+                            |                |
+                            |                |
+                            |                |
+                            |                |
+                            |                |
+     rho_init ______________|                |___________
 
-                           t_start         t_end
+                            t_start         t_end
     """
     def __init__(self,
                  timer,
@@ -73,11 +98,11 @@ class ImpulseReactivityInsertion(ReactivityInsertion):
                  t_end=2.0*units.seconds,
                  rho_init=0.0*units.delta_k,
                  rho_max=1.0*units.delta_k):
-        ReactivityInsertion.__init__(self, timer=timer)
         self.t_start = t_start
         self.t_end = t_end
         self.rho_init = rho_init
         self.rho_max = rho_max
+        ReactivityInsertion.__init__(self, timer=timer)
 
     def f(self, x):
         if x < self.timer.t_idx(self.t_start):
@@ -90,18 +115,18 @@ class ImpulseReactivityInsertion(ReactivityInsertion):
 
 class RampReactivityInsertion(ReactivityInsertion):
     """
-    Returns a ramp
+    Returns a ramp::
 
-    rho_rise
-                                  /|
-                                 / |
-                                /  |
-                               /   |
-    rho_final                 /    |__________
+     rho_rise
+                                   /|
+                                  / |
+                                 /  |
+                                /   |
+     rho_final                 /    |__________
+                              /
                              /
-                            /
-    rho_init ______________/
-                        t_start    t_end
+     rho_init ______________/
+                         t_start    t_end
     """
     def __init__(self,
                  timer,
@@ -110,18 +135,19 @@ class RampReactivityInsertion(ReactivityInsertion):
                  rho_init=0.0*units.delta_k,
                  rho_rise=1.0*units.delta_k,
                  rho_final=1.0*units.delta_k):
-        ReactivityInsertion.__init__(self, timer=timer)
         self.t_start = t_start
         self.t_end = t_end
         self.rho_init = rho_init
         self.rho_rise = rho_rise
         self.rho_final = rho_final
+        ReactivityInsertion.__init__(self, timer=timer)
 
     def f(self, x):
         if x < self.timer.t_idx(self.t_start):
             return self.rho_init
         elif x <= self.timer.t_idx(self.t_end):
-            return self.slope()*(x - self.timer.t_idx(self.t_start))
+            return self.rho_init + \
+                self.slope()*(x - self.timer.t_idx(self.t_start))
         else:
             return self.rho_final
 

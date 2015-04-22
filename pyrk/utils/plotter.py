@@ -1,6 +1,7 @@
 # Licensed under a 3-clause BSD-style license - see LiCENSE.rst
-import numpy as np
 import os
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.cm as cmx
 import matplotlib.colors as colors
@@ -20,13 +21,13 @@ def plot(y, si):
     """Creates plots for interesting values in the simulation.
     :param y: The full solution array
     :type y: np.ndarray"""
-    x = np.arange(start=si.timer.t0.magnitude,
-                  stop=si.timer.tf.magnitude+si.timer.dt.magnitude,
-                  step=si.timer.dt.magnitude)
+    x = si.timer.series.magnitude
     plot_power(x, y)
     plot_reactivity(x, si)
+    plot_power_w_reactivity(x=x, y=y, si=si)
     plot_zetas(x, y, si)
-    plot_omegas(x, y, si)
+    if si.ne._ndg > 0:
+        plot_omegas(x, y, si)
     plot_temps_together(x, y, si)
     plot_temps_separately(x, y, si)
 
@@ -50,6 +51,19 @@ def plot_power(x, y):
     plt.ylabel("Power [units]")
     plt.title("Power [units]")
     saveplot("power", plt)
+
+
+def plot_power_w_reactivity(x, si, y):
+    power = y[:, 0]
+    rho = si.ne._rho
+    plt.plot(x, power, color=my_colors(0, 2), marker='.', label="Power")
+    plt.plot(x, rho, color=my_colors(1, 2), marker='.',
+             label="External Reactivity")
+    plt.legend()
+    plt.xlabel("Time [s]")
+    plt.ylabel("Power and Reactivity [$\Delta k$]")
+    plt.title("Power and Reactivity [$\Delta k$]")
+    saveplot("pow_and_rho", plt)
 
 
 def plot_temps_together(x, y, si):

@@ -1,15 +1,13 @@
 pyrk.data package
 =================
 
-Subpackages
------------
+The data package holds precursor group and decay heat group data for the 
+neutronics calculation.
 
-.. toctree::
-
-    pyrk.data.tests
-
-Submodules
-----------
+.. automodule:: pyrk.data
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 pyrk.data.decay_heat module
 ---------------------------
@@ -27,11 +25,8 @@ pyrk.data.precursors module
     :undoc-members:
     :show-inheritance:
 
+Tests
+------
+.. toctree::
 
-Module contents
----------------
-
-.. automodule:: pyrk.data
-    :members:
-    :undoc-members:
-    :show-inheritance:
+    pyrk.data.tests

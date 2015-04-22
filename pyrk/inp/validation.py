@@ -4,6 +4,7 @@ from ur import units
 def validate_ge(valname, val, llim):
     """Raises errors if the value is less than the lower limit (llim) or if it
     is of the wrong type
+
     :param valname: the name of the value being validated
     :type valname: string
     :param val: the value to be validated
@@ -24,6 +25,7 @@ def validate_ge(valname, val, llim):
 def validate_le(valname, val, ulim):
     """Raises errors if the value is greater than the upper limit (ulim) or if it
     is of the wrong type
+
     :param valname: the name of the value being validated
     :type valname: string
     :param val: the value to be validated
@@ -42,6 +44,7 @@ def validate_le(valname, val, ulim):
 
 def validate_num(valname, val):
     """Checks that val is a number
+
     :param valname: the name of the value being validated
     :type valname: string
     :param val: the value to be validated
@@ -50,15 +53,21 @@ def validate_num(valname, val):
     if isinstance(val, (int, long, float, units.Quantity)):
         return val
     else:
-        msg = valname + " must be an integer, long, float, or Quantity.\n"
-        msg += "The value provided was of type " + str(type(val))
-        msg += " and value "
-        msg += str(val)
-        raise TypeError(msg)
+        try:
+            if isinstance(val.magnitude, (int, long, float, units.Quantity)):
+                return val
+        except AttributeError:
+                pass
+    msg = valname + " must be an integer, long, float, or Quantity.\n"
+    msg += "The value provided was of type " + str(type(val))
+    msg += " and value "
+    msg += str(val)
+    raise TypeError(msg)
 
 
 def validate_not_none(valname, val):
     """Checks that val is not None
+
     :param valname: the name of the value being validated
     :type valname: string
     :param val: the value to be validated
@@ -73,6 +82,15 @@ def validate_not_none(valname, val):
 
 
 def validate_supported(valname, val, supported):
+    """Checks that val is not None
+
+    :param valname: the name of the value being validated
+    :type valname: string
+    :param val: the value to be validated
+    :type val: any
+    :param supported: a list or tuple of allowed values for val
+    :type supported: list, tuple, anything with "in" functionality
+    """
     if val in supported:
         return val
     else:

@@ -1,8 +1,12 @@
 pyrk.utils package
 ==================
 
-Submodules
-----------
+
+.. automodule:: pyrk.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 pyrk.utils.exceptions module
 ----------------------------
@@ -21,10 +25,3 @@ pyrk.utils.logger module
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: pyrk.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:

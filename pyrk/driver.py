@@ -24,7 +24,9 @@ si = sim_info.SimInfo(timer=infile.ti,
                       e=infile.spectrum,
                       n_precursors=infile.n_pg,
                       n_decay=infile.n_dg,
-                      kappa=infile.kappa)
+                      kappa=infile.kappa,
+                      feedback=infile.feedback,
+                      rho_ext=infile.rho_ext)
 
 n_components = len(si.components)
 
@@ -33,6 +35,7 @@ _y = np.zeros(shape=(si.timer.timesteps(), si.n_entries()), dtype=float)
 
 def update_n(t, y_n):
     """This function updates the neutronics block.
+
     :param t: the time [s] at which the update is occuring.
     :type t: float.
     :param y_n: The array that solves the neutronics block at time t
@@ -45,6 +48,7 @@ def update_n(t, y_n):
 
 def update_th(t, y_n, y_th):
     """This function updates the thermal hydraulics block.
+
     :param t: the time [s] at which the update is occuring.
     :type t: float.
     :param y_th: The array that solves thermal hydraulics block at time t
@@ -67,6 +71,7 @@ def update_f(t, y):
 
 def f_n(t, y):
     """Returns the neutronics block solution at time t
+
     :param t: the time [s] at which the update is occuring.
     :type t: float.
     :param y: TODO
@@ -89,6 +94,7 @@ def f_n(t, y):
 
 def f_th(t, y_th):
     """Returns the thermal hydraulics solution at time t
+
     :param t: the time [s] at which the update is occuring.
     :type t: float.
     :param y: TODO
@@ -154,9 +160,9 @@ def solve():
     eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps)
     eqn.set_initial_value(y0(), si.timer.t0.magnitude)
     while (eqn.successful() and eqn.t < si.timer.tf.magnitude):
+        si.timer.advance_one_timestep()
         eqn.integrate(eqn.t+si.timer.dt.magnitude)
         update_f(eqn.t, eqn.y)
-        si.timer.advance_timestep()
     return _y
 
 
