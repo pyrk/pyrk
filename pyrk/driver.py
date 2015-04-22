@@ -161,7 +161,7 @@ def solve():
     eqn.set_initial_value(y0(), si.timer.t0.magnitude)
     while (eqn.successful() and eqn.t < si.timer.tf.magnitude):
         si.timer.advance_one_timestep()
-        eqn.integrate(eqn.t+si.timer.dt.magnitude)
+        eqn.integrate(si.timer.current_time().magnitude)
         update_f(eqn.t, eqn.y)
     return _y
 
