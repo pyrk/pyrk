@@ -63,11 +63,9 @@ class Neutronics(object):
         """feedback (bool): False if no reactivity feedbacks, true otherwise"""
 
     def init_rho_ext(self, rho_ext):
-        if rho_ext is not None:
-            return rho_ext
-        else:
+        if rho_ext is None:
             rho_ext = ReactivityInsertion(self._timer)
-            return rho_ext
+        return rho_ext
 
     def dpdt(self, t_idx, components, power, zetas):
         """Calculates the power term. The first in the neutronics block.

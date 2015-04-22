@@ -18,11 +18,16 @@ alpha_f = -3.8*units.pcm/units.kelvin
 alpha_c = -1.8*units.pcm/units.kelvin
 alpha_m = -0.7*units.pcm/units.kelvin
 alpha_r = 1.8*units.pcm/units.kelvin
-# below from greenspan/cisneros
-t_f = units.Quantity(730.0, units.degC).to('K')
-t_c = units.Quantity(650.0, units.degC).to('K')
-t_m = units.Quantity(700.0, units.degC).to('K')
-t_r = units.Quantity(650.0, units.degC).to('K')
+# below from steady state analysis
+t_fuel = 955.58086*units.kelvin
+t_cool = 936.57636*units.kelvin
+t_refl = 923.18521*units.kelvin
+t_mod = 937.39862*units.kelvin
+t_graph_peb = 936.40806*units.kelvin
+t_core = 970.54064*units.kelvin
+
+
+
 # the data below comes from design doc rev c
 
 # self._vol_flow_rate = 976.0*0.3 # kg/s TODO 0.3 is nat circ guess
@@ -39,10 +44,10 @@ core_outer_radius = 1.25*units.meter  #
 t0 = 0.00*units.seconds
 
 # Timestep
-dt = 0.01*units.seconds
+dt = 0.005*units.seconds
 
 # Final Time
-tf = 30.0*units.seconds
+tf = 5.0*units.seconds
 
 
 def area_sphere(r):
@@ -116,7 +121,13 @@ fission_iso = "u235"
 spectrum = "thermal"
 
 # Feedbacks, False to turn reactivity feedback off. True otherwise.
-feedback = False
+feedback = True
+
+# External Reactivity
+from reactivity_insertion import StepReactivityInsertion
+rho_ext = StepReactivityInsertion(timer=ti, t_step=1.0*units.seconds,
+                                  rho_init=0.0*units.delta_k,
+                                  rho_final=0.005*units.delta_k)
 
 # maximum number of internal steps that the ode solver will take
 nsteps = 1000
@@ -125,7 +136,7 @@ nsteps = 1000
 fuel = th.THComponent(name="fuel",
                       mat=Kernel(name="fuelkernel"),
                       vol=vol_fuel,
-                      T0=t_f,
+                      T0=t_fuel,
                       alpha_temp=alpha_f,
                       timer=ti,
                       heatgen=True,
@@ -134,35 +145,35 @@ fuel = th.THComponent(name="fuel",
 cool = th.THComponent(name="cool",
                       mat=Flibe(name="flibe"),
                       vol=vol_cool,
-                      T0=t_c,
+                      T0=t_cool,
                       alpha_temp=alpha_c,
                       timer=ti)
 
 refl = th.THComponent(name="refl",
                       mat=Graphite(name="reflgraphite"),
                       vol=vol_refl,
-                      T0=t_r,
+                      T0=t_refl,
                       alpha_temp=alpha_r,
                       timer=ti)
 
 mod = th.THComponent(name="mod",
                      mat=Graphite(name="pebgraphite"),
                      vol=vol_mod,
-                     T0=t_m,
+                     T0=t_mod,
                      alpha_temp=alpha_mod,
                      timer=ti)
 
 core = th.THComponent(name="core",
                       mat=Graphite(name="pebgraphite"),
                       vol=vol_core,
-                      T0=t_m,
+                      T0=t_core,
                       alpha_temp=alpha_core,
                       timer=ti)
 
 graph_peb = th.THComponent(name="graph_peb",
                            mat=Graphite(name="pebgraphite"),
                            vol=vol_mod,
-                           T0=t_m,
+                           T0=t_graph_peb,
                            alpha_temp=alpha_graph_peb,
                            timer=ti)
 

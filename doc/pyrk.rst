@@ -6,6 +6,30 @@ PyRK package
     :undoc-members:
     :show-inheritance:
 
+Input Subpackage
+----------------
+
+.. toctree:: 
+   :maxdepth: 1
+
+   pyrk.inp
+
+Data Subpackage
+----------------
+
+.. toctree:: 
+   :maxdepth: 1
+
+   pyrk.data
+
+Utils Subpackage
+----------------
+
+.. toctree:: 
+   :maxdept: 1
+
+   pyrk.utils
+
 pyrk.driver
 -------------
 

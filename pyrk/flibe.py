@@ -40,15 +40,18 @@ class Flibe(Material):
         """
         FLiBe density as a funciton of T. [kg/m^3]
 
-        The relation isL
-        $ 2415 + 0.49072T $
+        The relation is
+        .. math::
+        2415 + 0.49072T\]
 
         This is based on
         http://aries.ucsd.edu/raffray/publications/FST/TOFE_15_Zaghloul.pdf
         it is valid between the melting point and the critical point
-        melting point [K]
+
+        .. math::
         t_m = 732.2
-        critical point [K]
+
+        .. math::
         t_c = 4498.8
         """
         return DensityModel(a=2415.6*units.kg/(units.meter**3),

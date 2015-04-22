@@ -63,8 +63,8 @@ class StepReactivityInsertion(ReactivityInsertion):
         :param rho_final: Final reactivity (after t_step)
         :type rho_final: float, units of delta_k
         """
-        self.rho_init = rho_init
-        self.rho_final = rho_final
+        self.rho_init = rho_init.to('delta_k')
+        self.rho_final = rho_final.to('delta_k')
         self.t_step = t_step
         ReactivityInsertion.__init__(self, timer=timer)
 
