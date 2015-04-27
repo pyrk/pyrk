@@ -19,12 +19,12 @@ alpha_c = -1.8*units.pcm/units.kelvin
 alpha_m = -0.7*units.pcm/units.kelvin
 alpha_r = 1.8*units.pcm/units.kelvin
 # below from steady state analysis
-t_fuel = 955.58086*units.kelvin
+t_fuel = 946.74521*units.kelvin
 t_cool = 936.57636*units.kelvin
 t_refl = 923.18521*units.kelvin
 t_mod = 937.39862*units.kelvin
 t_graph_peb = 936.40806*units.kelvin
-t_core = 970.54064*units.kelvin
+t_ldg = 970.54064*units.kelvin
 
 
 
@@ -44,7 +44,7 @@ core_outer_radius = 1.25*units.meter  #
 t0 = 0.00*units.seconds
 
 # Timestep
-dt = 0.005*units.seconds
+dt = 0.001*units.seconds
 
 # Final Time
 tf = 5.0*units.seconds
@@ -64,13 +64,13 @@ n_pebbles = 470000
 n_graph_peb = 218000
 n_particles_per_pebble = 4730
 r_pebble = 0.015*units.meter  # [m] diam = 3cm
-r_core = 0.0125*units.meter  # [m] diam = 2.5cm
+r_ldg = 0.0125*units.meter  # [m] diam = 2.5cm
 r_particle = 200*units.micrometer
 
 # vol of 4730 kernels per pebble, each 400 micrometer diameter
 vol_fuel = n_pebbles*n_particles_per_pebble*vol_sphere(r_particle)
-vol_core = (n_pebbles)*(vol_sphere(r_core))
-vol_mod = (n_pebbles)*(vol_sphere(r_pebble) - vol_sphere(r_core)) - vol_fuel
+vol_ldg = (n_pebbles)*(vol_sphere(r_ldg))
+vol_mod = (n_pebbles)*(vol_sphere(r_pebble) - vol_sphere(r_ldg)) - vol_fuel
 vol_graph_peb = (n_graph_peb)*(vol_sphere(r_pebble))
 
 # from design report
@@ -81,7 +81,7 @@ mass_refl = mass_inner_refl + mass_outer_refl
 rho_refl = 1740.0*units.kg/units.meter**3
 vol_refl = mass_refl/rho_refl
 
-a_core = area_sphere(r_core)*n_pebbles
+a_ldg = area_sphere(r_ldg)*n_pebbles
 a_mod = area_sphere(r_pebble)*n_pebbles
 a_graph_peb = area_sphere(r_pebble)*n_graph_peb
 a_fuel = area_sphere(r_particle)*n_pebbles*n_particles_per_pebble
@@ -91,9 +91,9 @@ h_mod = 4700*units.watt/units.kelvin/units.meter**2  # TODO implement h(T) model
 h_refl = 600*units.watt/units.kelvin/units.meter**2  # TODO placeholder
 
 # modified alphas for mod
-vol_mod_tot = vol_mod + vol_graph_peb + vol_core
+vol_mod_tot = vol_mod + vol_graph_peb + vol_ldg
 alpha_mod = alpha_m*vol_mod/vol_mod_tot
-alpha_core = alpha_m*vol_core/vol_mod_tot
+alpha_ldg = alpha_m*vol_ldg/vol_mod_tot
 alpha_graph_peb = alpha_m*vol_graph_peb/vol_mod_tot
 
 #############################################
@@ -124,13 +124,15 @@ spectrum = "thermal"
 feedback = True
 
 # External Reactivity
-from reactivity_insertion import StepReactivityInsertion
-rho_ext = StepReactivityInsertion(timer=ti, t_step=1.0*units.seconds,
-                                  rho_init=0.0*units.delta_k,
-                                  rho_final=0.00*units.delta_k)
+from reactivity_insertion import ImpulseReactivityInsertion
+rho_ext = ImpulseReactivityInsertion(timer=ti,
+                                     t_start=1.0*units.seconds,
+                                     t_end=2.0*units.seconds,
+                                     rho_init=0.0*units.delta_k,
+                                     rho_max=0.001*units.delta_k)
 
 # maximum number of internal steps that the ode solver will take
-nsteps = 1000
+nsteps = 10000
 
 
 fuel = th.THComponent(name="fuel",
@@ -163,11 +165,11 @@ mod = th.THComponent(name="mod",
                      alpha_temp=alpha_mod,
                      timer=ti)
 
-core = th.THComponent(name="core",
+ldg = th.THComponent(name="ldg",
                       mat=Graphite(name="pebgraphite"),
-                      vol=vol_core,
-                      T0=t_core,
-                      alpha_temp=alpha_core,
+                      vol=vol_ldg,
+                      T0=t_ldg,
+                      alpha_temp=alpha_ldg,
                       timer=ti)
 
 graph_peb = th.THComponent(name="graph_peb",
@@ -177,20 +179,20 @@ graph_peb = th.THComponent(name="graph_peb",
                            alpha_temp=alpha_graph_peb,
                            timer=ti)
 
-components = [fuel, cool, refl, mod, graph_peb, core]
+components = [fuel, cool, refl, mod, graph_peb, ldg]
 
 # The fuel conducts to the moderator graphite
 fuel.add_conduction('mod', area=a_fuel)
 
-# The moderator graphite conducts to the core graphite
-mod.add_conduction('core', area=a_core)
+# The moderator graphite conducts to the ldg graphite
+mod.add_conduction('ldg', area=a_ldg)
 # The moderator graphite conducts to the fuel
 mod.add_conduction('fuel', area=a_mod)
 # The moderator graphite convects to the coolant
 mod.add_convection('cool', h=h_mod, area=a_mod)
 
-# The core graphite conducts to the moderator graphite
-core.add_conduction('mod', area=a_core)
+# The ldg graphite conducts to the moderator graphite
+ldg.add_conduction('mod', area=a_ldg)
 
 # The graphite pebbles convect to the coolant
 graph_peb.add_convection('cool', h=h_mod, area=a_graph_peb)
