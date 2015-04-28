@@ -1,9 +1,11 @@
 # Licensed under a 3-clause BSD style license - see LICENSE
+import numpy as np
 
 from timer import Timer
 import neutronics
 import reactivity_insertion as ri
 import th_system
+
 
 class SimInfo(object):
     """This class holds information about a reactor kinetics simulation"""
@@ -25,6 +27,8 @@ class SimInfo(object):
         self.feedback = feedback
         self.ne = self.init_ne()
         self.th = th_system.THSystem(kappa=kappa, components=components)
+        self.y = np.zeros(shape=(timer.timesteps(), self.n_entries()),
+                          dtype=float)
 
     def init_rho_ext(self, rho_ext):
         if rho_ext is None:
@@ -39,6 +43,10 @@ class SimInfo(object):
                                    rho_ext=self.rho_ext,
                                    feedback=self.feedback)
         return ne
+
+    def n_components(self):
+        to_ret = len(self.components)
+        return to_ret
 
     def n_entries(self):
         to_ret = 1 + self.n_pg + self.n_dg + len(self.components)

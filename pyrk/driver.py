@@ -9,15 +9,14 @@ import numpy as np
 from scipy.integrate import ode
 import importlib
 import argparse
-
-from utils.logger import logger
+from utils import logger
+from utils.logger import pyrklog
 from inp import sim_info
 from ur import units
 from utils import plotter
 
 
-
-def update_n(t, y, y_n):
+def update_n(t, y_n, si):
     """This function updates the neutronics block.
 
     :param t: the time [s] at which the update is occuring.
@@ -27,14 +26,15 @@ def update_n(t, y, y_n):
     """
     t_idx = si.timer.t_idx(t*units.seconds)
     n_n = len(y_n)
-    _y[t_idx][:n_n] = y_n
+    si.y[t_idx][:n_n] = y_n
 
 
-def update_th(t, y_n, y_th):
+def update_th(t, y_n, y_th, si):
     """This function updates the thermal hydraulics block.
 
     :param t: the time [s] at which the update is occuring.
     :type t: float.
+
     :param y_th: The array that solves thermal hydraulics block at time t
     :type y_th: np.ndarray.
     """
@@ -42,10 +42,10 @@ def update_th(t, y_n, y_th):
     for idx, comp in enumerate(si.components):
         comp.update_temp(t_idx, y_th[idx]*units.kelvin)
     n_n = len(y_n)
-    _y[t_idx][n_n:] = y_th
+    si.y[t_idx][n_n:] = y_th
 
 
-def f_n(t, y):
+def f_n(t, y, si):
     """Returns the neutronics block solution at time t
 
     :param t: the time [s] at which the update is occuring.
@@ -68,7 +68,7 @@ def f_n(t, y):
     return f
 
 
-def f_th(t, y_th):
+def f_th(t, y_th, si):
     """Returns the thermal hydraulics solution at time t
 
     :param t: the time [s] at which the update is occuring.
@@ -77,12 +77,12 @@ def f_th(t, y_th):
     :type y: np.ndarray
     """
     t_idx = si.timer.t_idx(t*units.seconds)
-    f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),
+    f = units.Quantity(np.zeros(shape=(si.n_components(),), dtype=float),
                        'kelvin / second')
-    power = _y[t_idx][0]
+    power = si.y[t_idx][0]
     o_i = 1+si.n_pg
     o_f = 1+si.n_pg+si.n_dg
-    omegas = _y[t_idx][o_i:o_f]
+    omegas = si.y[t_idx][o_i:o_f]
     for idx, comp in enumerate(si.components):
         f[idx] = si.th.dtempdt(component=comp,
                                power=power,
@@ -91,7 +91,7 @@ def f_th(t, y_th):
     return f
 
 
-def y0():
+def y0(si):
     """The initial conditions for y"""
     i = 0
     f = np.zeros(shape=(si.n_entries(),), dtype=float)
@@ -105,65 +105,69 @@ def y0():
     for idx, comp in enumerate(si.components):
         f[i+idx+1] = comp.T0.magnitude
     assert len(f) == si.n_entries()
-    _y[0] = f
+    si.y[0] = f
     return f
 
 
-def y0_n():
+def y0_n(si):
     """The initial conditions for y_n, the neutronics sub-block of y"""
     idx = si.n_pg+si.n_dg + 1
-    y = y0()[:idx]
+    y = y0(si)[:idx]
     return y
 
 
-def y0_th():
+def y0_th(si):
     """The initial conditions for y_th, the thermal hydraulics sub-block of
     y"""
-    tidx = si.n_pg+si.n_dg + 1
-    y = y0()[tidx:]
+    thidx = si.n_pg+si.n_dg + 1
+    y = y0(si)[thidx:]
     return y
 
 
 def solve(si, y, infile):
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
     n = ode(f_n).set_integrator('dopri5')
-    n.set_initial_value(y0_n(), si.timer.
+    n.set_initial_value(y0_n(si), si.timer.
                         t0.magnitude)
+    n.set_f_params(si)
     th = ode(f_th).set_integrator('dopri5', nsteps=infile.nsteps)
-    th.set_initial_value(y0_th(), si.timer.t0.magnitude)
+    th.set_initial_value(y0_th(si), si.timer.t0.magnitude)
+    th.set_f_params(si)
     while (n.successful()
            and n.t < si.timer.tf.magnitude
            and th.t < si.timer.tf.magnitude):
         si.timer.advance_one_timestep()
         n.integrate(si.timer.current_time().magnitude)
-        update_n(n.t, n.y)
+        update_n(n.t, n.y, si)
         th.integrate(si.timer.current_time().magnitude)
-        update_th(th.t, n.y, th.y)
-    return _y
+        update_th(th.t, n.y, th.y, si)
+    return si.y
 
 
-def log_results():
-    logger.info("\nReactivity : \n"+str(si.ne._rho))
-    logger.info("\nFinal Result : \n"+np.array_str(_y))
+def log_results(si):
+    pyrklog.info("\nReactivity : \n"+str(si.ne._rho))
+    pyrklog.info("\nFinal Result : \n"+np.array_str(si.y))
     for comp in si.components:
-        logger.info("\n" + comp.name + ":\n" + np.array_str(comp.T.magnitude))
-    logger.info("\nPrecursor lambdas: \n"+str(si.ne._pd.lambdas()))
-    logger.info("\nDelayed neutron frac: \n"+str(si.ne._pd.beta()))
-    logger.info("\nPrecursor betas: \n"+str(si.ne._pd.betas()))
-    logger.info("\nDecay kappas: \n"+str(si.ne._dd.kappas()))
-    logger.info("\nDecay lambdas: \n"+str(si.ne._dd.lambdas()))
+        pyrklog.info("\n" + comp.name + ":\n" + np.array_str(comp.T.magnitude))
+    pyrklog.info("\nPrecursor lambdas: \n"+str(si.ne._pd.lambdas()))
+    pyrklog.info("\nDelayed neutron frac: \n"+str(si.ne._pd.beta()))
+    pyrklog.info("\nPrecursor betas: \n"+str(si.ne._pd.betas()))
+    pyrklog.info("\nDecay kappas: \n"+str(si.ne._dd.kappas()))
+    pyrklog.info("\nDecay lambdas: \n"+str(si.ne._dd.lambdas()))
+
 
 def print_logo():
     with open('logo.txt', 'r') as logo:
-        logger.critical("\nWelcome to PyRK.\n" +
-                        "(c) Kathryn D. Huff\n" +
-                        "Your simulation is starting.\n" +
-                        "Perhaps it's time for a coffee.\n" +
-                        logo.read())
+        pyrklog.critical("\nWelcome to PyRK.\n" +
+                         "(c) Kathryn D. Huff\n" +
+                         "Your simulation is starting.\n" +
+                         "Perhaps it's time for a coffee.\n" +
+                         logo.read())
+
 
 def main(args):
     np.set_printoptions(precision=5, threshold=np.inf)
-
+    logger.set_up_pyrklog(args.logfile)
     infile = importlib.import_module(args.infile)
 
     si = sim_info.SimInfo(timer=infile.ti,
@@ -175,22 +179,21 @@ def main(args):
                           kappa=infile.kappa,
                           feedback=infile.feedback)
     print_logo()
-
-
-    _y = np.zeros(shape=(si.timer.timesteps(), si.n_entries()), dtype=float)
-    n_components = len(si.components)
-
-    sol = solve(si=si, y=_y, infile=infile)
-    log_results(si, _y)
+    # n_components = len(si.components)
+    sol = solve(si=si, y=si.y, infile=infile)
+    log_results(si)
     plotter.plot(sol, si)
-    logger.critical("\nSimulation succeeded.\n")
-
+    pyrklog.critical("\nSimulation succeeded.\n")
 
 
 """Run it as a script"""
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description = 'Say hello')
-    parser.add_argument('name', help='your name, enter it')
-    args = parser.parse_args()
-    main(args.name)
-
+    ap = argparse.ArgumentParser(description='PyRK parameters')
+    ap.add_argument('--infile', help='the name of the input file',
+                    default='input')
+    ap.add_argument('--logfile', help='the name of the log file',
+                    default='pyrk.log')
+    ap.add_argument('--outfile', help='the name of the output database',
+                    default='pyrk.h5')
+    args = ap.parse_args()
+    main(args)
