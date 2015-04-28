@@ -6,7 +6,7 @@ pyrklog = logging.getLogger("pyrklog")
 def set_up_pyrklog(logfile):
     pyrklog.setLevel(logging.DEBUG)
     # create file handler which logs even debug messages
-    fh = logging.FileHandler(filename='pyrk.log', mode="w")
+    fh = logging.FileHandler(filename=logfile, mode="w")
     fh.setLevel(level=logging.DEBUG)
     # create console handler with a higher log level
     ch = logging.StreamHandler()
