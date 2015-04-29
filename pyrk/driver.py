@@ -178,7 +178,8 @@ def main(args):
                           n_decay=infile.n_dg,
                           kappa=infile.kappa,
                           feedback=infile.feedback,
-                          rho_ext=infile.rho_ext)
+                          rho_ext=infile.rho_ext,
+                          plotdir=args.plotdir)
     print_logo()
     # n_components = len(si.components)
     sol = solve(si=si, y=si.y, infile=infile)
@@ -194,6 +195,8 @@ if __name__ == "__main__":
                     default='input')
     ap.add_argument('--logfile', help='the name of the log file',
                     default='pyrk.log')
+    ap.add_argument('--plotdir', help='the name of the directory of output plots',
+                    default='images')
     ap.add_argument('--outfile', help='the name of the output database',
                     default='pyrk.h5')
     args = ap.parse_args()

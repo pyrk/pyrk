@@ -22,7 +22,7 @@ def plot(y, si):
     :param y: The full solution array
     :type y: np.ndarray"""
     x = si.timer.series.magnitude
-    plot_power(x, y)
+    plot_power(x, y, si)
     plot_reactivity(x, si)
     plot_power_w_reactivity(x=x, y=y, si=si)
     plot_zetas(x, y, si)
@@ -41,16 +41,16 @@ def plot_reactivity(x, si):
     plt.xlabel("Time [s]")
     plt.ylabel("Reactivity [$\Delta k/k$]")
     plt.title("Reactivity [$\Delta k/k$]")
-    saveplot("reactivity", plt)
+    saveplot("reactivity", plt, si.plotdir)
 
 
-def plot_power(x, y):
+def plot_power(x, y, si):
     power = y[:, 0]
     plt.plot(x, power, color=my_colors(1, len(y)), marker='.')
     plt.xlabel("Time [s]")
     plt.ylabel("Power [units]")
     plt.title("Power [units]")
-    saveplot("power", plt)
+    saveplot("power", plt, si.plotdir)
 
 
 def plot_power_w_reactivity(x, si, y):
@@ -63,7 +63,7 @@ def plot_power_w_reactivity(x, si, y):
     plt.xlabel("Time [s]")
     plt.ylabel("Power and Reactivity [$\Delta k$]")
     plt.title("Power and Reactivity [$\Delta k$]")
-    saveplot("pow_and_rho", plt)
+    saveplot("pow_and_rho", plt, si.plotdir)
 
 
 def plot_temps_together(x, y, si):
@@ -75,7 +75,7 @@ def plot_temps_together(x, y, si):
     plt.xlabel("Time [s]")
     plt.ylabel("Temperature [K]")
     plt.title("Temperature of Each Component")
-    saveplot("temps", plt)
+    saveplot("temps", plt, si.plotdir)
 
 
 def plot_temps_separately(x, y, si):
@@ -87,7 +87,7 @@ def plot_temps_separately(x, y, si):
         plt.ylabel("Temperature [K]")
         plt.title("Temperature of "+comp.name)
         plt.legend()
-        saveplot(comp.name+" Temp[K]", plt)
+        saveplot(comp.name+" Temp[K]", plt, si.plotdir)
 
 
 def plot_zetas(x, y, si):
@@ -99,7 +99,7 @@ def plot_zetas(x, y, si):
     plt.ylabel("Concentration of Neutron Precursors, $\zeta_i [\#/dr^3]$")
     plt.title("Concentration of Neutron Precursors, $\zeta_i [\#/dr^3]$")
     plt.legend()
-    saveplot("zetas", plt)
+    saveplot("zetas", plt, si.plotdir)
 
 
 def plot_omegas(x, y, si):
@@ -114,8 +114,7 @@ def plot_omegas(x, y, si):
     saveplot("omegas", plt)
 
 
-def saveplot(name, plt):
-    plotdir = 'images'
+def saveplot(name, plt, plotdir='images'):
     if not os.path.exists(plotdir):
         os.makedirs(plotdir)
     plt.savefig(str(plotdir+"/"+name+'.pdf'), bbox_inches='tight')

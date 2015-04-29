@@ -14,7 +14,7 @@ class SimInfo(object):
                  timer=Timer(),
                  components={},
                  iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 kappa=0.0, rho_ext=None, feedback=False):
+                 kappa=0.0, rho_ext=None, feedback=False, plotdir='images'):
         """This class holds information about a reactor kinetics simulation
         """
         self.timer = timer
@@ -29,6 +29,7 @@ class SimInfo(object):
         self.th = th_system.THSystem(kappa=kappa, components=components)
         self.y = np.zeros(shape=(timer.timesteps(), self.n_entries()),
                           dtype=float)
+        self.plotdir = plotdir
 
     def init_rho_ext(self, rho_ext):
         if rho_ext is None:
