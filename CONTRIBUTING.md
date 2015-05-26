@@ -22,7 +22,7 @@ one.
     or `#1234`. 
   - Changes should be PEP8 compatible [PEP8](http://www.python.org/dev/peps/pep-0008/).
   - Keep style fixes to a separate commit to make your PR more readable.
-  - Docstrings ideally follow the [numpydoc](https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt) format.
+  - Docstrings ideally follow the [sphinx autodoc](https://pythonhosted.org/an_example_pypi_project/sphinx.html#function-definitions)
   - Write tests.
   - When writing tests, please.
   - When you start working on a PR, start by creating a new branch pointing at the latest
