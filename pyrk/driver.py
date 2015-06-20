@@ -30,6 +30,7 @@ si = sim_info.SimInfo(timer=infile.ti,
 
 n_components = len(si.components)
 
+# _y is the matrix of dimension timesteps*nb of equations(unknowns)
 _y = np.zeros(shape=(si.timer.timesteps(), si.n_entries()), dtype=float)
 
 
@@ -62,6 +63,8 @@ def update_th(t, y_n, y_th):
 
 
 def update_f(t, y):
+    """ update f by updating n(neutronics) and th(thermal-hydraulics) arrays
+    """
     idx = 1+si.n_pg+si.n_dg
     y_n = y[:idx]
     y_th = y[idx:]
@@ -165,6 +168,12 @@ def solve():
         update_f(eqn.t, eqn.y)
     return _y
 
+def post_proc():
+    '''solution from the equation systems may not be temperature, for example in
+    spherical system, the equations are solved for U=rT, where r and T are
+    radius and temperature of the point where the equation is solved for.
+    '''
+    pass
 
 def log_results():
     logger.info("\nReactivity : \n"+str(si.ne._rho))

@@ -76,3 +76,6 @@ class THSystem(object):
         num = (t_b-t_env)
         denom = L/(k*A)
         return num/denom
+
+    def conduction_sph(self, t_b, t_env, r, k):
+
