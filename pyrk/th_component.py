@@ -18,7 +18,8 @@ class THComponent(object):
                  alpha_temp=0*units.delta_k/units.kelvin,
                  timer=Timer(),
                  heatgen=False,
-                 power_tot=0*units.watt):
+                 power_tot=0*units.watt,
+                 sph=False):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.
@@ -35,6 +36,9 @@ class THComponent(object):
         :type timer: Timer object
         :param heatgen: is this component a heat generator (fuel)
         :type heatgen: bool
+        :param sph: is this component a spherical component, spherical equations
+        for heatgen, conduction are different, post-processing is different too
+        :type sph: bool
         """
         self.name = name
         self.vol = vol.to('meter**3')
@@ -54,6 +58,7 @@ class THComponent(object):
         self.cond = {}
         self.conv = {}
         self.prev_t_idx = 0
+        self.sph=sph
 
     def temp(self, timestep):
         """The temperature of this component at the chosen timestep
