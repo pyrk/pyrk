@@ -19,6 +19,8 @@ class THComponent(object):
                  timer=Timer(),
                  heatgen=False,
                  power_tot=0*units.watt,
+                 adv=False,
+                 advheat=0*units.watts,
                  sph=False
                  ):
         """Initalizes a thermal hydraulic component.
@@ -37,6 +39,10 @@ class THComponent(object):
         :type timer: Timer object
         :param heatgen: is this component a heat generator (fuel)
         :type heatgen: bool
+        :param adv: is this component losses heat from advection
+        :type adv: bool
+        :param advheat: heat transfered through advection(watts), positive if
+        gain heat, negative is loss heat
         :param sph: is this component a spherical component, spherical equations
         for heatgen, conduction are different, post-processing is different too
         :type sph: bool
@@ -56,6 +62,8 @@ class THComponent(object):
         self.timer = timer
         self.heatgen = heatgen
         self.power_tot = power_tot
+        self.adv = adv
+        self.advheat = advheat
         self.cond = {}
         self.conv = {}
         self.prev_t_idx = 0
@@ -108,10 +116,12 @@ class THComponent(object):
             "area": area.to('meter**2')
         }
 
-    def add_conduction(self, env, k, area, L=0.0*units.meter, r=0.0*units.meter):
+    def add_conduction(self, env, k, area, L=0.0*units.meter,
+                       r_b=0.0*units.meter, r_env=0.0*units.meter):
         self.cond[env] = {
             "k": k.to('watts/meter/kelvin'),
             "area": area.to('meter**2'),
             "L":L.to('meter'),
-            "r": r.to('meter')
+            "r_b": r_b.to('meter'),
+            "r_env": r_env.to('meter')
         }

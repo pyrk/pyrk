@@ -35,13 +35,15 @@ class THSystemSphPS(THSystem):
         cap = (component.rho(t_idx)*component.cp*component.vol)
         if component.heatgen:
             to_ret += self.heatgen(component, power, omegas)/cap
+        if component.adv:
+            to_ret += component.advheat
         for interface, d in component.cond.iteritems():
             env = self.comp_from_name(interface)
             to_ret -= self.conduction(t_b=component.T[t_idx],
                                       t_env=env.T[t_idx],
-                                      k=d['k'],
-                                      L=d['L'],
-                                      A=d['area'])/cap
+                                      r_b=d['r_b'],
+                                      r_env=d['r_env'],
+                                      k=d['k'])/cap
         for interface, d in component.conv.iteritems():
             env = self.comp_from_name(interface)
             to_ret -= self.convection(t_b=component.T[t_idx],
@@ -69,7 +71,7 @@ class THSystemSphPS(THSystem):
         denom = (1.0/(h*A))
         return num/denom
 
-    def conduction(self, t_b, t_env, r_b, r_env, L, k):
+    def conduction(self, t_b, t_env, r_b, r_env, k):
         """
         heat transfer by conduction(watts)
         :param t_b: The temperature of the body
