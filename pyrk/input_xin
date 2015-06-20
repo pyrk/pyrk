@@ -1,3 +1,6 @@
+''' changed from the initial input file
+to represent a simplified model for the FHR core
+'''
 from ur import units
 import th_component as th
 import math
@@ -19,26 +22,10 @@ alpha_c = -1.8*units.pcm/units.kelvin
 alpha_m = -0.7*units.pcm/units.kelvin
 alpha_r = 1.8*units.pcm/units.kelvin
 # below from steady state analysis
-t_fuel = 946.74521*units.kelvin
-t_cool = 936.57636*units.kelvin
-t_refl = 923.18521*units.kelvin
-t_mod = 937.39862*units.kelvin
-t_graph_peb = 936.40806*units.kelvin
-t_ldg = 970.54064*units.kelvin
-
-
-
-# the data below comes from design doc rev c
-
-# self._vol_flow_rate = 976.0*0.3 # kg/s TODO 0.3 is nat circ guess
-vel_cool = 2.*units.meter/units.second  # m/s
-t_inlet = units.Quantity(600.0, units.degC)  # degrees C
-# [m] ... matrix(4mm) + coating(1mm)
-thickness_fuel_matrix = 0.005*units.meter
-kappa = 0.00  # TODO if you fix omegas, kappa ~ 0.06
-core_height = 3.5*units.meter  # [m] (TODO currently approximate)
-core_inner_radius = 0.35*units.meter  # m
-core_outer_radius = 1.25*units.meter  #
+t_mod = 986.511*units.kelvin
+t_fuel = 963.8713*units.kelvin
+t_shell = 951.2938*units.kelvin 
+t_cool = 922.7725*units.kelvin
 
 # Initial time
 t0 = 0.00*units.seconds
@@ -66,13 +53,18 @@ n_particles_per_pebble = 4730
 r_pebble = 0.015*units.meter  # [m] diam = 3cm
 r_ldg = 0.0125*units.meter  # [m] diam = 2.5cm
 r_particle = 200*units.micrometer
+r_mod = 1.25*units.centimeter
+r_fuel = 1.4*units.centimeter
+r_shell = 1.5*units.centimeter
 
 # vol of 4730 kernels per pebble, each 400 micrometer diameter
 vol_fuel = n_pebbles*n_particles_per_pebble*vol_sphere(r_particle)
 vol_ldg = (n_pebbles)*(vol_sphere(r_ldg))
 vol_mod = (n_pebbles)*(vol_sphere(r_pebble) - vol_sphere(r_ldg)) - vol_fuel
 vol_graph_peb = (n_graph_peb)*(vol_sphere(r_pebble))
-
+L_mod = r_mod
+L_fuel = r_fuel-r_mod
+L_shell = r_shell-r_fuel
 # from design report
 vol_cool = 7.20*units.meter**3
 mass_inner_refl = 43310.0*units.kg
@@ -87,14 +79,22 @@ a_graph_peb = area_sphere(r_pebble)*n_graph_peb
 a_fuel = area_sphere(r_particle)*n_pebbles*n_particles_per_pebble
 a_refl = 2*math.pi*core_outer_radius*core_height
 
-h_mod = 4700*units.watt/units.kelvin/units.meter**2  # TODO implement h(T) model
-h_refl = 600*units.watt/units.kelvin/units.meter**2  # TODO placeholder
+h_cool = 4700*units.watt/units.kelvin/units.meter**2  # TODO implement h(T) model
 
-# modified alphas for mod
-vol_mod_tot = vol_mod + vol_graph_peb + vol_ldg
-alpha_mod = alpha_m*vol_mod/vol_mod_tot
-alpha_ldg = alpha_m*vol_ldg/vol_mod_tot
-alpha_graph_peb = alpha_m*vol_graph_peb/vol_mod_tot
+## Calculate h using wakao correlation
+#m_flow = 976*units.kg/units.seconds
+#mu_coolant=@(Tc) 4.638E5/Tc^2.79;%pa.s, Tc in celsius
+#mu_cool = mu_coolant(Y(i0+4)-273.15);
+#Pr = cp(4)*mu_cool/k(4);
+#epsilon = 0.6; %packing fraction
+#A_flow = pi*(1.25^2 - 0.35^2);%whole core
+#T_in = 600+273.15;
+#T_out = 2*Y(i0+4)-T_in;
+#Re = m_flow*diam_pb/mu_cool/A_flow;
+#Nu = 2+1.1*Pr^(1/3)*Re^0.6;
+#h=k(4)*Nu/diam_pb;
+
+t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 
 #############################################
 #
@@ -135,6 +135,13 @@ rho_ext = ImpulseReactivityInsertion(timer=ti,
 nsteps = 10000
 
 
+mod = th.THComponent(name="mod",
+                     mat=Graphite(name="pebgraphite"),
+                     vol=vol_mod,
+                     T0=t_mod,
+                     alpha_temp=alpha_mod,
+                     timer=ti)
+
 fuel = th.THComponent(name="fuel",
                       mat=Kernel(name="fuelkernel"),
                       vol=vol_fuel,
@@ -144,6 +151,13 @@ fuel = th.THComponent(name="fuel",
                       heatgen=True,
                       power_tot=power_tot)
 
+shell = th.THComponent(name="shell",
+                     mat=Graphite(name="pebgraphite"),
+                     vol=vol_shell,
+                     T0=t_shell,
+                     alpha_temp=alpha_shell,
+                     timer=ti)
+
 cool = th.THComponent(name="cool",
                       mat=Flibe(name="flibe"),
                       vol=vol_cool,
@@ -151,58 +165,20 @@ cool = th.THComponent(name="cool",
                       alpha_temp=alpha_c,
                       timer=ti)
 
-refl = th.THComponent(name="refl",
-                      mat=Graphite(name="reflgraphite"),
-                      vol=vol_refl,
-                      T0=t_refl,
-                      alpha_temp=alpha_r,
-                      timer=ti)
+components = [mod, fuel, shell, cool]
 
-mod = th.THComponent(name="mod",
-                     mat=Graphite(name="pebgraphite"),
-                     vol=vol_mod,
-                     T0=t_mod,
-                     alpha_temp=alpha_mod,
-                     timer=ti)
-
-ldg = th.THComponent(name="ldg",
-                      mat=Graphite(name="pebgraphite"),
-                      vol=vol_ldg,
-                      T0=t_ldg,
-                      alpha_temp=alpha_ldg,
-                      timer=ti)
-
-graph_peb = th.THComponent(name="graph_peb",
-                           mat=Graphite(name="pebgraphite"),
-                           vol=vol_mod,
-                           T0=t_graph_peb,
-                           alpha_temp=alpha_graph_peb,
-                           timer=ti)
-
-components = [fuel, cool, refl, mod, graph_peb, ldg]
-
-# The fuel conducts to the moderator graphite
-fuel.add_conduction('mod', area=a_fuel)
-
-# The moderator graphite conducts to the ldg graphite
-mod.add_conduction('ldg', area=a_ldg)
 # The moderator graphite conducts to the fuel
-mod.add_conduction('fuel', area=a_mod)
-# The moderator graphite convects to the coolant
-mod.add_convection('cool', h=h_mod, area=a_mod)
+mod.add_conduction('fuel', area=a_mod, L=L_mod)
 
-# The ldg graphite conducts to the moderator graphite
-ldg.add_conduction('mod', area=a_ldg)
+# The fuel conducts to the shell and moderator kernel
+fuel.add_conduction('shell', area=a_fuel, L=L_fuel)
+fuel.add_conduction('mod', area=a_fuel, L=L_fuel)
 
-# The graphite pebbles convect to the coolant
-graph_peb.add_convection('cool', h=h_mod, area=a_graph_peb)
+# The shell conducts to the fuel
+shell.add_conduction('mod', area=a_fuel, L=L_fuel)
+# The shell convects to the coolant
+shell.add_convection('cool', h=h_cool, area=a_shell)
 
-# The coolant convects accross the graphite pebbles
+# The coolant convects to the shell
 cool.add_convection('graph_peb', h=h_mod, area=a_graph_peb)
-# The coolant convects accross the graphite pebbles
-cool.add_convection('mod', h=h_mod, area=a_mod)
-# The coolant convects accross the reflector
-cool.add_convection('refl', h=h_refl, area=a_refl)
 
-# The reflector convects with the coolant
-refl.add_convection('cool', h=h_refl, area=a_refl)

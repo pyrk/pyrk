@@ -19,7 +19,8 @@ class THComponent(object):
                  timer=Timer(),
                  heatgen=False,
                  power_tot=0*units.watt,
-                 sph=False):
+                 sph=False
+                 ):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.
@@ -107,5 +108,10 @@ class THComponent(object):
             "area": area.to('meter**2')
         }
 
-    def add_conduction(self, env, area):
-        self.cond[env] = area.to('meter**2')
+    def add_conduction(self, env, k, area, L=0.0*units.meter, r=0.0*units.meter):
+        self.cond[env] = {
+            "k": k.to('watts/meter/kelvin'),
+            "area": area.to('meter**2'),
+            "L":L.to('meter'),
+            "r": r.to('meter')
+        }
