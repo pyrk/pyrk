@@ -35,8 +35,11 @@ class THSystemSphPS(THSystem):
         cap = (component.rho(t_idx)*component.cp*component.vol)
         if component.heatgen:
             to_ret += self.heatgen(component, power, omegas)/cap
-        if component.adv:
-            to_ret += component.advheat
+        for flow, d in component.adv.iteritems():
+            to_ret += self.advection(t_out=component.T[t_idx]*2 - d['t_in'],
+                                     t_in=d['t_in'],
+                                     m_flow=d['m_flow'],
+                                     cp=d['cp'])/cap
         for interface, d in component.cond.iteritems():
             env = self.comp_from_name(interface)
             to_ret -= self.conduction(t_b=component.T[t_idx],
@@ -89,4 +92,7 @@ class THSystemSphPS(THSystem):
         denom = (1/r_b - 1/r_env)
         return num/denom
 
-
+    def advection(self, t_out, t_in, m_flow, cp):
+        ''' calculate heat transfer by advection in watts
+        '''
+        return m_flow*cp*(t_out-t_in)

@@ -17,15 +17,17 @@ from timer import Timer
 
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
-alpha_f = -3.8*units.pcm/units.kelvin
-alpha_c = -1.8*units.pcm/units.kelvin
-alpha_m = -0.7*units.pcm/units.kelvin
-alpha_r = 1.8*units.pcm/units.kelvin
+alpha_fuel = -3.8*units.pcm/units.kelvin
+alpha_cool = -1.8*units.pcm/units.kelvin
+alpha_mod = -0.7*units.pcm/units.kelvin
+alpha_pb = 0*units.pcm/units.kelvin
 # below from steady state analysis
 t_mod = 986.511*units.kelvin
 t_fuel = 963.8713*units.kelvin
-t_shell = 951.2938*units.kelvin 
+t_shell = 951.2938*units.kelvin
 t_cool = 922.7725*units.kelvin
+
+kappa=0.0
 
 # Initial time
 t0 = 0.00*units.seconds
@@ -48,52 +50,19 @@ def vol_sphere(r):
 
 # volumes
 n_pebbles = 470000
-n_graph_peb = 218000
-n_particles_per_pebble = 4730
-r_pebble = 0.015*units.meter  # [m] diam = 3cm
-r_ldg = 0.0125*units.meter  # [m] diam = 2.5cm
-r_particle = 200*units.micrometer
 r_mod = 1.25*units.centimeter
 r_fuel = 1.4*units.centimeter
 r_shell = 1.5*units.centimeter
 
-# vol of 4730 kernels per pebble, each 400 micrometer diameter
-vol_fuel = n_pebbles*n_particles_per_pebble*vol_sphere(r_particle)
-vol_ldg = (n_pebbles)*(vol_sphere(r_ldg))
-vol_mod = (n_pebbles)*(vol_sphere(r_pebble) - vol_sphere(r_ldg)) - vol_fuel
-vol_graph_peb = (n_graph_peb)*(vol_sphere(r_pebble))
-L_mod = r_mod
-L_fuel = r_fuel-r_mod
-L_shell = r_shell-r_fuel
-# from design report
-vol_cool = 7.20*units.meter**3
-mass_inner_refl = 43310.0*units.kg
-mass_outer_refl = 5940.0*units.kg
-mass_refl = mass_inner_refl + mass_outer_refl
-rho_refl = 1740.0*units.kg/units.meter**3
-vol_refl = mass_refl/rho_refl
+vol_mod = vol_sphere(r_mod)
+vol_fuel = vol_sphere(r_fuel) - vol_sphere(r_mod)
+vol_shell = vol_sphere(r_shell) - vol_sphere(r_fuel)
+vol_cool =(vol_mod + vol_fuel + vol_shell)*0.4/0.6
 
-a_ldg = area_sphere(r_ldg)*n_pebbles
-a_mod = area_sphere(r_pebble)*n_pebbles
-a_graph_peb = area_sphere(r_pebble)*n_graph_peb
-a_fuel = area_sphere(r_particle)*n_pebbles*n_particles_per_pebble
-a_refl = 2*math.pi*core_outer_radius*core_height
+a_pb = area_sphere(r_shell)
 
 h_cool = 4700*units.watt/units.kelvin/units.meter**2  # TODO implement h(T) model
-
-## Calculate h using wakao correlation
-#m_flow = 976*units.kg/units.seconds
-#mu_coolant=@(Tc) 4.638E5/Tc^2.79;%pa.s, Tc in celsius
-#mu_cool = mu_coolant(Y(i0+4)-273.15);
-#Pr = cp(4)*mu_cool/k(4);
-#epsilon = 0.6; %packing fraction
-#A_flow = pi*(1.25^2 - 0.35^2);%whole core
-#T_in = 600+273.15;
-#T_out = 2*Y(i0+4)-T_in;
-#Re = m_flow*diam_pb/mu_cool/A_flow;
-#Nu = 2+1.1*Pr^(1/3)*Re^0.6;
-#h=k(4)*Nu/diam_pb;
-
+m_flow = 976*units.kg/units.second
 t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 
 #############################################
@@ -146,7 +115,7 @@ fuel = th.THComponent(name="fuel",
                       mat=Kernel(name="fuelkernel"),
                       vol=vol_fuel,
                       T0=t_fuel,
-                      alpha_temp=alpha_f,
+                      alpha_temp=alpha_fuel,
                       timer=ti,
                       heatgen=True,
                       power_tot=power_tot)
@@ -155,30 +124,30 @@ shell = th.THComponent(name="shell",
                      mat=Graphite(name="pebgraphite"),
                      vol=vol_shell,
                      T0=t_shell,
-                     alpha_temp=alpha_shell,
+                     alpha_temp=alpha_pb,
                      timer=ti)
 
 cool = th.THComponent(name="cool",
                       mat=Flibe(name="flibe"),
                       vol=vol_cool,
                       T0=t_cool,
-                      alpha_temp=alpha_c,
+                      alpha_temp=alpha_cool,
                       timer=ti)
 
 components = [mod, fuel, shell, cool]
 
 # The moderator graphite conducts to the fuel
-mod.add_conduction('fuel', area=a_mod, L=L_mod)
+mod.add_conduction('fuel', k=fuel.k, r_b=r_mod, r_env=r_fuel )
 
 # The fuel conducts to the shell and moderator kernel
-fuel.add_conduction('shell', area=a_fuel, L=L_fuel)
-fuel.add_conduction('mod', area=a_fuel, L=L_fuel)
+fuel.add_conduction('shell', k=shell.k, r_b=r_fuel, r_env=r_shell)
+fuel.add_conduction('mod', k=fuel.k, r_b=r_fuel, r_env=r_mod)
 
 # The shell conducts to the fuel
-shell.add_conduction('mod', area=a_fuel, L=L_fuel)
+shell.add_conduction('fuel', k=shell.k, r_b=r_shell, r_env=r_fuel)
 # The shell convects to the coolant
-shell.add_convection('cool', h=h_cool, area=a_shell)
+shell.add_convection('cool', h=h_cool, area=a_pb*n_pebbles)
 
 # The coolant convects to the shell
-cool.add_convection('graph_peb', h=h_mod, area=a_graph_peb)
-
+cool.add_convection('shell', h=h_cool, area=a_pb*n_pebbles)
+cool.add_advection( m_flow, t_inlet, cp=cool.cp)

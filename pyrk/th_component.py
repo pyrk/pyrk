@@ -19,8 +19,6 @@ class THComponent(object):
                  timer=Timer(),
                  heatgen=False,
                  power_tot=0*units.watt,
-                 adv=False,
-                 advheat=0*units.watts,
                  sph=False
                  ):
         """Initalizes a thermal hydraulic component.
@@ -62,10 +60,9 @@ class THComponent(object):
         self.timer = timer
         self.heatgen = heatgen
         self.power_tot = power_tot
-        self.adv = adv
-        self.advheat = advheat
         self.cond = {}
         self.conv = {}
+        self.adv = {}
         self.prev_t_idx = 0
         self.sph=sph
 
@@ -116,7 +113,7 @@ class THComponent(object):
             "area": area.to('meter**2')
         }
 
-    def add_conduction(self, env, k, area, L=0.0*units.meter,
+    def add_conduction(self, env, k, area=0.0*units.meter**2, L=0.0*units.meter,
                        r_b=0.0*units.meter, r_env=0.0*units.meter):
         self.cond[env] = {
             "k": k.to('watts/meter/kelvin'),
@@ -124,4 +121,11 @@ class THComponent(object):
             "L":L.to('meter'),
             "r_b": r_b.to('meter'),
             "r_env": r_env.to('meter')
+        }
+
+    def add_advection(self, m_flow, t_in, cp):
+        self.adv['flow'] = {
+            "m_flow": m_flow.to('kg/second'),
+            "t_in": t_in.to('kelvin'),
+            "cp": cp.to('joule/kg/kelvin')
         }
