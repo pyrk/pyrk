@@ -3,7 +3,7 @@ from density_model import DensityModel
 from material import Material
 
 
-class Flibe(Material):
+class Cool(Material):
     """This class represents FLiBe. It inherits from the material
     class and possesses attributes intrinsic to flibe.
     """
@@ -20,13 +20,7 @@ class Flibe(Material):
                           dm=self.density())
 
     def thermal_conductivity(self):
-        """FLiBe thermal conductivity in [W/m-K]
-
-        (based on http://www.psfc.mit.edu/library1/catalog/reports/
-        1980/80rr/80rr012/80rr012_full.pdf)
-        and found in the Andreades et. al Technical Description (pbfhr design
-        report)
-        """
+        '''TODO 0.7662 + 0.0005*Tc'''
         return 1.0*units.watt/(units.meter*units.kelvin)
 
     def specific_heat_capacity(self):
@@ -34,7 +28,7 @@ class Flibe(Material):
 
         from www-ferp.ucsd.edu/LIB/PROPS/HTS.shtml
         """
-        return 2350.0*units.joule/(units.kg*units.kelvin)
+        return 2415.78*units.joule/(units.kg*units.kelvin)
 
     def density(self):
         """

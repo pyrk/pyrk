@@ -123,8 +123,8 @@ class THComponent(object):
             "r_env": r_env.to('meter')
         }
 
-    def add_advection(self, m_flow, t_in, cp):
-        self.adv['flow'] = {
+    def add_advection(self, name, m_flow, t_in, cp):
+        self.adv[name] = {
             "m_flow": m_flow.to('kg/second'),
             "t_in": t_in.to('kelvin'),
             "cp": cp.to('joule/kg/kelvin')

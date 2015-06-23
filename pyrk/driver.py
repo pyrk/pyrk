@@ -26,7 +26,8 @@ si = sim_info.SimInfo(timer=infile.ti,
                       n_decay=infile.n_dg,
                       kappa=infile.kappa,
                       feedback=infile.feedback,
-                      rho_ext=infile.rho_ext)
+                      #rho_ext=infile.rho_ext
+                      )
 
 n_components = len(si.components)
 
@@ -107,6 +108,7 @@ def f_th(t, y_th):
     f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),
                        'kelvin / second')
     power = _y[t_idx][0]
+    #print 'power %f' %power
     o_i = 1+si.n_pg
     o_f = 1+si.n_pg+si.n_dg
     omegas = _y[t_idx][o_i:o_f]
@@ -129,10 +131,11 @@ def y0():
     """The initial conditions for y"""
     i = 0
     f = np.zeros(shape=(si.n_entries(),), dtype=float)
-    f[i] = 1.0  # real power is 236 MWth, but normalized is 1
+    f[i] = 1 # todo change the code to have this from input
+    # real power is 236 MWth, but normalized is 1
     for j in range(0, si.n_pg):
         i += 1
-        f[i] = si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
+        f[i] = f[0]*si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
     for k in range(0, si.n_dg):
         i += 1
         f[i] = 0
@@ -163,9 +166,15 @@ def solve():
     eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps)
     eqn.set_initial_value(y0(), si.timer.t0.magnitude)
     while (eqn.successful() and eqn.t < si.timer.tf.magnitude):
+        #print 'before'
+        #print _y
         si.timer.advance_one_timestep()
+        #print 'mid'
+        #print _y
         eqn.integrate(si.timer.current_time().magnitude)
         update_f(eqn.t, eqn.y)
+        #print 'after'
+        #print _y
     return _y
 
 def post_proc():
