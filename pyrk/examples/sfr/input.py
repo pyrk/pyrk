@@ -90,3 +90,20 @@ xi6_o = (bet(6)*p_o)/(lam(6)*Lambda)
 T_f_o = 525
 # Initial Coolant Tempearture [C]
 T_c_o = 440
+
+
+
+
+
+Fuel radius Rfuel (m) .00348
+Clad radius Rclad (m) 0.004
+Active core height H (m) 0.8
+Coolant speed, u (m/s) 5
+Inlet temperature, Tin (◦C) 355
+Hydraulic area per fuel pin, Aflow (m2) 5.281 E−5
+Nominal power density conversion factor pow (W/m3)  4.77E8
+Mean generation time (s)  1E−5
+Delayed neutron fractions (pcm) 650 9, 87, 70, 140, 60, 55
+Precursors time constants (1/s) 0.0124, 0.0305, 0.111, 0.301, 1.14, 3.01
+Doppler reactivity coefficient, ˛Doppler (pcm/(Cd)) −0.8841
+Coolant reactivity coefficient, ˛cool (pcm/C) +0.1263
