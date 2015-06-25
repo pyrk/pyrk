@@ -1,7 +1,5 @@
 from pint import UnitRegistry
-
 units = UnitRegistry()
-
 units.define('dollars = 100 * cents')
 units.define('milli_beta = 10 * cents')
 units.define('cents = []')

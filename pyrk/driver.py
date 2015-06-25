@@ -14,6 +14,8 @@ from inp import sim_info
 from ur import units
 from utils import plotter
 
+from th_component import THSuperComponent
+
 np.set_printoptions(precision=5, threshold=np.inf)
 
 infile = importlib.import_module("input")
@@ -58,7 +60,10 @@ def update_th(t, y_n, y_th):
     """
     t_idx = si.timer.t_idx(t*units.seconds)
     for idx, comp in enumerate(si.components):
-        comp.update_temp(t_idx, y_th[idx]*units.kelvin)
+        if isinstance(comp, THSuperComponent):
+            comp.update_temp_R(t_idx, y_th[idx+1]*units.kelvin, y_th[idx-1]*units.kelvin)
+        else:
+            comp.update_temp(t_idx, y_th[idx]*units.kelvin)
     n_n = len(y_n)
     _y[t_idx][n_n:] = y_th
 
@@ -177,12 +182,6 @@ def solve():
         #print _y
     return _y
 
-def post_proc():
-    '''solution from the equation systems may not be temperature, for example in
-    spherical system, the equations are solved for U=rT, where r and T are
-    radius and temperature of the point where the equation is solved for.
-    '''
-    pass
 
 def log_results():
     logger.info("\nReactivity : \n"+str(si.ne._rho))

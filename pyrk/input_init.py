@@ -36,7 +36,7 @@ t_fuel = (800+273.15)*units.kelvin
 t_shell = (770+273.15)*units.kelvin
 t_cool = (650+273.15)*units.kelvin
 
-kappa = 0.0
+kappa=0.0
 
 # Initial time
 t0 = 0.00*units.seconds
@@ -45,7 +45,7 @@ t0 = 0.00*units.seconds
 dt = 0.01*units.seconds
 
 # Final Time
-tf = 5.0*units.seconds
+tf = 30.0*units.seconds
 
 
 def area_sphere(r):
@@ -66,12 +66,11 @@ r_shell = 1.5*units.centimeter
 vol_mod = vol_sphere(r_mod)
 vol_fuel = vol_sphere(r_fuel) - vol_sphere(r_mod)
 vol_shell = vol_sphere(r_shell) - vol_sphere(r_fuel)
-vol_cool = (vol_mod + vol_fuel + vol_shell)*0.4/0.6
+vol_cool =(vol_mod + vol_fuel + vol_shell)*0.4/0.6
 a_pb = area_sphere(r_shell)
 
-# 4700TODO implement h(T) model
-h_cool = 4700*units.watt/units.kelvin/units.meter**2
-m_flow = 976*units.kg/units.second  # 976*units.kg/units.second
+h_cool = 4700*units.watt/units.kelvin/units.meter**2  # 4700TODO implement h(T) model
+m_flow = 976*units.kg/units.second #976*units.kg/units.second
 t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 
 #############################################
@@ -100,7 +99,7 @@ fission_iso = "u235"
 spectrum = "thermal"
 
 # Feedbacks, False to turn reactivity feedback off. True otherwise.
-feedback = False  # True
+feedback = True
 
 # External Reactivity
 from reactivity_insertion import ImpulseReactivityInsertion
@@ -121,54 +120,44 @@ mod = th.THComponent(name="mod",
                      alpha_temp=alpha_mod,
                      timer=ti,
                      heatgen=True,
-                     power_tot=power_tot/n_pebbles,
-                     sph=True,
-                     ri=0.0*units.meter,
-                     ro=r_mod)
+                     power_tot=power_tot/n_pebbles)
 
 fuel = th.THComponent(name="fuel",
                       mat=Fuel(name="fuelkernel"),
                       vol=vol_fuel,
                       T0=t_fuel,
                       alpha_temp=alpha_fuel,
-                      timer=ti,
-                      sph=True,
-                      ri=r_mod.to('meter'),
-                      ro=r_fuel.to('meter'))
+                      timer=ti
+                      )
 
 shell = th.THComponent(name="shell",
-                       mat=Mod(name="pebgraphite"),
-                       vol=vol_shell,
-                       T0=t_shell,
-                       alpha_temp=alpha_shell,
-                       timer=ti,
-                       sph=True,
-                       ri=r_fuel.to('meter'),
-                       ro=r_shell.to('meter'))
+                     mat=Mod(name="pebgraphite"),
+                     vol=vol_shell,
+                     T0=t_shell,
+                     alpha_temp=alpha_shell,
+                     timer=ti)
 
-# mesh size for the fuel pebble FVM calculation
-l = 0.01*units.centimeter
-comp_list = mod.mesh(l)
-comp_list.extend(fuel.mesh(l))
-comp_list.extend(shell.mesh(l))
-pebble = th.THSuperComponent('pebble', t_shell, comp_list, timer=ti)
 cool = th.THComponent(name="cool",
                       mat=Cool(name="flibe"),
                       vol=vol_cool,
                       T0=t_cool,
                       alpha_temp=alpha_cool,
                       timer=ti)
-#components = deepcopy(pebble.sub_comp)
-#components.extend([pebble, cool])
-components = mod.mesh(l)
-components.extend(fuel.mesh(l))
-components.extend(shell.mesh(l))
-components.extend([pebble, cool])
-# Add convective boundary condition to the pebble
-pebble.add_conv_bc('cool', h=h_cool)
-# Add conductions between the mesh cells
-pebble.add_conduction_in_mesh
+
+components = [mod, fuel, shell, cool]
+
+# The moderator graphite conducts to the fuel
+mod.add_conduction('fuel', k=fuel.k, r_b=r_mod, r_env=r_fuel )
+
+# The fuel conducts to the shell and moderator kernel
+fuel.add_conduction('shell', k=shell.k, r_b=r_fuel, r_env=r_shell)
+fuel.add_conduction('mod', k=-1.0*fuel.k, r_b=r_fuel, r_env=r_mod)
+
+# The shell conducts to the fuel
+shell.add_conduction('fuel', k=-1.0*shell.k, r_b=r_shell, r_env=r_fuel)
+# The shell convects to the coolant
+shell.add_convection('cool', h=h_cool, area=a_pb)
 
 # The coolant convects to the shell
-cool.add_convection('pebble', h=h_cool, area=a_pb)
+cool.add_convection('shell', h=h_cool, area=a_pb)
 cool.add_advection('cool', m_flow/n_pebbles, t_inlet, cp=cool.cp)
