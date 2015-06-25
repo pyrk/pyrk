@@ -161,14 +161,27 @@ class THSystemSphFVM(THSystem):
                     env.T[t_idx].magnitude, Qcond.magnitude)
             for interface, d in component.conv.iteritems():
                 env = self.comp_from_name(interface)
-                Qconv = self.convection(t_b=component.T[t_idx],
-                                        t_env=env.T[t_idx],
-                                        h=d['h'],
-                                        A=d['area'])
+                if isinstance(env, THSuperComponent):
+                    dr = env.sub_comp[0].ro-env.sub_comp[0].ri
+                    k = env.sub_comp[-1].k
+                    h=d['h']
+                    Tr=(-h/k*component.T[t_idx]+env.sub_comp[-2].T[t_idx]/dr)/(1/dr-h/k)
+                    Qconv = self.convection(t_b=component.T[t_idx],
+                                            t_env=Tr,
+                                            h=d['h'],
+                                            A=d['area'])
+                    assert (Qconv*(component.T[t_idx]-Tr)).magnitude >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
+                        component.name, env.name, component.T[t_idx].magnitude,
+                        Tr, Qconv.magnitude)
+                else:
+                    Qconv = self.convection(t_b=component.T[t_idx],
+                                            t_env=env.T[t_idx],
+                                            h=d['h'],
+                                            A=d['area'])
+                    assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'cnvection from %s to %s, from temp %f to %f is wrong %f' % (
+                        component.name, env.name, component.T[t_idx].magnitude,
+                        env.T[t_idx].magnitude, Qconv.magnitude)
                 to_ret -= Qconv/cap/component.vol
-                assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'cnvection from %s to %s, from temp %f to %f is wrong %f' % (
-                    component.name, env.name, component.T[t_idx].magnitude,
-                    env.T[t_idx].magnitude, Qconv.magnitude)
             for name, d in component.adv.iteritems():
                 Qadv = self.advection(t_out=component.T[t_idx]*2.0 - d['t_in'],
                                     t_in=d['t_in'],
