@@ -156,8 +156,7 @@ class THSystemSphFVM(THSystem):
                                            dr=component.ro-component.ri,
                                            k=component.k)
                 to_ret -= Qcond/cap
-                assert (Qcond*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'conduction from %s to %s, from temp %f to %f is wrong %f' % (
-                    component.name, env.name, component.T[t_idx].magnitude,
+                assert (Qcond*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'conduction from %s to %s, from temp %f to %f is wrong %f' % ( component.name, env.name, component.T[t_idx].magnitude,
                     env.T[t_idx].magnitude, Qcond.magnitude)
             for interface, d in component.conv.iteritems():
                 env = self.comp_from_name(interface)
@@ -176,7 +175,7 @@ class THSystemSphFVM(THSystem):
                                             t_env=env.T[t_idx],
                                             h=d['h'],
                                             A=d['area'])
-                    assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'cnvection from %s to %s, from temp %f to %f is wrong %f' % (
+                    assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
                         component.name, env.name, component.T[t_idx].magnitude,
                         env.T[t_idx].magnitude, Qconv.magnitude)
                 to_ret -= Qconv/cap/component.vol
