@@ -199,9 +199,10 @@ class THSuperComponent(object):
         return self.T[timestep]
 
     def compute_tr(self, t_env, t_innercomp):
-        h = self.conv["h"]
-        k = self.conv["k"]
-        dr = self.conv["dr"]
+        for envname, d in self.conv.iteritems():
+            h = self.conv[envname]["h"]
+            k = self.conv[envname]["k"]
+            dr = self.conv[envname]["dr"]
         return (-h/k*t_env+t_innercomp/dr)/(1/dr-h/k)
 
     def add_component(self, a_component):
