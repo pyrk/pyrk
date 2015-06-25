@@ -148,8 +148,9 @@ class THComponent(object):
     def addConvBC(self, env, prev_comp, h, R):
         self.convBC[env] = {
             "h": h.to('joule/second/kelvin/meter**2'),
-            "prev_comp": prev_comp
-            }
+            "prev_comp": prev_comp,
+            "R": R
+        }
 
     def add_conduction(self, env, k, area=0.0*units.meter**2, L=0.0*units.meter,
                        r_b=0.0*units.meter, r_env=0.0*units.meter):
@@ -183,21 +184,25 @@ class THSuperComponent(object):
         self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
                                          dtype=float), 'kelvin')
         self.T[0] = T0
+        self.conv = {}
 
-    def update_temp_R(self, timestep, t_env, t_r):
+    def update_temp_R(self, timestep, t_env, t_innercomp):
         """Updates the temperature
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
         :param temp: the new tempterature
         :type float: float, units of kelvin
         """
-        #TODO: this is very bad, need to be changed
-        h=4700.0*units.watts/units.kelvin/units.meter**2
-        k=15.0*units.watts/units.meter/units.kelvin
-        dr=self.sub_comp[0].ro-self.sub_comp[0].ri
-        self.T[timestep] = (-h/k*t_env+t_r/dr)/(1/dr-h/k)
+        tr=self.compute_tr(t_env, t_innercomp)
+        self.T[timestep] =tr
         self.prev_t_idx = timestep
         return self.T[timestep]
+
+    def compute_tr(self, t_env, t_innercomp):
+        h = self.conv["h"]
+        k = self.conv["k"]
+        dr = self.conv["dr"]
+        return (-h/k*t_env+t_innercomp/dr)/(1/dr-h/k)
 
     def add_component(self, a_component):
         self.sub_comp.append(a_component)
@@ -207,6 +212,11 @@ class THSuperComponent(object):
                                    self.sub_comp[-1],
                                    h,
                                    (self.sub_comp)[-1].ro)
+        self.conv[envname]= {'h': h,
+                             'k' : self.sub_comp[-1].k,
+                             'dr' : self.sub_comp[-1].ro-self.sub_comp[-1].ri
+                             }
+
     def add_conduction_in_mesh(self):
         N = len(self.sub_comp)
         # element i=0:

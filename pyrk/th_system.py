@@ -130,31 +130,31 @@ class THSystemSphFVM(THSystem):
             return to_ret
         else:
             cap = (component.rho(t_idx)*component.cp)
-            if component.sph==True and component.ri.magnitude == 0.0:
+            if component.sph and component.ri.magnitude == 0.0:
                 # U0=0
                 Qcent = self.BC_center(component,
-                                         t_b=component.T[t_idx],
-                                         dr=component.ro - component.ri)
+                                       t_b=component.T[t_idx],
+                                       dr=component.ro - component.ri)
                 to_ret -= Qcent/cap
             for interface, d in component.convBC.iteritems():
                 env = self.comp_from_name(interface)
                 QconvBC = self.convBoundary(component,
-                                        t_b=component.T[t_idx],
-                                        t_env=env.T[t_idx],
-                                        t_prev=d['prev_comp'].T[t_idx],
-                                        h=d["h"])
+                                            t_b=component.T[t_idx],
+                                            t_env=env.T[t_idx],
+                                            h=d["h"],
+                                            R=d["R"])
                 to_ret -= QconvBC/cap
             if component.heatgen:
                 to_ret += self.heatgenFVM(component, power, omegas)/cap
             for interface, d in component.cond.iteritems():
                 env = self.comp_from_name(interface)
                 Qcond = self.conductionFVM(component,
-                                        t_b=component.T[t_idx],
-                                        t_env=env.T[t_idx],
-                                        r_b=component.ro,
-                                        r_env=env.ro,
-                                        dr=component.ro-component.ri,
-                                        k=component.k)
+                                           t_b=component.T[t_idx],
+                                           t_env=env.T[t_idx],
+                                           r_b=component.ro,
+                                           r_env=env.ro,
+                                           dr=component.ro-component.ri,
+                                           k=component.k)
                 to_ret -= Qcond/cap
                 assert (Qcond*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'conduction from %s to %s, from temp %f to %f is wrong %f' % (
                     component.name, env.name, component.T[t_idx].magnitude,
@@ -162,10 +162,8 @@ class THSystemSphFVM(THSystem):
             for interface, d in component.conv.iteritems():
                 env = self.comp_from_name(interface)
                 if isinstance(env, THSuperComponent):
-                    dr = env.sub_comp[0].ro-env.sub_comp[0].ri
-                    k = env.sub_comp[-1].k
-                    h=d['h']
-                    Tr=(-h/k*component.T[t_idx]+env.sub_comp[-2].T[t_idx]/dr)/(1/dr-h/k)
+                    Tr = env.compute_tr(component.T[t_idx],
+                                        env.sub_comp[-2].T[t_idx])
                     Qconv = self.convection(t_b=component.T[t_idx],
                                             t_env=Tr,
                                             h=d['h'],
@@ -184,9 +182,9 @@ class THSystemSphFVM(THSystem):
                 to_ret -= Qconv/cap/component.vol
             for name, d in component.adv.iteritems():
                 Qadv = self.advection(t_out=component.T[t_idx]*2.0 - d['t_in'],
-                                    t_in=d['t_in'],
-                                    m_flow=d['m_flow'],
-                                    cp=d['cp'])
+                                      t_in=d['t_in'],
+                                      m_flow=d['m_flow'],
+                                      cp=d['cp'])
                 to_ret -= Qadv/cap/component.vol
                 if Qadv.magnitude < 0:
                     print '''at step %d, %s is heating the system by %f watts???
@@ -198,14 +196,13 @@ class THSystemSphFVM(THSystem):
     def BC_center(self, component, t_b, dr):
         return component.k*t_b/dr**2
 
-    def convBoundary(self, component, t_b, t_env, t_prev, h):
-            r_b = component.ro
-            k=component.k
-            R=1.5*units.centimeter
-            dr=component.ri-component.ro
-            T_R = (-h/k*t_env + t_b/dr)/(1/dr-h/k)
-            to_ret = 1/r_b*k*(r_b*t_b-R*T_R)/dr**2
-            return to_ret
+    def convBoundary(self, component, t_b, t_env, h, R):
+        r_b = component.ro
+        k = component.k
+        dr = component.ri-component.ro
+        T_R = (-h/k*t_env + t_b/dr)/(1/dr-h/k)
+        to_ret = 1/r_b*k*(r_b*t_b-R*T_R)/dr**2
+        return to_ret
 
     def heatgenFVM(self, component, power, omegas):
         '''to do: change this return to include decay heat'''
