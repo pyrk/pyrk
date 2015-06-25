@@ -201,9 +201,10 @@ class THSystemSphFVM(THSystem):
     def convBoundary(self, component, t_b, t_env, t_prev, h):
             r_b = component.ro
             k=component.k
+            R=1.5*units.centimeter
             dr=component.ri-component.ro
             T_R = (-h/k*t_env + t_b/dr)/(1/dr-h/k)
-            to_ret = 1/r_b*k*(r_b*T_b-R*T_R)/dr**2
+            to_ret = 1/r_b*k*(r_b*t_b-R*T_R)/dr**2
             return to_ret
 
     def heatgenFVM(self, component, power, omegas):

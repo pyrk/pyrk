@@ -8,7 +8,7 @@ from cool import Cool
 from mod import Mod
 from fuel import Fuel
 from timer import Timer
-
+import copy
 #############################################
 #
 # User Workspace
@@ -159,11 +159,13 @@ cool = th.THComponent(name="cool",
                       alpha_temp=alpha_cool,
                       timer=ti)
 #components = deepcopy(pebble.sub_comp)
-#components.extend([pebble, cool])
-components = mod.mesh(l)
-components.extend(fuel.mesh(l))
-components.extend(shell.mesh(l))
+components=copy.copy(pebble.sub_comp)
 components.extend([pebble, cool])
+#len=len(pebble.sub_comp)
+#for i in range(0, len(pebble.sub_comp)):
+#    component[i] = pebble.sub_comp[i]
+#component[len+1]=pebble
+#component[len+2]=cool
 # Add convective boundary condition to the pebble
 pebble.add_conv_bc('cool', h=h_cool)
 # Add conductions between the mesh cells

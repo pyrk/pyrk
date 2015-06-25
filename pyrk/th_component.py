@@ -210,9 +210,9 @@ class THSuperComponent(object):
     def add_conduction_in_mesh(self):
         N = len(self.sub_comp)
         # element i=0:
-        self.sub_comp[0].add_conduction(self.sub_comp[1].name, self.sub_comp[1].k)
+        self.sub_comp[0].add_conduction(self.sub_comp[1].name, self.sub_comp[0].k)
         # element i=1:elementNb-3
-        for i in range(1, N-3):
+        for i in range(1, N-2):
             self.sub_comp[i].add_conduction(self.sub_comp[i-1].name, self.sub_comp[i].k)
             self.sub_comp[i].add_conduction(self.sub_comp[i+1].name, self.sub_comp[i].k)
         # element i=elementNb-2
