@@ -22,7 +22,7 @@ long_description = read('README.md', 'CONTRIBUTING.md')
 
 setup(
     name='pyrk',
-    version=get_git_version(),
+    #version=get_git_version(),
     url='http://github.com/katyhuff/pyrk/',
     license='BSD 3-Clause License',
     author='Kathryn D. Huff',

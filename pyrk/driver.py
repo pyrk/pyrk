@@ -32,6 +32,7 @@ si = sim_info.SimInfo(timer=infile.ti,
                       )
 
 n_components = len(si.components)
+print n_components
 
 # _y is the matrix of dimension timesteps*nb of equations(unknowns)
 _y = np.zeros(shape=(si.timer.timesteps(), si.n_entries()), dtype=float)

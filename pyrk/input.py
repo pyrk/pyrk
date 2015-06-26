@@ -81,8 +81,8 @@ t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 #############################################
 
 # Total power, Watts, thermal
-power_tot = 234000000.0*units.watt
-#power_tot = 2.0*units.watt
+#power_tot = 234000000.0*units.watt
+power_tot = 0.0*units.watt
 
 # Timer instance, based on t0, tf, dt
 ti = Timer(t0=t0, tf=tf, dt=dt)
@@ -147,7 +147,7 @@ shell = th.THComponent(name="shell",
                        ro=r_shell.to('meter'))
 
 # mesh size for the fuel pebble FVM calculation
-l = 0.01*units.centimeter
+l = 0.05*units.centimeter
 comp_list = mod.mesh(l)
 comp_list.extend(fuel.mesh(l))
 comp_list.extend(shell.mesh(l))
@@ -158,8 +158,8 @@ cool = th.THComponent(name="cool",
                       T0=t_cool,
                       alpha_temp=alpha_cool,
                       timer=ti)
-#components = deepcopy(pebble.sub_comp)
-components=copy.copy(pebble.sub_comp)
+components=[]
+components.extend(pebble.sub_comp)
 components.extend([pebble, cool])
 #len=len(pebble.sub_comp)
 #for i in range(0, len(pebble.sub_comp)):
