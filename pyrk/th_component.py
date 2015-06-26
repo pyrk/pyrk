@@ -187,7 +187,8 @@ class THSuperComponent(object):
         self.conv = {}
 
     def update_temp_R(self, timestep, t_env, t_innercomp):
-        """Updates the temperature
+        """ TODO this function is not used
+        Updates the temperature
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
         :param temp: the new tempterature
@@ -195,6 +196,17 @@ class THSuperComponent(object):
         """
         tr=self.compute_tr(t_env, t_innercomp)
         self.T[timestep] =tr
+        self.prev_t_idx = timestep
+        return self.T[timestep]
+
+    def update_temp(self, timestep, temp):
+        """Updates the temperature
+        :param timestep: the timestep at which to query the temperature
+        :type timestep: int
+        :param temp: the new tempterature
+        :type float: float, units of kelvin
+        """
+        self.T[timestep] = temp
         self.prev_t_idx = timestep
         return self.T[timestep]
 

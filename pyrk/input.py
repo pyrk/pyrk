@@ -45,7 +45,7 @@ t0 = 0.00*units.seconds
 dt = 0.01*units.seconds
 
 # Final Time
-tf = 5.0*units.seconds
+tf = 100*units.seconds
 
 
 def area_sphere(r):
@@ -70,8 +70,8 @@ vol_cool = (vol_mod + vol_fuel + vol_shell)*0.4/0.6
 a_pb = area_sphere(r_shell)
 
 # 4700TODO implement h(T) model
-h_cool = 4700*units.watt/units.kelvin/units.meter**2
-m_flow = 976*units.kg/units.second  # 976*units.kg/units.second
+h_cool = 4700.0*units.watt/units.kelvin/units.meter**2
+m_flow = 0*units.kg/units.second  # 976*units.kg/units.second
 t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 
 #############################################
@@ -152,25 +152,23 @@ comp_list = mod.mesh(l)
 comp_list.extend(fuel.mesh(l))
 comp_list.extend(shell.mesh(l))
 pebble = th.THSuperComponent('pebble', t_shell, comp_list, timer=ti)
+# Add convective boundary condition to the pebble
+pebble.add_conv_bc('cool', h=h_cool)
+# Add conductions between the mesh cells
+pebble.add_conduction_in_mesh()
+
 cool = th.THComponent(name="cool",
                       mat=Cool(name="flibe"),
                       vol=vol_cool,
                       T0=t_cool,
                       alpha_temp=alpha_cool,
                       timer=ti)
-components=[]
-components.extend(pebble.sub_comp)
-components.extend([pebble, cool])
-#len=len(pebble.sub_comp)
-#for i in range(0, len(pebble.sub_comp)):
-#    component[i] = pebble.sub_comp[i]
-#component[len+1]=pebble
-#component[len+2]=cool
-# Add convective boundary condition to the pebble
-pebble.add_conv_bc('cool', h=h_cool)
-# Add conductions between the mesh cells
-pebble.add_conduction_in_mesh
-
 # The coolant convects to the shell
 cool.add_convection('pebble', h=h_cool, area=a_pb)
 cool.add_advection('cool', m_flow/n_pebbles, t_inlet, cp=cool.cp)
+
+components=[]
+for i in range(0, len(pebble.sub_comp)):
+    components.append(pebble.sub_comp[i])
+components.extend([pebble, cool])
+

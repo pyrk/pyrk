@@ -32,7 +32,6 @@ si = sim_info.SimInfo(timer=infile.ti,
                       )
 
 n_components = len(si.components)
-print n_components
 
 # _y is the matrix of dimension timesteps*nb of equations(unknowns)
 _y = np.zeros(shape=(si.timer.timesteps(), si.n_entries()), dtype=float)
@@ -61,10 +60,10 @@ def update_th(t, y_n, y_th):
     """
     t_idx = si.timer.t_idx(t*units.seconds)
     for idx, comp in enumerate(si.components):
-        if isinstance(comp, THSuperComponent):
-            comp.update_temp_R(t_idx, y_th[idx+1]*units.kelvin, y_th[idx-1]*units.kelvin)
-        else:
-            comp.update_temp(t_idx, y_th[idx]*units.kelvin)
+        #if isinstance(comp, THSuperComponent):
+        #    comp.update_temp_R(t_idx, y_th[idx+1]*units.kelvin, y_th[idx-1]*units.kelvin)
+        #else:
+        comp.update_temp(t_idx, y_th[idx]*units.kelvin)
     n_n = len(y_n)
     _y[t_idx][n_n:] = y_th
 
