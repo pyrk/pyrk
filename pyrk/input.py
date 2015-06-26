@@ -33,8 +33,8 @@ alpha_shell = 0*units.pcm/units.kelvin
 
 t_mod = (800+273.15)*units.kelvin
 t_fuel = (800+273.15)*units.kelvin
-t_shell = (770+273.15)*units.kelvin
-t_cool = (650+273.15)*units.kelvin
+t_shell = (800+273.15)*units.kelvin
+t_cool = (800+273.15)*units.kelvin
 
 kappa = 0.0
 
@@ -45,7 +45,7 @@ t0 = 0.00*units.seconds
 dt = 0.01*units.seconds
 
 # Final Time
-tf = 5.0*units.seconds
+tf = 1.0*units.seconds
 
 
 def area_sphere(r):
@@ -71,7 +71,7 @@ a_pb = area_sphere(r_shell)
 
 # 4700TODO implement h(T) model
 h_cool = 4700*units.watt/units.kelvin/units.meter**2
-m_flow = 976*units.kg/units.second  # 976*units.kg/units.second
+m_flow = 0*units.kg/units.second  # 976*units.kg/units.second
 t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 
 #############################################
@@ -81,8 +81,8 @@ t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 #############################################
 
 # Total power, Watts, thermal
-power_tot = 234000000.0*units.watt
-#power_tot = 2.0*units.watt
+#power_tot = 234000000.0*units.watt
+power_tot = 0.0*units.watt
 
 # Timer instance, based on t0, tf, dt
 ti = Timer(t0=t0, tf=tf, dt=dt)
@@ -169,8 +169,17 @@ components.extend([pebble, cool])
 # Add convective boundary condition to the pebble
 pebble.add_conv_bc('cool', h=h_cool)
 # Add conductions between the mesh cells
-pebble.add_conduction_in_mesh
+#pebble.add_conduction_in_mesh
 
+N = len(pebble.sub_comp)
+# element i=0:
+pebble.sub_comp[0].add_conduction(pebble.sub_comp[1].name, pebble.sub_comp[0].k)
+# element i=1:elementNb-3
+for i in range(1, N-2):
+    pebble.sub_comp[i].add_conduction(pebble.sub_comp[i-1].name, pebble.sub_comp[i].k)
+    pebble.sub_comp[i].add_conduction(pebble.sub_comp[i+1].name, pebble.sub_comp[i].k)
+# element i=elementNb-2
+pebble.sub_comp[N-2].add_conduction(pebble.sub_comp[N-3].name, pebble.sub_comp[N-2].k)
 # The coolant convects to the shell
 cool.add_convection('pebble', h=h_cool, area=a_pb)
 cool.add_advection('cool', m_flow/n_pebbles, t_inlet, cp=cool.cp)

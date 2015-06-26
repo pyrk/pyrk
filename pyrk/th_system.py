@@ -148,17 +148,16 @@ class THSystemSphFVM(THSystem):
                 to_ret += self.heatgenFVM(component, power, omegas)/cap
             for interface, d in component.cond.iteritems():
                 env = self.comp_from_name(interface)
-                Qcond = self.conductionFVM(component,
-                                           t_b=component.T[t_idx],
+                Qcond = self.conductionFVM(t_b=component.T[t_idx],
                                            t_env=env.T[t_idx],
                                            r_b=component.ro,
                                            r_env=env.ro,
                                            dr=component.ro-component.ri,
                                            k=component.k)
                 to_ret -= Qcond/cap
-                assert (Qcond*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'conduction from %s to %s, from temp %f to %f is wrong %f' % (
-                    component.name, env.name, component.T[t_idx].magnitude,
-                    env.T[t_idx].magnitude, Qcond.magnitude)
+                #assert (Qcond*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'conduction from %s to %s, from temp %f to %f is wrong %f' % (
+                #    component.name, env.name, component.T[t_idx].magnitude,
+                #    env.T[t_idx].magnitude, Qcond.magnitude)
             for interface, d in component.conv.iteritems():
                 env = self.comp_from_name(interface)
                 if isinstance(env, THSuperComponent):
