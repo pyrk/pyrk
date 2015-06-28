@@ -45,7 +45,7 @@ t0 = 0.00*units.seconds
 dt = 0.01*units.seconds
 
 # Final Time
-tf = 100*units.seconds
+tf = 120*units.seconds
 
 
 def area_sphere(r):
@@ -100,13 +100,13 @@ fission_iso = "u235"
 spectrum = "thermal"
 
 # Feedbacks, False to turn reactivity feedback off. True otherwise.
-feedback = False  # True
+feedback = True
 
 # External Reactivity
 from reactivity_insertion import ImpulseReactivityInsertion
 rho_ext = ImpulseReactivityInsertion(timer=ti,
-                                     t_start=10.0*units.seconds,
-                                     t_end=20.0*units.seconds,
+                                     t_start=150.0*units.seconds,
+                                     t_end=200.0*units.seconds,
                                      rho_init=0.0*units.delta_k,
                                      rho_max=0.001*units.delta_k)
 
