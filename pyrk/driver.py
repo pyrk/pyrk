@@ -9,6 +9,10 @@ import numpy as np
 from scipy.integrate import ode
 import importlib
 
+from scipy.integrate import odeint 
+from pylab import *
+import matplotlib.pyplot as plt
+
 from utils.logger import logger
 from inp import sim_info
 from ur import units
@@ -28,7 +32,7 @@ si = sim_info.SimInfo(timer=infile.ti,
                       n_decay=infile.n_dg,
                       kappa=infile.kappa,
                       feedback=infile.feedback,
-                      #rho_ext=infile.rho_ext
+                      rho_ext=infile.rho_ext
                       )
 
 n_components = len(si.components)
@@ -130,8 +134,13 @@ def f(t, y):
     y_th = y[i_th:]
     to_ret = np.concatenate((f_n(t, y), f_th(t, y_th)))
     return to_ret
-
-
+def deriv(y,t):
+    print t
+    i_th = 1+si.n_pg+si.n_dg
+    y_th = y[i_th:]
+    to_ret = np.concatenate((f_n(t, y), f_th(t, y_th)))
+    return to_ret
+    
 def y0():
     """The initial conditions for y"""
     i = 0
@@ -168,7 +177,8 @@ def y0_th():
 
 def solve():
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
-    eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps)
+    eqn = ode(f).set_integrator('vode', method='bdf', order=15, nsteps=infile.nsteps)
+    #eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps)
     eqn.set_initial_value(y0(), si.timer.t0.magnitude)
     while (eqn.successful() and eqn.t < si.timer.tf.magnitude):
         #print 'before'
@@ -182,6 +192,15 @@ def solve():
         #print _y
     return _y
 
+def solve_odeint():
+    time = np.linspace(0.0, 50, 5000)
+    y=odeint(deriv, y0(), time)
+    print len(y0())
+    plt.plot(time, y[:,0])
+    plt.xlabel('t')
+    plt.ylabel('y')
+    plt.show()
+    return y
 
 def log_results():
     logger.info("\nReactivity : \n"+str(si.ne._rho))
@@ -206,4 +225,5 @@ if __name__ == "__main__":
     sol = solve()
     log_results()
     plotter.plot(sol, si)
+    #solve_odeint()
     logger.critical("\nSimulation succeeded.\n")

@@ -6,6 +6,7 @@ from data import precursors as pr
 from data import decay_heat as dh
 from reactivity_insertion import ReactivityInsertion
 from timer import Timer
+from th_component import THSuperComponent
 
 class Neutronics(object):
     """This class handles calculations and data related to the
@@ -130,9 +131,10 @@ class Neutronics(object):
         :type components: list of THComponent objects
         """
         rho = {}
-        if self.feedback:
-            for component in components:
-                rho[component.name] = component.temp_reactivity()
+        if self.feedback and t_idx >50: #TODO: shouldt specify 100 here
+	    for component in components:
+                if not isinstance(component, THSuperComponent):
+	             rho[component.name] = component.temp_reactivity()
         rho["external"] = self._rho_ext(t_idx=t_idx).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret

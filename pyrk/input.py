@@ -45,7 +45,7 @@ t0 = 0.00*units.seconds
 dt = 0.01*units.seconds
 
 # Final Time
-tf = 100*units.seconds
+tf = 60*units.seconds
 
 
 def area_sphere(r):
@@ -71,7 +71,7 @@ a_pb = area_sphere(r_shell)
 
 # 4700TODO implement h(T) model
 h_cool = 4700.0*units.watt/units.kelvin/units.meter**2
-m_flow = 0*units.kg/units.second  # 976*units.kg/units.second
+m_flow = 976*units.kg/units.second  # 976*units.kg/units.second
 t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 
 #############################################
@@ -81,8 +81,8 @@ t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 #############################################
 
 # Total power, Watts, thermal
-#power_tot = 234000000.0*units.watt
-power_tot = 0.0*units.watt
+power_tot = 234000000.0*units.watt
+#power_tot = 0.0*units.watt
 
 # Timer instance, based on t0, tf, dt
 ti = Timer(t0=t0, tf=tf, dt=dt)
@@ -100,15 +100,15 @@ fission_iso = "u235"
 spectrum = "thermal"
 
 # Feedbacks, False to turn reactivity feedback off. True otherwise.
-feedback = False  # True
+feedback = True
 
 # External Reactivity
 from reactivity_insertion import ImpulseReactivityInsertion
 rho_ext = ImpulseReactivityInsertion(timer=ti,
-                                     t_start=10.0*units.seconds,
-                                     t_end=20.0*units.seconds,
+                                     t_start=50.0*units.seconds,
+                                     t_end=120.0*units.seconds,
                                      rho_init=0.0*units.delta_k,
-                                     rho_max=0.001*units.delta_k)
+                                     rho_max=0.0001*units.delta_k)
 
 # maximum number of internal steps that the ode solver will take
 nsteps = 10000
