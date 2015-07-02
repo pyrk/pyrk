@@ -4,7 +4,7 @@ from material import Material
 
 
 class Sodium(Material):
-Sodium"""This class represents Sodium. It inherits from the material
+    """This class represents Sodium. It inherits from the material
     class and possesses attributes intrinsic to flibe.
     """
     def __init__(self, name="sodium"):
@@ -32,7 +32,7 @@ Sodium"""This class represents Sodium. It inherits from the material
         return 70.0*units.watt/(units.meter*units.kelvin)
 
     def specific_heat_capacity(self):
-        """Specific heat capacity of Sodium [kJ/kg/K]
+        """Specific heat capacity of Sodium [J/kg/K]
         actually depends on temperature pretty strongly.
 
         TODO, Issue #4
@@ -44,7 +44,8 @@ Sodium"""This class represents Sodium. It inherits from the material
         Below is a constant estimate of sodium cp at temperatures around 400C
         based on table 1.1-5 in http://www.ne.anl.gov/eda/ANL-RE-95-2.pdf
         """
-        return 1.3*units.kilojoule/(units.kg*units.kelvin)
+        to_ret = 1.3*units.kilojoule/(units.kg*units.kelvin)
+        return to_ret.to('J/kg/kelvin')
 
     def density(self):
         """
