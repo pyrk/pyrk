@@ -1,6 +1,6 @@
 from pint import UnitRegistry
 
-units = UnitRegistry()
+units = UnitRegistry(autoconvert_offset_to_baseunit = True)
 
 units.define('dollars = 100 * cents')
 units.define('milli_beta = 10 * cents')
