@@ -53,6 +53,7 @@ class THComponent(object):
         self.power_tot = power_tot
         self.cond = {}
         self.conv = {}
+        self.mass = {}
         self.prev_t_idx = 0
 
     def temp(self, timestep):
@@ -104,3 +105,7 @@ class THComponent(object):
 
     def add_conduction(self, env, area):
         self.cond[env] = area.to('meter**2')
+
+    def add_mass_trans(self, env, H, u):
+        self.mass[env] = {"H": H,
+                          "u": u}

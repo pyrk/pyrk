@@ -28,6 +28,12 @@ class THSystem(object):
                                       t_env=env.T[t_idx],
                                       h=d['h'],
                                       A=d['area'])/cap
+        for interface, d in component.mass.iteritems():
+            env = self.comp_from_name(interface)
+            to_ret -= self.mass_trans(t_b=component.T[t_idx],
+                                      t_inlet=env.T[t_idx],
+                                      H=d['H'],
+                                      u=d['u'])
         return to_ret
 
     def comp_from_name(self, name):
@@ -44,6 +50,10 @@ class THSystem(object):
     def heatgen(self, component, power, omegas):
         return (component.power_tot)*((1-self.kappa)*power +
                                       sum(omegas))
+    def mass_trans(self, t_b, t_inlet, H, u):
+        num = 2.0*u*(t_b - t_inlet)
+        denom = H
+        return num/denom
 
     def convection(self, t_b, t_env, h, A):
         """
