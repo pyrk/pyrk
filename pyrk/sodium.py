@@ -70,7 +70,7 @@ class Sodium(Material):
         .. math::
         t_c = 2503.7K
         """
-        return SodiumDensity
+        return SodiumDensity()
 
 
 class SodiumDensity(DensityModel):
@@ -101,10 +101,14 @@ class SodiumDensity(DensityModel):
         self.rho_c = 219.0*units.kg/pow(units.meter, 3)
         self.T_c = 2503.7*units.kelvin
         self.T_m = 371.0*units.kelvin
-        self.f = 275.32
-        self.g = 511.58
+        self.f = 275.32*units.kg/pow(units.meter, 3)
+        self.g = 511.58*units.kg/pow(units.meter, 3)
         self.h = 0.5
 
-    def rho(self, temp=0.0*units.kelvin):
+    def hornung(self, temp=0.0*units.kelvin):
         to_ret = self.rho_c + self.f*(1 - temp/self.T_c) + self.g*pow((1 - temp/self.T_c), self.h)
         return to_ret.to('kg/m**3')
+
+    def rho(self, temp=0.0*units.kelvin):
+        return self.hornung(temp)
+
