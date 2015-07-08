@@ -28,6 +28,8 @@ class Sodium(Material):
 
         Below is an estimate of sodium k_th at temperatures around 400C
         based on table 2.1-1 in http://www.ne.anl.gov/eda/ANL-RE-95-2.pdf
+
+        (but, note that wikipedia gives it as 142 W/m-K...)
         """
         return 70.0*units.watt/(units.meter*units.kelvin)
 

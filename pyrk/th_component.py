@@ -54,6 +54,7 @@ class THComponent(object):
         self.cond = {}
         self.conv = {}
         self.mass = {}
+        self.cust = {}
         self.prev_t_idx = 0
 
     def temp(self, timestep):
@@ -109,3 +110,6 @@ class THComponent(object):
     def add_mass_trans(self, env, H, u):
         self.mass[env] = {"H": H,
                           "u": u}
+
+    def add_custom(self, env, res):
+        self.cust[env] = {"res": res.to(units.kelvin/units.watt)}

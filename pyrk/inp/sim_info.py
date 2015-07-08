@@ -13,8 +13,14 @@ class SimInfo(object):
     def __init__(self,
                  timer=Timer(),
                  components={},
-                 iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 kappa=0.0, rho_ext=None, feedback=False, plotdir='images'):
+                 iso="u235",
+                 e="thermal",
+                 n_precursors=6,
+                 n_decay=11,
+                 kappa=0.0,
+                 rho_ext=None,
+                 feedback=False,
+                 plotdir='images'):
         """This class holds information about a reactor kinetics simulation
         """
         self.timer = timer

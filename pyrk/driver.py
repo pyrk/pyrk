@@ -95,7 +95,7 @@ def y0(si):
     """The initial conditions for y"""
     i = 0
     f = np.zeros(shape=(si.n_entries(),), dtype=float)
-    f[i] = 1.0  # real power is 236 MWth, but normalized is 1
+    f[i] = 1.0  # power is normalized is 1
     for j in range(0, si.n_pg):
         i += 1
         f[i] = si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
