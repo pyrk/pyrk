@@ -9,9 +9,9 @@ import numpy as np
 from scipy.integrate import ode
 import importlib
 
-from scipy.integrate import odeint 
-from pylab import *
-import matplotlib.pyplot as plt
+#from scipy.integrate import odeint 
+#from pylab import *
+#import matplotlib.pyplot as plt
 
 from utils.logger import logger
 from inp import sim_info
@@ -113,11 +113,13 @@ def f_th(t, y_th):
     :param y: TODO
     :type y: np.ndarray
     """
+    print 'time %f' %t
     t_idx = si.timer.t_idx(t*units.seconds)
+    print 'time index %f' %t_idx
     f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),
                        'kelvin / second')
     power = _y[t_idx][0]
-    #print 'power %f' %power
+    print 'power %f' %power
     o_i = 1+si.n_pg
     o_f = 1+si.n_pg+si.n_dg
     omegas = _y[t_idx][o_i:o_f]
@@ -130,17 +132,12 @@ def f_th(t, y_th):
 
 
 def f(t, y):
+    print 't in f %f' %t
     i_th = 1+si.n_pg+si.n_dg
     y_th = y[i_th:]
     to_ret = np.concatenate((f_n(t, y), f_th(t, y_th)))
     return to_ret
-def deriv(y,t):
-    print t
-    i_th = 1+si.n_pg+si.n_dg
-    y_th = y[i_th:]
-    to_ret = np.concatenate((f_n(t, y), f_th(t, y_th)))
-    return to_ret
-    
+
 def y0():
     """The initial conditions for y"""
     i = 0
@@ -177,7 +174,7 @@ def y0_th():
 
 def solve():
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
-    eqn = ode(f).set_integrator('vode', method='bdf', order=15, nsteps=infile.nsteps)
+    eqn = ode(f).set_integrator('vode', method='bdf', order=4, nsteps=infile.nsteps)
     #eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps)
     eqn.set_initial_value(y0(), si.timer.t0.magnitude)
     while (eqn.successful() and eqn.t < si.timer.tf.magnitude):
@@ -186,21 +183,15 @@ def solve():
         si.timer.advance_one_timestep()
         #print 'mid'
         #print _y
-        eqn.integrate(si.timer.current_time().magnitude)
+        #eqn.integrate(si.timer.current_time().magnitude)
+        eqn.integrate(si.timer.current_time().magnitude, step=True)
+        #eqn.integrate(si.timer.tf.magnitude, step=True)
+        print si.timer.current_time().magnitude
         update_f(eqn.t, eqn.y)
         #print 'after'
         #print _y
     return _y
 
-def solve_odeint():
-    time = np.linspace(0.0, 50, 5000)
-    y=odeint(deriv, y0(), time)
-    print len(y0())
-    plt.plot(time, y[:,0])
-    plt.xlabel('t')
-    plt.ylabel('y')
-    plt.show()
-    return y
 
 def log_results():
     logger.info("\nReactivity : \n"+str(si.ne._rho))
@@ -225,5 +216,4 @@ if __name__ == "__main__":
     sol = solve()
     log_results()
     plotter.plot(sol, si)
-    #solve_odeint()
     logger.critical("\nSimulation succeeded.\n")

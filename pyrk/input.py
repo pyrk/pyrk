@@ -45,7 +45,7 @@ t0 = 0.00*units.seconds
 dt = 0.01*units.seconds
 
 # Final Time
-tf = 60*units.seconds
+tf = 80*units.seconds
 
 
 def area_sphere(r):
@@ -103,15 +103,21 @@ spectrum = "thermal"
 feedback = True
 
 # External Reactivity
+#from reactivity_insertion import ImpulseReactivityInsertion
+#rho_ext = ImpulseReactivityInsertion(timer=ti,
+#                                     t_start=50.0*units.seconds,
+#                                     t_end=120.0*units.seconds,
+#                                     rho_init=0.0*units.delta_k,
+#                                     rho_max=600*units.pcm)
+
 from reactivity_insertion import ImpulseReactivityInsertion
 rho_ext = ImpulseReactivityInsertion(timer=ti,
                                      t_start=50.0*units.seconds,
                                      t_end=120.0*units.seconds,
                                      rho_init=0.0*units.delta_k,
-                                     rho_max=0.0001*units.delta_k)
-
+                                     rho_max=100*units.pcm)
 # maximum number of internal steps that the ode solver will take
-nsteps = 10000
+nsteps = 100000
 
 
 mod = th.THComponent(name="mod",
