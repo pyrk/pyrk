@@ -1,7 +1,7 @@
 #!/bin/sh
-#SBATCH --job-name=pyrk
-#SBATCH --output=pyrk_savio.log
-#SBATCH --error=pyrk.serr
+#SBATCH --job-name=noext
+#SBATCH --output=noext_savio.log
+#SBATCH --error=noext.serr
 #SBATCH --partition=savio
 #SBATCH --time=4:00:00
 #SBATCH --nodes=1

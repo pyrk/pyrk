@@ -110,12 +110,14 @@ feedback = True
 #                                     rho_init=0.0*units.delta_k,
 #                                     rho_max=600*units.pcm)
 
-from reactivity_insertion import ImpulseReactivityInsertion
-rho_ext = ImpulseReactivityInsertion(timer=ti,
+from reactivity_insertion import RampReactivityInsertion
+rho_ext = RampReactivityInsertion(timer=ti,
                                      t_start=50.0*units.seconds,
-                                     t_end=120.0*units.seconds,
+                                     t_end=60.0*units.seconds,
                                      rho_init=0.0*units.delta_k,
-                                     rho_max=100*units.pcm)
+                                     rho_rise=0.0*units.pcm,
+                                     rho_final=0.0*units.pcm)
+
 # maximum number of internal steps that the ode solver will take
 nsteps = 100000
 

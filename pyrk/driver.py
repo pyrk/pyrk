@@ -113,9 +113,9 @@ def f_th(t, y_th):
     :param y: TODO
     :type y: np.ndarray
     """
-    print 'time %f' %t
+    print 'time in f_th %f' %t
     t_idx = si.timer.t_idx(t*units.seconds)
-    print 'time index %f' %t_idx
+    print 'time index in f_th %f' %t_idx
     f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),
                        'kelvin / second')
     power = _y[t_idx][0]
@@ -174,20 +174,37 @@ def y0_th():
 
 def solve():
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
-    eqn = ode(f).set_integrator('vode', method='bdf', order=4, nsteps=infile.nsteps)
+    eqn = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=0.1)
     #eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps)
     eqn.set_initial_value(y0(), si.timer.t0.magnitude)
-    while (eqn.successful() and eqn.t < si.timer.tf.magnitude):
+    tf1=50*units.seconds
+    while (eqn.successful() and eqn.t < 50): #si.timer.tf1.magnitude):
+      #TODO: change 50 to input
         #print 'before'
         #print _y
         si.timer.advance_one_timestep()
         #print 'mid'
         #print _y
         #eqn.integrate(si.timer.current_time().magnitude)
-        eqn.integrate(si.timer.current_time().magnitude, step=True)
+        eqn.integrate(si.timer.current_time().magnitude)
         #eqn.integrate(si.timer.tf.magnitude, step=True)
         print si.timer.current_time().magnitude
         update_f(eqn.t, eqn.y)
+        #print 'after'
+        #print _y
+    eqn_trans = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=0.001)
+    eqn_trans.set_initial_value(eqn.y, eqn.t)
+    while (eqn_trans.successful() and eqn_trans.t < si.timer.tf.magnitude):
+        #print 'before'
+        #print _y
+        si.timer.advance_one_timestep()
+        #print 'mid'
+        #print _y
+        #eqn_trans.integrate(si.timer.current_time().magnitude)
+        eqn_trans.integrate(si.timer.current_time().magnitude)
+        #eqn_trans.integrate(si.timer.tf.magnitude, step=True)
+        print si.timer.current_time().magnitude
+        update_f(eqn_trans.t, eqn_trans.y)
         #print 'after'
         #print _y
     return _y
