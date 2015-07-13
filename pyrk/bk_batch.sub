@@ -1,7 +1,7 @@
 #!/bin/sh
-#SBATCH --job-name=noext
-#SBATCH --output=noext_savio.log
-#SBATCH --error=noext.serr
+#SBATCH --job-name=5s20changesolver
+#SBATCH --output=5s20changesolver_savio.log
+#SBATCH --error=5s20changesolver.serr
 #SBATCH --partition=savio
 #SBATCH --time=4:00:00
 #SBATCH --nodes=1
