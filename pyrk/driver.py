@@ -9,7 +9,7 @@ import numpy as np
 from scipy.integrate import ode
 import importlib
 
-#from scipy.integrate import odeint 
+#from scipy.integrate import odeint
 #from pylab import *
 #import matplotlib.pyplot as plt
 
@@ -174,12 +174,12 @@ def y0_th():
 
 def solve():
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
-    eqn = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=0.1)
+    eqn = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=1.0)
     #eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps)
     eqn.set_initial_value(y0(), si.timer.t0.magnitude)
     tf1=50*units.seconds
-    while (eqn.successful() and eqn.t < 50): #si.timer.tf1.magnitude):
-      #TODO: change 50 to input
+    while (eqn.successful() and eqn.t < 10): #si.timer.tf1.magnitude):
+      #TODO: change eqn.t limit to input
         #print 'before'
         #print _y
         si.timer.advance_one_timestep()
@@ -192,7 +192,7 @@ def solve():
         update_f(eqn.t, eqn.y)
         #print 'after'
         #print _y
-    eqn_trans = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=0.001)
+    eqn_trans = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=1.0)
     eqn_trans.set_initial_value(eqn.y, eqn.t)
     while (eqn_trans.successful() and eqn_trans.t < si.timer.tf.magnitude):
         #print 'before'
