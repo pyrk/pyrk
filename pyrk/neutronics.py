@@ -134,7 +134,7 @@ class Neutronics(object):
         if self.feedback and t_idx >500: #TODO: should not specify 500 here
             for component in components:
                 if not isinstance(component, THSuperComponent):
-                    rho[component.name] = component.temp_reactivity()
+                    rho[component.name] = component.temp_reactivity(t_idx)
         rho["external"] = self._rho_ext(t_idx=t_idx).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         print 'external rho %f' %rho["external"]
