@@ -131,10 +131,10 @@ class Neutronics(object):
         :type components: list of THComponent objects
         """
         rho = {}
-        if self.feedback and t_idx >5000: #TODO: should not specify 5000 here
+        if self.feedback and t_idx >5000: #TODO: run heat transfer mode only for 50s, but should not specify 5000 here
             for component in components:
                 if not isinstance(component, THSuperComponent):
-                    rho[component.name] = component.temp_reactivity()
+                    rho[component.name] = component.temp_reactivity(t_idx)
         rho["external"] = self._rho_ext(t_idx=t_idx).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         print 'external rho %f' %rho["external"]

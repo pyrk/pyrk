@@ -86,11 +86,12 @@ class THComponent(object):
             ro = self.ri+(i+1)*size
             vol = 4.0/3.0*math.pi*(ro**3-ri**3)
             power_tot = self.power_tot/self.vol*vol
+            alpha_temp = self.alpha_temp/self.vol*vol
             to_ret.append(THComponent(name=self.name+'%d'%i,
                                       mat=self.mat,
                                       vol=vol,
                                       T0=self.T0,
-                                      alpha_temp=self.alpha_temp,
+                                      alpha_temp=alpha_temp,
                                       timer=self.timer,
                                       heatgen=self.heatgen,
                                       power_tot=power_tot,
@@ -130,14 +131,17 @@ class THComponent(object):
         self.prev_t_idx = timestep
         return self.T[timestep]
 
-    def dtemp(self):
+    def dtemp(self, timestep):
         if self.prev_t_idx == 0:
             return 0.0*units.kelvin
         else:
-            return (self.T[self.prev_t_idx] - self.T[self.prev_t_idx-1])
+            T0=self.T[4900]
+            #TODO: hard coded initial steady state temp, at 49s with dt=0.01
+            return self.T[timestep]-T0
+        #return (self.T[self.prev_t_idx] - self.T[self.prev_t_idx-1])
 
-    def temp_reactivity(self):
-        return self.alpha_temp*self.dtemp()
+    def temp_reactivity(self, timestep):
+        return self.alpha_temp*self.dtemp(timestep)
 
     def add_convection(self, env, h, area):
         self.conv[env] = {
