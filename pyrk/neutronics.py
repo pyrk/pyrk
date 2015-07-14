@@ -131,7 +131,7 @@ class Neutronics(object):
         :type components: list of THComponent objects
         """
         rho = {}
-        if self.feedback and t_idx >500: #TODO: should not specify 500 here
+        if self.feedback and t_idx >5000: #TODO: should not specify 5000 here
             for component in components:
                 if not isinstance(component, THSuperComponent):
                     rho[component.name] = component.temp_reactivity()

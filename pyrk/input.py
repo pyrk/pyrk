@@ -112,14 +112,14 @@ feedback = True
 
 from reactivity_insertion import RampReactivityInsertion
 rho_ext = RampReactivityInsertion(timer=ti,
-                                     t_start=50.0*units.seconds,
-                                     t_end=60.0*units.seconds,
+                                     t_start=60.0*units.seconds,
+                                     t_end=70.0*units.seconds,
                                      rho_init=0.0*units.delta_k,
-                                     rho_rise=100.0*units.pcm,
-                                     rho_final=100.0*units.pcm)
+                                     rho_rise=10.0*units.pcm,
+                                     rho_final=10.0*units.pcm)
 
 # maximum number of internal steps that the ode solver will take
-nsteps = 100000
+nsteps = 500
 
 
 mod = th.THComponent(name="mod",
