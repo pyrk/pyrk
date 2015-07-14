@@ -177,8 +177,8 @@ def solve():
     eqn = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=1.0)
     #eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps)
     eqn.set_initial_value(y0(), si.timer.t0.magnitude)
-    tf1=50*units.seconds
-    while (eqn.successful() and eqn.t < 10): #si.timer.tf1.magnitude):
+    tf1=10*units.seconds
+    while (eqn.successful() and eqn.t < tf1): #si.timer.tf1.magnitude):
       #TODO: change eqn.t limit to input
         #print 'before'
         #print _y

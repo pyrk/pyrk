@@ -86,11 +86,12 @@ class THComponent(object):
             ro = self.ri+(i+1)*size
             vol = 4.0/3.0*math.pi*(ro**3-ri**3)
             power_tot = self.power_tot/self.vol*vol
+            alpha_temp = self.alpha_temp/self.vol*vol
             to_ret.append(THComponent(name=self.name+'%d'%i,
                                       mat=self.mat,
                                       vol=vol,
                                       T0=self.T0,
-                                      alpha_temp=self.alpha_temp,
+                                      alpha_temp=alpha_temp,
                                       timer=self.timer,
                                       heatgen=self.heatgen,
                                       power_tot=power_tot,
