@@ -139,5 +139,7 @@ class Neutronics(object):
         to_ret = sum(rho.values()).magnitude
         print 'external rho %f' %rho["external"]
         print 'total rho %f' %to_ret
+        #print 'rho list'
+        #print rho.values()
         self._rho[t_idx] = to_ret
         return to_ret

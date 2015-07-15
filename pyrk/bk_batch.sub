@@ -1,7 +1,7 @@
 #!/bin/sh
-#SBATCH --job-name=lambda1
-#SBATCH --output=lambda1.log
-#SBATCH --error=lambda1.serr
+#SBATCH --job-name=600pcm
+#SBATCH --output=600pcm.log
+#SBATCH --error=600pcm.serr
 #SBATCH --partition=savio
 #SBATCH --time=4:00:00
 #SBATCH --nodes=1

@@ -115,8 +115,8 @@ rho_ext = RampReactivityInsertion(timer=ti,
                                      t_start=60.0*units.seconds,
                                      t_end=70.0*units.seconds,
                                      rho_init=0.0*units.delta_k,
-                                     rho_rise=10.0*units.pcm,
-                                     rho_final=10.0*units.pcm)
+                                     rho_rise=600.0*units.pcm,
+                                     rho_final=600.0*units.pcm)
 
 # maximum number of internal steps that the ode solver will take
 nsteps = 500

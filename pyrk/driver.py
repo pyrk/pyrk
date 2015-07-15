@@ -9,9 +9,16 @@ import numpy as np
 from scipy.integrate import ode
 import importlib
 
-#from scipy.integrate import odeint
-#from pylab import *
-#import matplotlib.pyplot as plt
+from scipy.integrate._ode import vode
+class my_vode(vode):
+    def step(self, *args):
+        itask = self.call_args[2]
+        self.rwork[0] = args[4]
+        self.call_args[2] = 5
+        r = self.run(*args)
+        self.call_args[2] = itask
+        return r
+
 
 from utils.logger import logger
 from inp import sim_info
@@ -75,6 +82,7 @@ def update_th(t, y_n, y_th):
 def update_f(t, y):
     """ update f by updating n(neutronics) and th(thermal-hydraulics) arrays
     """
+    #print 'update_f at %f' %t
     idx = 1+si.n_pg+si.n_dg
     y_n = y[:idx]
     y_th = y[idx:]
@@ -113,13 +121,12 @@ def f_th(t, y_th):
     :param y: TODO
     :type y: np.ndarray
     """
-    print 'time in f_th %f' %t
+    #print 'time in f_th %f' %t
     t_idx = si.timer.t_idx(t*units.seconds)
-    print 'time index in f_th %f' %t_idx
     f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),
                        'kelvin / second')
     power = _y[t_idx][0]
-    print 'power %f' %power
+    #print 'power %f' %power
     o_i = 1+si.n_pg
     o_f = 1+si.n_pg+si.n_dg
     omegas = _y[t_idx][o_i:o_f]
@@ -174,10 +181,13 @@ def y0_th():
 
 def solve():
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
-    eqn = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=1.0)
-    #eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps)
+    #eqn = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=1.0)
+    
+    eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps)
+    #eqn = ode(f)
+    #eqn._integrator= my_vode(method='bdf', order=2, nsteps=infile.nsteps, max_step=1.0)
     eqn.set_initial_value(y0(), si.timer.t0.magnitude)
-    tf1=50*units.seconds
+    tf1=40*units.seconds
     while (eqn.successful() and eqn.t < tf1.magnitude): #si.timer.tf1.magnitude):
       #TODO: change eqn.t limit to input
         #print 'before'
@@ -187,12 +197,18 @@ def solve():
         #print _y
         #eqn.integrate(si.timer.current_time().magnitude)
         eqn.integrate(si.timer.current_time().magnitude)
+        #assert eqn.t+0.01>si.timer.current_time().magnitude, '%f and %f' %(eqn.t, 
+        #    si.timer.current_time().magnitude)
         #eqn.integrate(si.timer.tf.magnitude, step=True)
-        print si.timer.current_time().magnitude
+        print 'timer time %f' %si.timer.current_time().magnitude
+        print 'eqn time %f' %eqn.t
         update_f(eqn.t, eqn.y)
         #print 'after'
         #print _y
-    eqn_trans = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=1.0)
+    #eqn_trans = ode(f)
+    #eqn_trans._integrator= my_vode(method='bdf', nsteps=infile.nsteps*10, max_step=1.0)
+    eqn_trans = ode(f).set_integrator('dopri5', nsteps=infile.nsteps*10)
+    #eqn_trans = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=1.0)
     eqn_trans.set_initial_value(eqn.y, eqn.t)
     while (eqn_trans.successful() and eqn_trans.t < si.timer.tf.magnitude):
         #print 'before'
@@ -200,10 +216,10 @@ def solve():
         si.timer.advance_one_timestep()
         #print 'mid'
         #print _y
-        #eqn_trans.integrate(si.timer.current_time().magnitude)
         eqn_trans.integrate(si.timer.current_time().magnitude)
+        #eqn_trans.integrate(si.timer.current_time().magnitude, step=True)
         #eqn_trans.integrate(si.timer.tf.magnitude, step=True)
-        print si.timer.current_time().magnitude
+        print 'timer time %f' %si.timer.current_time().magnitude
         update_f(eqn_trans.t, eqn_trans.y)
         #print 'after'
         #print _y
