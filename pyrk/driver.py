@@ -139,7 +139,7 @@ def f_th(t, y_th):
 
 
 def f(t, y):
-    print 't in f %f' %t
+    #print 't in f %f' %t
     i_th = 1+si.n_pg+si.n_dg
     y_th = y[i_th:]
     to_ret = np.concatenate((f_n(t, y), f_th(t, y_th)))
@@ -200,8 +200,8 @@ def solve():
         #assert eqn.t+0.01>si.timer.current_time().magnitude, '%f and %f' %(eqn.t, 
         #    si.timer.current_time().magnitude)
         #eqn.integrate(si.timer.tf.magnitude, step=True)
-        print 'timer time %f' %si.timer.current_time().magnitude
-        print 'eqn time %f' %eqn.t
+        #print 'timer time %f' %si.timer.current_time().magnitude
+        #print 'eqn time %f' %eqn.t
         update_f(eqn.t, eqn.y)
         #print 'after'
         #print _y
@@ -219,7 +219,7 @@ def solve():
         eqn_trans.integrate(si.timer.current_time().magnitude)
         #eqn_trans.integrate(si.timer.current_time().magnitude, step=True)
         #eqn_trans.integrate(si.timer.tf.magnitude, step=True)
-        print 'timer time %f' %si.timer.current_time().magnitude
+        #print 'timer time %f' %si.timer.current_time().magnitude
         update_f(eqn_trans.t, eqn_trans.y)
         #print 'after'
         #print _y

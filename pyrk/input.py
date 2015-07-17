@@ -41,10 +41,10 @@ kappa = 0.0
 t0 = 0.00*units.seconds
 
 # Timestep
-dt = 0.1*units.seconds
+dt = 0.01*units.seconds
 
 # Final Time
-tf = 80*units.seconds
+tf = 120*units.seconds
 
 
 def area_sphere(r):

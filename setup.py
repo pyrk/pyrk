@@ -4,7 +4,7 @@ import io
 import os
 
 import pyrk
-from version import get_git_version
+#from version import get_git_version
 
 here = os.path.abspath(os.path.dirname(__file__))
 

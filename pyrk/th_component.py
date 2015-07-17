@@ -136,8 +136,8 @@ class THComponent(object):
         if self.prev_t_idx == 0:
             return 0.0*units.kelvin
         else:
-            T0=self.T[4900]
-            print self.T[4900]
+            T0=self.T[5400]
+            #print self.T[5400]
             #print 'self.T' 
             #print self.T
             #TODO: hard coded initial steady state temp, at 49s with dt=0.01
@@ -146,8 +146,8 @@ class THComponent(object):
 
     def temp_reactivity(self, timestep):
         '''alpha_temp is converted to deltak/kelvin'''
-        print self.alpha_temp
-        print self.dtemp(timestep)
+        #print self.alpha_temp
+        #print self.dtemp(timestep)
         return self.alpha_temp*self.dtemp(timestep)
 
     def add_convection(self, env, h, area):
