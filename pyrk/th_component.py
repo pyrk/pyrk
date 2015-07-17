@@ -77,7 +77,8 @@ class THComponent(object):
         self.ro = ro
 
     def mesh(self, size):
-        '''cut a THComponent into a list of smaller component'''
+        '''cut a THComponent into a list of smaller component
+        return: a list of components'''
         N = int(round((self.ro-self.ri)/size.to('meter')))
         #todo implement: assert (N*size).magnitude == (self.ro-self.ri).magnitude
         to_ret = []
