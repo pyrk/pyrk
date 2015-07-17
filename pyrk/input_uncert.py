@@ -1,13 +1,14 @@
-''' changed from the initial input file
-to represent a simplified model for the FHR core
+''' changed from the input file input_FVM.py
+to conduct uncertainty study
 '''
 from ur import units
 import th_component as th
 import math
-from cool import Cool
+from cool_uncert import Cool
 from mod import Mod
 from fuel import Fuel
 from timer import Timer
+import random
 #############################################
 #
 # User Workspace
@@ -16,20 +17,12 @@ from timer import Timer
 
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
-alpha_fuel = -3.8*units.pcm/units.kelvin
-alpha_cool = -1.8*units.pcm/units.kelvin
+alpha_fuel = random.gauss(-3.19, 0.05*3.8)*units.pcm/units.kelvin
+alpha_cool = random.gauss(0.23, 0.11)*units.pcm/units.kelvin
 alpha_mod = -0.7*units.pcm/units.kelvin
 alpha_shell = 0*units.pcm/units.kelvin
-#alpha_fuel = 0*units.pcm/units.kelvin
-#alpha_cool = 0*units.pcm/units.kelvin
-#alpha_mod =  0*units.pcm/units.kelvin
-#alpha_shell = 0*units.pcm/units.kelvin
-# below from steady state analysis
-#t_mod = 986.511*units.kelvin
-#t_fuel = 963.8713*units.kelvin
-#t_shell = 951.2938*units.kelvin
-#t_cool = 922.7725*units.kelvin
 
+#initial values for temepratures
 t_mod = (800+273.15)*units.kelvin
 t_fuel = (800+273.15)*units.kelvin
 t_shell = (770+273.15)*units.kelvin
