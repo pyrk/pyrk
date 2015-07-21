@@ -20,7 +20,7 @@ cup of coffee.
 .. toctree::
    :maxdepth: 1
 
-   pyrk
+   src/index
    tutorial
    authors
 
