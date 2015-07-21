@@ -28,7 +28,19 @@ class THSystem(object):
                                       t_env=env.T[t_idx],
                                       h=d['h'],
                                       A=d['area'])/cap
-        return to_ret
+        for interface, d in component.mass.iteritems():
+            env = self.comp_from_name(interface)
+            to_ret -= self.mass_trans(t_b=component.T[t_idx],
+                                      t_inlet=env.T[t_idx],
+                                      H=d['H'],
+                                      u=d['u'])
+        for interface, d in component.cust.iteritems():
+            env = self.comp_from_name(interface)
+            to_ret -= self.custom(t_b=component.T[t_idx],
+                                      t_env=env.T[t_idx],
+                                      res=d['res'])/cap
+
+        return to_ret.to('kelvin/second')
 
     def comp_from_name(self, name):
         """Returns the component with the matching name
@@ -42,8 +54,19 @@ class THSystem(object):
         raise KeyError(msg)
 
     def heatgen(self, component, power, omegas):
-        return (component.power_tot)*((1-self.kappa)*power +
-                                      sum(omegas))
+        to_ret = (component.power_tot)*((1-self.kappa)*power + sum(omegas))
+        return to_ret.to(units.watt)
+
+    def mass_trans(self, t_b, t_inlet, H, u):
+        """
+        :param t_b: The temperature of the body
+        :type t_b: float.
+        :param t_inlet: The temperature of the flow inlet
+        :type t_inlet:
+        """
+        num = 2.0*u*(t_b - t_inlet)
+        denom = H
+        return num/denom
 
     def convection(self, t_b, t_env, h, A):
         """
@@ -75,4 +98,9 @@ class THSystem(object):
         """
         num = (t_b-t_env)
         denom = L/(k*A)
+        return num/denom
+
+    def custom(self, t_b, t_env, res):
+        num = (t_b-t_env)
+        denom = res.to(units.kelvin/units.watt)
         return num/denom
