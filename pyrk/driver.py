@@ -14,7 +14,7 @@ from utils.logger import pyrklog
 from inp import sim_info
 from ur import units
 from utils import plotter
-
+import os
 
 def update_n(t, y_n, si):
     """This function updates the neutronics block.
@@ -95,7 +95,7 @@ def y0(si):
     """The initial conditions for y"""
     i = 0
     f = np.zeros(shape=(si.n_entries(),), dtype=float)
-    f[i] = 1.0  # real power is 236 MWth, but normalized is 1
+    f[i] = 1.0  # power is normalized is 1
     for j in range(0, si.n_pg):
         i += 1
         f[i] = si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
@@ -156,8 +156,9 @@ def log_results(si):
     pyrklog.info("\nDecay lambdas: \n"+str(si.ne._dd.lambdas()))
 
 
-def print_logo():
-    with open('logo.txt', 'r') as logo:
+def print_logo(curr_dir):
+    filename = os.path.join(curr_dir, 'logo.txt')
+    with open(filename, 'r') as logo:
         pyrklog.critical("\nWelcome to PyRK.\n" +
                          "(c) Kathryn D. Huff\n" +
                          "Your simulation is starting.\n" +
@@ -165,7 +166,7 @@ def print_logo():
                          logo.read())
 
 
-def main(args):
+def main(args, curr_dir):
     np.set_printoptions(precision=5, threshold=np.inf)
     logger.set_up_pyrklog(args.logfile)
     infile = importlib.import_module(args.infile)
@@ -180,7 +181,7 @@ def main(args):
                           feedback=infile.feedback,
                           rho_ext=infile.rho_ext,
                           plotdir=args.plotdir)
-    print_logo()
+    print_logo(curr_dir)
     # n_components = len(si.components)
     sol = solve(si=si, y=si.y, infile=infile)
     log_results(si)
@@ -190,6 +191,7 @@ def main(args):
 
 """Run it as a script"""
 if __name__ == "__main__":
+    curr_dir = os.path.dirname(__file__)
     ap = argparse.ArgumentParser(description='PyRK parameters')
     ap.add_argument('--infile', help='the name of the input file',
                     default='input')
@@ -200,4 +202,4 @@ if __name__ == "__main__":
     ap.add_argument('--outfile', help='the name of the output database',
                     default='pyrk.h5')
     args = ap.parse_args()
-    main(args)
+    main(args, curr_dir)

@@ -9,7 +9,7 @@ class Triso(THComponent):
     support of calculations related to the thermal hydraulics subblock
     """
     def __init__(self, name=None, vol=0, T0=0,
-                 alpha_temp=0, timesteps=0, heatgen=False, power_tot=0):
+                 alpha_temp=0, timesteps=0, heatgen=True, power_tot=0):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.
