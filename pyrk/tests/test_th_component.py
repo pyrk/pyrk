@@ -5,7 +5,7 @@ import th_component as th
 from inp import sim_info
 from ur import units
 from timer import Timer
-from material import Material
+from materials.material import Material
 import density_model
 
 name = "testname"

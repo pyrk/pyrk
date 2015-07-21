@@ -2,8 +2,8 @@ import math
 from ur import units
 import th_component as th
 from timer import Timer
-from sfrmetal import SFRMetal
-from sodium import Sodium
+from materials.sfrmetal import SFRMetal
+from materials.sodium import Sodium
 
 #############################################
 #

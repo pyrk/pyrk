@@ -1,10 +1,10 @@
 from ur import units
 import th_component as th
 import math
-from sfrmetal import SFRMetal
-from sodium import Sodium
-from ss316 import SS316
-from timer import Timer
+from materials.sfrmetal import SFRMetal
+from materials.sodium import Sodium
+from materials.ss316 import SS316
+from materials.timer import Timer
 
 #############################################
 #
