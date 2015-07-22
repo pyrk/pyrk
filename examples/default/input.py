@@ -1,9 +1,9 @@
 from ur import units
 import th_component as th
 import math
-from flibe import Flibe
-from graphite import Graphite
-from kernel import Kernel
+from materials.flibe import Flibe
+from materials.graphite import Graphite
+from materials.kernel import Kernel
 from timer import Timer
 
 #############################################
