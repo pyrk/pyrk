@@ -182,7 +182,6 @@ def main(args, curr_dir):
                           rho_ext=infile.rho_ext,
                           plotdir=args.plotdir)
     print_logo(curr_dir)
-    # n_components = len(si.components)
     sol = solve(si=si, y=si.y, infile=infile)
     log_results(si)
     plotter.plot(sol, si)
@@ -194,7 +193,7 @@ if __name__ == "__main__":
     curr_dir = os.path.dirname(__file__)
     ap = argparse.ArgumentParser(description='PyRK parameters')
     ap.add_argument('--infile', help='the name of the input file',
-                    default='../examples/default/input')
+                    default='input')
     ap.add_argument('--logfile', help='the name of the log file',
                     default='pyrk.log')
     ap.add_argument('--plotdir', help='the name of the directory of output plots',
