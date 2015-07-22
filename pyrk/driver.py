@@ -12,7 +12,7 @@ import argparse
 from utils import logger
 from utils.logger import pyrklog
 from inp import sim_info
-from ur import units
+from utils.ur import units
 from utils import plotter
 import os
 
@@ -194,7 +194,7 @@ if __name__ == "__main__":
     curr_dir = os.path.dirname(__file__)
     ap = argparse.ArgumentParser(description='PyRK parameters')
     ap.add_argument('--infile', help='the name of the input file',
-                    default='input')
+                    default='../examples/default/input')
     ap.add_argument('--logfile', help='the name of the log file',
                     default='pyrk.log')
     ap.add_argument('--plotdir', help='the name of the directory of output plots',
