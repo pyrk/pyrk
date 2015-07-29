@@ -14,7 +14,7 @@ class Neutronics(object):
     """
 
     def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 timer=Timer(), rho_ext=None, feedback=False):
+                 timer=Timer(), rho_ext=None, feedback=False, feedback_onset_time=50):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
@@ -62,6 +62,8 @@ class Neutronics(object):
 
         self.feedback =  feedback
         """feedback (bool): False if no reactivity feedbacks, true otherwise"""
+
+        self.feedback_onset_time = feedback_onset_time
 
     def init_rho_ext(self, rho_ext):
         if rho_ext is None:
@@ -132,9 +134,10 @@ class Neutronics(object):
         """
         rho = {}
         if self.feedback and t_idx >5500: #TODO: run heat transfer mode only for 50s, but should not specify 5000 here
+            T0_timestep = t_idx -5
             for component in components:
                 if not isinstance(component, THSuperComponent):
-                    rho[component.name] = component.temp_reactivity(t_idx)
+                    rho[component.name] = component.temp_reactivity(t_idx, T0_timestep)
         rho["external"] = self._rho_ext(t_idx=t_idx).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         #print 'external rho %f' %rho["external"]

@@ -7,7 +7,8 @@ class Cool(Material):
     """This class represents FLiBe. It inherits from the material
     class and possesses attributes intrinsic to flibe.
     """
-    def __init__(self, name="flibe"):
+    def __init__(self, name="flibe", cp=2415.78*units.joule/(units.kg*units.kelvin)):
+
         """Initalizes a material
 
         :param name: The name of the component (i.e., "fuel" or "cool")
@@ -16,7 +17,7 @@ class Cool(Material):
         Material.__init__(self,
                           name=name,
                           k=self.thermal_conductivity(),
-                          cp=self.specific_heat_capacity(),
+                          cp=cp,
                           dm=self.density())
 
     def thermal_conductivity(self):
@@ -28,8 +29,7 @@ class Cool(Material):
 
         from www-ferp.ucsd.edu/LIB/PROPS/HTS.shtml
         """
-        cp=random.gauss(2415.78, 0.05*2415.78)
-        return cp*units.joule/(units.kg*units.kelvin)
+        return 2415.78*units.joule/(units.kg*units.kelvin)
 
     def density(self):
         """

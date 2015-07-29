@@ -8,17 +8,20 @@ scripts.
 import numpy as np
 from scipy.integrate import ode
 import importlib
+import sys
 
-from scipy.integrate._ode import vode
-class my_vode(vode):
-    def step(self, *args):
-        itask = self.call_args[2]
-        self.rwork[0] = args[4]
-        self.call_args[2] = 5
-        r = self.run(*args)
-        self.call_args[2] = itask
-        return r
-
+#from scipy.integrate._ode import vode
+#class my_vode(vode):
+#    #overwrite the original Vode ode solver class to change the default step
+#    #mode from 2 to 5
+#    def step(self, *args):
+#        itask = self.call_args[2]
+#        self.rwork[0] = args[4]
+#        self.call_args[2] = 5
+#        r = self.run(*args)
+#        self.call_args[2] = itask
+#        return r
+#
 
 from utils.logger import logger
 from inp import sim_info
@@ -29,7 +32,7 @@ from th_component import THSuperComponent
 
 np.set_printoptions(precision=5, threshold=np.inf)
 
-infile = importlib.import_module("input")
+infile = importlib.import_module(sys.argv[1])
 
 si = sim_info.SimInfo(timer=infile.ti,
                       components=infile.components,
@@ -39,8 +42,8 @@ si = sim_info.SimInfo(timer=infile.ti,
                       n_decay=infile.n_dg,
                       kappa=infile.kappa,
                       feedback=infile.feedback,
-                      rho_ext=infile.rho_ext
-                      )
+                      rho_ext=infile.rho_ext,
+                      uncertainty_param=infile.uncertainty_param)
 
 n_components = len(si.components)
 
@@ -182,7 +185,7 @@ def y0_th():
 def solve():
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
     #eqn = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=1.0)
-    
+
     eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps, max_step=1.0)
     #eqn = ode(f)
     #eqn._integrator= my_vode(method='bdf', order=2, nsteps=infile.nsteps, max_step=1.0)
@@ -197,7 +200,7 @@ def solve():
         #print _y
         #eqn.integrate(si.timer.current_time().magnitude)
         eqn.integrate(si.timer.current_time().magnitude)
-        #assert eqn.t+0.01>si.timer.current_time().magnitude, '%f and %f' %(eqn.t, 
+        #assert eqn.t+0.01>si.timer.current_time().magnitude, '%f and %f' %(eqn.t,
         #    si.timer.current_time().magnitude)
         #eqn.integrate(si.timer.tf.magnitude, step=True)
         #print 'timer time %f' %si.timer.current_time().magnitude
@@ -228,6 +231,7 @@ def solve():
 
 def log_results():
     logger.info("\nReactivity : \n"+str(si.ne._rho))
+    logger.info('\nUncertainty param: \n' + str(uncertainty_param))
     logger.info("\nFinal Result : \n"+np.array_str(_y))
     for comp in si.components:
         logger.info("\n" + comp.name + ":\n" + np.array_str(comp.T.magnitude))
