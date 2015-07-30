@@ -208,7 +208,7 @@ def solve():
     #eqn = ode(f)
     #eqn._integrator= my_vode(method='bdf', order=2, nsteps=infile.nsteps, max_step=1.0)
     eqn.set_initial_value(y0(), si.timer.t0.magnitude)
-    tf1=1*units.seconds
+    tf1=1.0*units.seconds
     while (eqn.successful() and eqn.t < tf1.magnitude): #si.timer.tf1.magnitude):
       #TODO: change eqn.t limit to input
         #print 'before'
@@ -249,7 +249,7 @@ def solve():
 
 def log_results():
     logger.info("\nReactivity : \n"+str(si.ne._rho))
-    logger.info('\nUncertainty param: \n' + str(uncertainty_param))
+    logger.info('\nUncertainty param: \n' + str(si.uncertainty_param))
     logger.info("\nFinal Result : \n"+np.array_str(_y))
     for comp in si.components:
         logger.info("\n" + comp.name + ":\n" + np.array_str(comp.T.magnitude))

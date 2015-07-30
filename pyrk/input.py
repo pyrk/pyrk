@@ -21,8 +21,6 @@ t0 = 0.00*units.seconds
 dt = 0.01*units.seconds
 # Final Time
 tf = 2*units.seconds
-
-
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
 alpha_fuel = random.gauss(-3.19, 0.1595)*units.pcm/units.kelvin
@@ -110,24 +108,23 @@ rho_ext = RampReactivityInsertion(timer=ti,
 # maximum number of internal steps that the ode solver will take
 nsteps = 500
 
-k_mod =0.26*units.watt/(units.meter*units.kelvin)
-cp_mod=1650.0*units.joule/(units.kg*units.kelvin)
+k_mod =random.gauss(17, 17*0.05)*units.watt/(units.meter*units.kelvin)
+cp_mod=random.gauss(1650.0, 1650.0*0.05)*units.joule/(units.kg*units.kelvin)
 rho_mod = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
 Moderator=Material('mod', k_mod, cp_mod, rho_mod)
 
-k_fuel=random.uniform(15, 19)*units.watt/(units.meter*units.kelvin)
-cp_fuel=random.gauss(1818, 1818*0.05)*units.joule/units.kg/units.kelvin # [J/kg/K]
-rho=random.gauss(2200.0, 2200.0*0.05)
-rho_fuel=DensityModel(a=rho*units.kg/(units.meter**3), model="constant")
+k_fuel=random.uniform(15.0, 19.0)*units.watt/(units.meter*units.kelvin)
+cp_fuel=random.gauss(1818.0, 1818*0.05)*units.joule/units.kg/units.kelvin # [J/kg/K]
+rho_fuel=DensityModel(a=2200.0*units.kg/(units.meter**3), model="constant")
 Fuel=Material('fuel', k_fuel, cp_fuel, rho_fuel)
 
-k_shell =0.26*units.watt/(units.meter*units.kelvin)
-cp_shell=1650.0*units.joule/(units.kg*units.kelvin)
+k_shell =random.gauss(17, 17*0.05)*units.watt/(units.meter*units.kelvin)
+cp_shell=random.gauss(1650.0, 1650.0*0.05)*units.joule/(units.kg*units.kelvin)
 rho_shell = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
 Shell=Material('shell', k_shell, cp_shell, rho_shell)
 
 k_cool=1*units.watt/(units.meter*units.kelvin)
-cp_cool=2415.78*units.joule/(units.kg*units.kelvin)
+cp_cool=random.gauss(2415.78, 2415.78*0.05)*units.joule/(units.kg*units.kelvin)
 rho_cool = DensityModel(a=2415.6*units.kg/(units.meter**3),
                             b=-0.49072*units.kg/(units.meter**3)/units.kelvin,
                             model="linear")

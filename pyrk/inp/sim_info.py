@@ -23,6 +23,7 @@ class SimInfo(object):
         self.n_dg = n_decay
         self.rho_ext = self.init_rho_ext(rho_ext)
         self.feedback = feedback
+        self.uncertainty_param=uncertainty_param
         self.ne = self.init_ne()
         self.th = th_system.THSystemSphFVM(kappa=kappa, components=components)
 
