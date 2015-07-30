@@ -9,11 +9,11 @@ import numpy as np
 from scipy.integrate import ode
 import importlib
 import argparse
-from utils import logger
-from utils.logger import pyrklog
+from utilities import logger
+from utilities.logger import pyrklog
 from inp import sim_info
-from utils.ur import units
-from utils import plotter
+from utilities.ur import units
+from utilities import plotter
 import os
 
 def update_n(t, y_n, si):
