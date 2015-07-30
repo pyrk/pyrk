@@ -52,7 +52,7 @@ In the long term, it is very likely that PyRK will one day be absorbed into or
 will absorb the wonderful `PyNE` package.
 
 
-.. PyNE:: http://pyne.github.io
+.. _PyNE: http://pyne.github.io
 
 .. warning::
 
