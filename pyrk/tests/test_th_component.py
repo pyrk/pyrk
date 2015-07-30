@@ -3,7 +3,7 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
 
 import th_component as th
 from inp import sim_info
-from ur import units
+from utilities.ur import units
 from timer import Timer
 from materials.material import Material
 import density_model

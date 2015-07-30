@@ -3,7 +3,7 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
 
 import reactivity_insertion as ri
 import timer
-from ur import units
+from utilities.ur import units
 
 ti = timer.Timer(t0=0.0*units.seconds,
                  tf=10.0*units.seconds,
