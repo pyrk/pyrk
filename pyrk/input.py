@@ -20,7 +20,7 @@ t0 = 0.00*units.seconds
 # Timestep
 dt = 0.01*units.seconds
 # Final Time
-tf = 120*units.seconds
+tf = 2*units.seconds
 
 
 # Thermal hydraulic params

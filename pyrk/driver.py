@@ -10,6 +10,24 @@ from scipy.integrate import ode
 import importlib
 import sys
 
+import logging
+logger = logging.getLogger("pyrk logger")
+logger.setLevel(logging.DEBUG)
+# create file handler which logs even debug messages
+fh = logging.FileHandler(filename=sys.argv[2], mode="w")
+fh.setLevel(level=logging.DEBUG)
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.ERROR)
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s \n %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
+
+
 #from scipy.integrate._ode import vode
 #class my_vode(vode):
 #    #overwrite the original Vode ode solver class to change the default step
@@ -23,7 +41,7 @@ import sys
 #        return r
 #
 
-from utils.logger import logger
+#from utils.logger import logger
 from inp import sim_info
 from ur import units
 from utils import plotter
@@ -190,7 +208,7 @@ def solve():
     #eqn = ode(f)
     #eqn._integrator= my_vode(method='bdf', order=2, nsteps=infile.nsteps, max_step=1.0)
     eqn.set_initial_value(y0(), si.timer.t0.magnitude)
-    tf1=40*units.seconds
+    tf1=1*units.seconds
     while (eqn.successful() and eqn.t < tf1.magnitude): #si.timer.tf1.magnitude):
       #TODO: change eqn.t limit to input
         #print 'before'
