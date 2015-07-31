@@ -20,7 +20,7 @@ t0 = 0.00*units.seconds
 # Timestep
 dt = 0.01*units.seconds
 # Final Time
-tf = 2*units.seconds
+tf = 120.0*units.seconds
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
 alpha_fuel = random.gauss(-3.19, 0.1595)*units.pcm/units.kelvin
@@ -106,7 +106,7 @@ rho_ext = RampReactivityInsertion(timer=ti,
                                      rho_final=600.0*units.pcm)
 
 # maximum number of internal steps that the ode solver will take
-nsteps = 500
+nsteps = 5000
 
 k_mod =random.gauss(17, 17*0.05)*units.watt/(units.meter*units.kelvin)
 cp_mod=random.gauss(1650.0, 1650.0*0.05)*units.joule/(units.kg*units.kelvin)

@@ -1,7 +1,7 @@
 #!/bin/sh
-#SBATCH --job-name=faster
-#SBATCH --output=faster.log
-#SBATCH --error=faster.serr
+#SBATCH --job-name=uncert
+#SBATCH --output=uncert.log
+#SBATCH --error=uncert.serr
 #SBATCH --partition=savio
 #SBATCH --time=4:00:00
 #SBATCH --nodes=1
@@ -15,4 +15,4 @@
 #mail user
 #SBATCH --mail-user=imwangxin@gmail.com
 
-python driver.py
+python driver.py 'input' 'output2'
