@@ -1,7 +1,7 @@
 from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 
-import ur
+import utilities.ur as ur
 
 
 def test_pcm_to_per_cent_delta_k():
