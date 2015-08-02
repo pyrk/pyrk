@@ -270,5 +270,5 @@ if __name__ == "__main__":
                         logo.read())
     sol = solve()
     log_results()
-    plotter.plot(sol, si)
+    plotter.plot(sol, si, sys.argv[3])
     logger.critical("\nSimulation succeeded.\n")

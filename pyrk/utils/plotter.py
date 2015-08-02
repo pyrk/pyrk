@@ -17,22 +17,22 @@ def my_colors(num, n):
     return color_val
 
 
-def plot(y, si):
+def plot(y, si, dir_loc):
     """Creates plots for interesting values in the simulation.
     :param y: The full solution array
     :type y: np.ndarray"""
     x = si.timer.series.magnitude
-    plot_power(x, y)
-    plot_reactivity(x, si)
-    plot_power_w_reactivity(x=x, y=y, si=si)
-    plot_zetas(x, y, si)
+    plot_power(x, y, dir_loc)
+    plot_reactivity(x, si, dir_loc)
+    plot_power_w_reactivity(x=x, y=y, si=si,dir_loc=dir_loc)
+    plot_zetas(x, y, si, dir_loc)
     if si.ne._ndg > 0:
-        plot_omegas(x, y, si)
-    plot_temps_together(x, y, si)
-    plot_temps_separately(x, y, si)
+        plot_omegas(x, y, si, dir_loc)
+    plot_temps_together(x, y, si, dir_loc)
+    plot_temps_separately(x, y, si, dir_loc)
 
 
-def plot_reactivity(x, si):
+def plot_reactivity(x, si, dir_loc):
     """Plots the reactivity
     :param x: The time series
     :type x: np.ndarray"""
@@ -41,19 +41,19 @@ def plot_reactivity(x, si):
     plt.xlabel("Time [s]")
     plt.ylabel("Reactivity [$\Delta k/k$]")
     plt.title("Reactivity [$\Delta k/k$]")
-    saveplot("reactivity", plt)
+    saveplot("reactivity", plt, dir_loc)
 
 
-def plot_power(x, y):
+def plot_power(x, y, dir_loc):
     power = y[:, 0]
     plt.plot(x, power, color=my_colors(1, len(y)), marker='.')
     plt.xlabel("Time [s]")
     plt.ylabel("Power [units]")
     plt.title("Power [units]")
-    saveplot("power", plt)
+    saveplot("power", plt, dir_loc)
 
 
-def plot_power_w_reactivity(x, si, y):
+def plot_power_w_reactivity(x, si, y, dir_loc):
     power = y[:, 0]
     rho = si.ne._rho
     plt.plot(x, power, color=my_colors(0, 2), marker='.', label="Power")
@@ -63,10 +63,10 @@ def plot_power_w_reactivity(x, si, y):
     plt.xlabel("Time [s]")
     plt.ylabel("Power and Reactivity [$\Delta k$]")
     plt.title("Power and Reactivity [$\Delta k$]")
-    saveplot("pow_and_rho", plt)
+    saveplot("pow_and_rho", plt, dir_loc)
 
 
-def plot_temps_together(x, y, si):
+def plot_temps_together(x, y, si, dir_loc):
     for num, comp in enumerate(si.components):
         idx = 1 + si.ne._npg + si.ne._ndg + num
         plt.plot(x, y[:, idx], label=comp.name,
@@ -75,10 +75,10 @@ def plot_temps_together(x, y, si):
     plt.xlabel("Time [s]")
     plt.ylabel("Temperature [K]")
     plt.title("Temperature of Each Component")
-    saveplot("temps", plt)
+    saveplot("temps", plt, dir_loc)
 
 
-def plot_temps_separately(x, y, si):
+def plot_temps_separately(x, y, si, dir_loc):
     for num, comp in enumerate(si.components):
         idx = 1 + si.ne._npg + si.ne._ndg + num
         plt.plot(x, y[:, idx], label=comp.name,
@@ -87,10 +87,10 @@ def plot_temps_separately(x, y, si):
         plt.ylabel("Temperature [K]")
         plt.title("Temperature of "+comp.name)
         plt.legend()
-        saveplot(comp.name+" Temp[K]", plt)
+        saveplot(comp.name+" Temp[K]", plt, dir_loc)
 
 
-def plot_zetas(x, y, si):
+def plot_zetas(x, y, si, dir_loc):
     for num in range(0, si.ne._npg):
         idx = num + 1
         plt.plot(x, y[:, idx], color=my_colors(num, si.ne._npg), marker='.',
@@ -99,10 +99,10 @@ def plot_zetas(x, y, si):
     plt.ylabel("Concentration of Neutron Precursors, $\zeta_i [\#/dr^3]$")
     plt.title("Concentration of Neutron Precursors, $\zeta_i [\#/dr^3]$")
     plt.legend()
-    saveplot("zetas", plt)
+    saveplot("zetas", plt, dir_loc)
 
 
-def plot_omegas(x, y, si):
+def plot_omegas(x, y, si, dir_loc):
     for num in range(0, si.ne._ndg):
         idx = 1 + si.ne._npg + num
         plt.plot(x, y[:, idx], color=my_colors(num, si.ne._ndg), marker='.',
@@ -111,11 +111,10 @@ def plot_omegas(x, y, si):
     plt.xlabel(r'Time $[s]$')
     plt.ylabel(r'Decay Heat Fractions, $\omega_i [\#/dr^3]$')
     plt.title(r'Decay Heat Fractions, $\omega_i [\#/dr^3]$')
-    saveplot("omegas", plt)
+    saveplot("omegas", plt, dir_loc)
 
 
-def saveplot(name, plt):
-    plotdir = 'images'
+def saveplot(name, plt, plotdir='image'):
     if not os.path.exists(plotdir):
         os.makedirs(plotdir)
     plt.savefig(str(plotdir+"/"+name+'.pdf'), bbox_inches='tight')

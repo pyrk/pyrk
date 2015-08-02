@@ -15,4 +15,4 @@
 #mail user
 #SBATCH --mail-user=imwangxin@gmail.com
 
-python driver.py 'input' 'output2'
+python driver.py 'input' 'output1' 'image'

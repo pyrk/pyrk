@@ -1,0 +1,34 @@
+#!/bin/bash
+#SBATCH -J Uncert              ## name
+#SBATCH -N 1                 ## 1 node
+#SBATCH --ntasks=20          ## number of tasks per node
+#SBATCH --time=100:00:00 
+# Partition:
+#SBATCH --partition=savio
+#
+# QoS:
+#SBATCH --qos=nuclear_normal
+# Account:
+#SBATCH --account=co_nuclear
+#
+# SLURM Output File
+##SBATCH --output=/dev/null
+##SBATCH --output=slurm.out
+#
+# SLURM Error File
+#SBATCH --error=slurm.err
+#
+# Mail type:
+##SBATCH --mail-type=all
+#
+# Mail user:
+##SBATCH --mail-user=xin.wang@berkeley.edu     
+
+for j in {000..010}
+do
+   sleep 1
+   echo running pyrk with $j
+   python driver.py  'input' 'out'$j 'image'$j
+done
+wait
+
