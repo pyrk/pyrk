@@ -134,7 +134,7 @@ class Neutronics(object):
         """
         rho = {}
         if self.feedback and t_idx >5500: #TODO: run heat transfer mode only for 50s, but should not specify 5000 here
-            T0_timestep = t_idx -5
+            T0_timestep = 5500 -5  # T0_timestep is the reference 'steady state' time step for calculating temeprature feedback rho_feedback=alpha*(T_current - T0_timestep)
             for component in components:
                 if not isinstance(component, THSuperComponent):
                     rho[component.name] = component.temp_reactivity(t_idx, T0_timestep)

@@ -1,5 +1,10 @@
 ''' changed from the initial input file
 to represent a simplified model for the FHR core
+
+The simulation has 3 stages:
+- initial temperature without feedback
+- turn on feedback
+- turn on external reactivity
 '''
 from ur import units
 import th_component as th
@@ -20,14 +25,17 @@ t0 = 0.00*units.seconds
 # Timestep
 dt = 0.01*units.seconds
 # Final Time
-tf = 120.0*units.seconds
+tf = 150.0*units.seconds
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
-alpha_fuel = random.gauss(-3.19, 0.1595)*units.pcm/units.kelvin
+alpha_fuel =-3.19 *units.pcm/units.kelvin
+#random.gauss(-3.19, 0.1595)*units.pcm/units.kelvin
 alpha_mod = -0.7*units.pcm/units.kelvin
 alpha_shell = 0*units.pcm/units.kelvin
-alpha_cool = random.gauss(0.23, 0.11)*units.pcm/units.kelvin
+alpha_cool =0.23 *units.pcm/units.kelvin
+#random.gauss(0.23, 0.11)*units.pcm/units.kelvin
 
+#initial temperature
 t_mod = (800+273.15)*units.kelvin
 t_fuel = (800+273.15)*units.kelvin
 t_shell = (770+273.15)*units.kelvin
@@ -56,6 +64,7 @@ vol_shell = vol_sphere(r_shell) - vol_sphere(r_fuel)
 vol_cool = (vol_mod + vol_fuel + vol_shell)*0.4/0.6
 a_pb = area_sphere(r_shell)
 
+# Coolant flow properties
 # 4700TODO implement h(T) model
 h_cool = random.gauss(4700.0, 4700.0*0.05)*units.watt/units.kelvin/units.meter**2
 m_flow = 976.0*units.kg/units.second  # 976*units.kg/units.second
@@ -188,4 +197,5 @@ for i in range(0, len(pebble.sub_comp)):
     components.append(pebble.sub_comp[i])
 components.extend([pebble, cool])
 
-uncertainty_param=[alpha_cool, alpha_fuel, k_mod, k_fuel, k_shell, cp_mod, cp_fuel, cp_shell, cp_cool, h_cool]
+uncert=[alpha_cool, alpha_fuel, k_mod, k_fuel, k_shell, cp_mod, cp_fuel, cp_shell, cp_cool, h_cool]
+uncertainty_param=[o.magnitude for o in uncert]
