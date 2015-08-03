@@ -146,8 +146,9 @@ def f_th(t, y_th):
     #print 'time in f_th %f' %t
     t_idx = si.timer.t_idx(t*units.seconds)
     #print 't_idx %d' %t_idx
-    f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),
-                       'kelvin / second')
+    #f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),
+    #                   'kelvin / second')
+    f = np.zeros(shape=(n_components,), dtype=float)
     power = _y[t_idx][0]
     #print 'power %f' %power
     o_i = 1+si.n_pg

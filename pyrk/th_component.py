@@ -126,7 +126,7 @@ class THComponent(object):
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
         :param temp: the new tempterature
-        :type float: float, units of kelvin
+        :type float: float, dimensionless
         """
         self.T[timestep] = temp
         self.prev_t_idx = timestep
@@ -196,7 +196,6 @@ class THSuperComponent(object):
                                          dtype=float), 'kelvin')
         self.T[0] = T0
         self.conv = {}
-
     def update_temp_R(self, timestep, t_env, t_innercomp):
         """ TODO this function is not used
         Updates the temperature

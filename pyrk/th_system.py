@@ -125,9 +125,12 @@ class THSystemSphFVM(THSystem):
         THSystem.__init__(self, kappa, components)
 
     def dtempdt(self, component, power, omegas, t_idx):
+        '''
+        return: kelvin/s
+        '''
         to_ret = 0.0#*units.kelvin/units.second
         if isinstance(component, THSuperComponent):
-            return to_ret*units.kelvin/units.second
+            return to_ret
         else:
             cap = (component.rho(t_idx).magnitude*component.cp.magnitude)
             if component.sph and component.ri.magnitude == 0.0:
@@ -190,7 +193,7 @@ class THSystemSphFVM(THSystem):
                 Tin is %f, tout is %f, tcomp is %f''' % (
                         t_idx, component.name, Qadv, d['t_in'].magnitude,
                         (component.T[t_idx]*2 - d['t_in']).magnitude, component.T[t_idx].magnitude)
-            return to_ret*units.kelvin/units.second
+            return to_ret
 
     def BC_center(self, component, t_b, dr):
         '''
