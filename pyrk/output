@@ -1,0 +1,218 @@
+2015-08-02 17:38:32,547 - pyrk logger - CRITICAL 
+ 
+Welcome to PyRK.
+(c) Kathryn D. Huff
+Your simulation is starting.
+Perhaps it's time for a coffee.
+                                                                                
+                                                                                
+                                                                                
+                 ,,,,yggyQQQQQQQQQQQQQQQQQyyyy,,,,                              
+        ,,gQQQQQQQQQQQQ#WWWEEEEERRRREEEEWWW#QQQQQQQQQQQQQy,,                    
+   ,gQQQQQQWR"D^^.-~~'~~WW~-..aQ     ,},,....... ,.``?RW@QQQQQQ,                
+ ,QQQWR^.           ,`Bm-gj^@L  .gyy, ``Q~-,,,a~^^         ^"WQQQQ              
+ @QQQy      ,-~^`          jQ,,DMmnmGQ`|Q        `"~.        ,#QQQ,             
+ @QQQQQQQQy,, `````         Q          #`    ````^""^^,,y#QQQQQQQQQQQQQg        
+ @QQQQQQQQQQQQQQQQQQQyyyy,,QQ@Q,,,,,,#Q,,,,ygg#QQQQQQQQQQQQQQQQQQQQQQQQQQQQ     
+ ]QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"RRQQQQQQQQ   
+  QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ    `@QQQQQQ  
+  QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQM      "QQQQQQ 
+  @QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ        ]QQQQQ 
+  'QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQM        ]QQQQQ 
+   @QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ         QQQQQ  
+    QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQM       ,QQQQQ^  
+    ]QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ     ,gQQQQQR    
+     @QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQyQQQQQQQQQM^      
+      @QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ#WR^`         
+       @QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ^                   
+        @QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ~                    
+         "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQE                      
+           YQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ#^                       
+            'YQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ#T                         
+               ?@QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQR                            
+                 `?RQQQQQQQQQQQQQQQQQQQQQQQQQQQ#R^                              
+                      7RRQQQQQQQQQQQQQQQQQWE"`.     
+
+2015-08-02 17:38:47,425 - pyrk logger - INFO 
+ 
+Reactivity : 
+[ 0.  0.  0.]
+2015-08-02 17:38:47,425 - pyrk logger - INFO 
+ 
+Uncertainty param: 
+[0.23, -3.19, 17.30392963963393, 18.738889703475103, 15.575598073733685, 1727.9354704742602, 1826.4020728089865, 1700.4369852625944, 2281.575038235629, 4434.667963565301]
+2015-08-02 17:38:47,427 - pyrk logger - INFO 
+ 
+Final Result : 
+[[  1.00000e+00   1.79856e+04   4.03921e+03   9.79430e+02   7.88067e+02
+    5.51259e+01   4.04102e+00   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.04315e+03   1.04315e+03   1.04315e+03   9.23150e+02]
+ [  1.00000e+00   1.79856e+04   4.03921e+03   9.79430e+02   7.88067e+02
+    5.51259e+01   4.04102e+00   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07334e+03   1.07334e+03   1.07041e+03
+    1.04458e+03   1.04315e+03   1.04315e+03   9.23303e+02]
+ [  1.00000e+00   1.79856e+04   4.03921e+03   9.79430e+02   7.88067e+02
+    5.51259e+01   4.04102e+00   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03   1.07315e+03
+    1.07315e+03   1.07318e+03   1.07353e+03   1.07323e+03   1.06810e+03
+    1.04569e+03   1.04315e+03   1.04315e+03   9.23477e+02]]
+2015-08-02 17:38:47,427 - pyrk logger - INFO 
+ 
+mod0:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,427 - pyrk logger - INFO 
+ 
+mod1:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,428 - pyrk logger - INFO 
+ 
+mod2:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,428 - pyrk logger - INFO 
+ 
+mod3:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,428 - pyrk logger - INFO 
+ 
+mod4:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,429 - pyrk logger - INFO 
+ 
+mod5:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,429 - pyrk logger - INFO 
+ 
+mod6:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,429 - pyrk logger - INFO 
+ 
+mod7:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,429 - pyrk logger - INFO 
+ 
+mod8:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,430 - pyrk logger - INFO 
+ 
+mod9:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,430 - pyrk logger - INFO 
+ 
+mod10:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,430 - pyrk logger - INFO 
+ 
+mod11:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,430 - pyrk logger - INFO 
+ 
+mod12:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,431 - pyrk logger - INFO 
+ 
+mod13:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,431 - pyrk logger - INFO 
+ 
+mod14:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,431 - pyrk logger - INFO 
+ 
+mod15:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,431 - pyrk logger - INFO 
+ 
+mod16:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,432 - pyrk logger - INFO 
+ 
+mod17:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,432 - pyrk logger - INFO 
+ 
+mod18:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,432 - pyrk logger - INFO 
+ 
+mod19:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,432 - pyrk logger - INFO 
+ 
+mod20:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,433 - pyrk logger - INFO 
+ 
+mod21:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,433 - pyrk logger - INFO 
+ 
+mod22:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,433 - pyrk logger - INFO 
+ 
+mod23:
+[ 1073.15  1073.15  1073.15]
+2015-08-02 17:38:47,434 - pyrk logger - INFO 
+ 
+mod24:
+[ 1073.15     1073.15     1073.17557]
+2015-08-02 17:38:47,434 - pyrk logger - INFO 
+ 
+fuel0:
+[ 1073.15     1073.33872  1073.53125]
+2015-08-02 17:38:47,434 - pyrk logger - INFO 
+ 
+fuel1:
+[ 1073.15     1073.33872  1073.2302 ]
+2015-08-02 17:38:47,434 - pyrk logger - INFO 
+ 
+fuel2:
+[ 1073.15     1070.41418  1068.09909]
+2015-08-02 17:38:47,435 - pyrk logger - INFO 
+ 
+shell0:
+[ 1043.15     1044.58383  1045.69271]
+2015-08-02 17:38:47,435 - pyrk logger - INFO 
+ 
+shell1:
+[ 1043.15  1043.15  1043.15]
+2015-08-02 17:38:47,435 - pyrk logger - INFO 
+ 
+pebble:
+[ 1043.15  1043.15  1043.15]
+2015-08-02 17:38:47,435 - pyrk logger - INFO 
+ 
+cool:
+[ 923.15     923.30311  923.47717]
+2015-08-02 17:38:47,435 - pyrk logger - INFO 
+ 
+Precursor lambdas: 
+[0.012715963686661995, 0.03173750826739676, 0.11552453009332421, 0.31082833208966154, 1.3974741543547284, 3.8723306176533256]
+2015-08-02 17:38:47,435 - pyrk logger - INFO 
+ 
+Delayed neutron frac: 
+0.008723
+2015-08-02 17:38:47,436 - pyrk logger - INFO 
+ 
+Precursor betas: 
+[0.00247, 0.0013845, 0.001222, 0.0026455, 0.000832, 0.000169]
+2015-08-02 17:38:47,436 - pyrk logger - INFO 
+ 
+Decay kappas: 
+[6.587, 0.149, 0.273, 0.02173, 0.001961, 0.0001025, 4.923e-06, 2.6789999999999996e-07, 1.452e-08, 1.893e-09, 1.633e-10]
+2015-08-02 17:38:47,436 - pyrk logger - INFO 
+ 
+Decay lambdas: 
+[2.658, 0.4619, 0.06069, 0.005593, 0.0006872, 6.734e-05, 6.413e-06, 6.155e-07, 8.288e-08, 1.923e-08, 1.214e-09]
