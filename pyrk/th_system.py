@@ -125,11 +125,11 @@ class THSystemSphFVM(THSystem):
         THSystem.__init__(self, kappa, components)
 
     def dtempdt(self, component, power, omegas, t_idx):
-        to_ret = 0*units.kelvin/units.second
+        to_ret = 0.0#*units.kelvin/units.second
         if isinstance(component, THSuperComponent):
-            return to_ret
+            return to_ret*units.kelvin/units.second
         else:
-            cap = (component.rho(t_idx)*component.cp)
+            cap = (component.rho(t_idx).magnitude*component.cp.magnitude)
             if component.sph and component.ri.magnitude == 0.0:
                 # U0=0
                 Qcent = self.BC_center(component,
@@ -167,49 +167,59 @@ class THSystemSphFVM(THSystem):
                                             t_env=Tr,
                                             h=d['h'],
                                             A=d['area'])
-                    assert (Qconv*(component.T[t_idx]-Tr)).magnitude >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
-                        component.name, env.name, component.T[t_idx].magnitude,
-                        Tr, Qconv.magnitude)
+                    #assert (Qconv*(component.T[t_idx]-Tr)).magnitude >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
+                    #    component.name, env.name, component.T[t_idx].magnitude,
+                    #    Tr, Qconv.magnitude)
                 else:
                     Qconv = self.convection(t_b=component.T[t_idx],
                                             t_env=env.T[t_idx],
                                             h=d['h'],
                                             A=d['area'])
-                    assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
-                        component.name, env.name, component.T[t_idx].magnitude,
-                        env.T[t_idx].magnitude, Qconv.magnitude)
-                to_ret -= Qconv/cap/component.vol
+                    #assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
+                    #    component.name, env.name, component.T[t_idx].magnitude,
+                    #    env.T[t_idx].magnitude, Qconv.magnitude)
+                to_ret -= Qconv/cap/component.vol.magnitude
             for name, d in component.adv.iteritems():
                 Qadv = self.advection(t_out=component.T[t_idx]*2.0 - d['t_in'],
                                       t_in=d['t_in'],
                                       m_flow=d['m_flow'],
                                       cp=d['cp'])
-                to_ret -= Qadv/cap/component.vol
-                if Qadv.magnitude < 0:
+                to_ret -= Qadv/cap/component.vol.magnitude
+                if Qadv< 0:
                     print '''at step %d, %s is heating the system by %f watts???
                 Tin is %f, tout is %f, tcomp is %f''' % (
-                        t_idx, component.name, Qadv.magnitude, d['t_in'].magnitude,
+                        t_idx, component.name, Qadv, d['t_in'].magnitude,
                         (component.T[t_idx]*2 - d['t_in']).magnitude, component.T[t_idx].magnitude)
-            return to_ret
+            return to_ret*units.kelvin/units.second
 
     def BC_center(self, component, t_b, dr):
-        return component.k*t_b/dr**2
+        '''
+        Qconduction for the component at the center of a sphere(conduction without interface)
+        physical meaning is watts/meter**3
+        return : dimensionless quantity
+        '''
+        return component.k.magnitude*t_b.magnitude/dr.magnitude**2
 
     def convBoundary(self, component, t_b, t_env, h, R):
-        r_b = component.ro
-        k = component.k
-        dr = component.ri-component.ro
-        T_R = (-h/k*t_env + t_b/dr)/(1/dr-h/k)
-        to_ret = 1/r_b*k*(r_b*t_b-R*T_R)/dr**2
+        '''
+        convective boundray Qconv
+        return: dimensionless quantity of Qconv
+        '''
+        r_b = component.ro.magnitude
+        k = component.k.magnitude
+        dr = component.ri.magnitude-component.ro.magnitude
+        T_R = (-h.magnitude/k*t_env.magnitude + t_b.magnitude/dr)/(1/dr-h.magnitude/k)
+        to_ret = 1/r_b*k*(r_b*t_b.magnitude-R.magnitude*T_R)/dr**2
         return to_ret
 
     def heatgenFVM(self, component, power, omegas):
         '''to do: change this return to include decay heat'''
-        return power*component.power_tot/component.vol
+        return power*component.power_tot.magnitude/component.vol.magnitude
 
     def conductionFVM(self, t_b, t_env, r_b, r_env, dr, k):
         """
-        heat transfer by conduction(watts)
+        heat transfer by conduction(watts/m3)
+        return: dimemsionless quantity
         :param t_b: The temperature of the body
         :type t_b: float.
         :param t_env: The temperature of the environment
@@ -221,15 +231,19 @@ class THSystemSphFVM(THSystem):
         :param A: the surface area of heat transfer
         :type A: float.
         """
-        return k/r_b*(r_b*t_b - r_env*t_env)/dr**2
+        return k.magnitude/r_b.magnitude*(
+            r_b.magnitude*t_b.magnitude - r_env.magnitude*t_env.magnitude)/(dr.magnitude**2)
+        #return k/r_b*(r_b*t_b - r_env*t_env)/dr**2
 
     def advection(self, t_out, t_in, m_flow, cp):
         ''' calculate heat transfer by advection in watts
+        return: dimemsionless quantity of Qadvective
         '''
         if t_out > t_in:
-            return m_flow*cp*(t_out-t_in)
+            #return m_flow*cp*(t_out-t_in)
+            return m_flow.magnitude*cp.magnitude*(t_out.magnitude-t_in.magnitude)
         else:
-            return 0*units.watts
+            return 0.0
 
     def convection(self, t_b, t_env, h, A):
         """
@@ -243,6 +257,6 @@ class THSystemSphFVM(THSystem):
         :param A: the surface area of heat transfer
         :type A: float.
         """
-        num = (t_b-t_env)
-        denom = (1.0/(h*A))
+        num = (t_b.magnitude-t_env.magnitude)
+        denom = (1.0/(h.magnitude*A.magnitude))
         return num/denom
