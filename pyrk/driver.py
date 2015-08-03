@@ -29,19 +29,6 @@ logger.addHandler(fh)
 logger.addHandler(ch)
 
 
-#from scipy.integrate._ode import vode
-#class my_vode(vode):
-#    #overwrite the original Vode ode solver class to change the default step
-#    #mode from 2 to 5
-#    def step(self, *args):
-#        itask = self.call_args[2]
-#        self.rwork[0] = args[4]
-#        self.call_args[2] = 5
-#        r = self.run(*args)
-#        self.call_args[2] = itask
-#        return r
-#
-
 #from utils.logger import logger
 from inp import sim_info
 from ur import units
@@ -96,7 +83,7 @@ def update_th(t, y_n, y_th):
         #if isinstance(comp, THSuperComponent):
         #    comp.update_temp_R(t_idx, y_th[idx+1]*units.kelvin, y_th[idx-1]*units.kelvin)
         #else:
-        comp.update_temp(t_idx, y_th[idx]*units.kelvin)
+        comp.update_temp(t_idx, y_th[idx])#*units.kelvin)
     n_n = len(y_n)
     _y[t_idx][n_n:] = y_th
 

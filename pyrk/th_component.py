@@ -61,9 +61,10 @@ class THComponent(object):
         self.timer = timer
         self.T0 = T0.to('kelvin')
         validation.validate_num("T", T0)
-        self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
-                                         dtype=float), 'kelvin')
-        self.T[0] = T0
+        #self.T = #units.Quantity(np.zeros(shape=(timer.timesteps(),),
+                                 #        dtype=float), 'kelvin')
+        self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
+        self.T[0] = T0.magnitude
         self.alpha_temp = alpha_temp.to('delta_k/kelvin')
         self.heatgen = heatgen
         self.power_tot = power_tot
@@ -192,9 +193,10 @@ class THSuperComponent(object):
         self.timer = timer
         self.T0 = T0.to('kelvin')
         validation.validate_num("T", T0)
-        self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
-                                         dtype=float), 'kelvin')
-        self.T[0] = T0
+        #self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
+        #                                 dtype=float), 'kelvin')
+        self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
+        self.T[0] = T0.magnitude
         self.conv = {}
     def update_temp_R(self, timestep, t_env, t_innercomp):
         """ TODO this function is not used
@@ -214,7 +216,7 @@ class THSuperComponent(object):
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
         :param temp: the new tempterature
-        :type float: float, units of kelvin
+        :type float: float, dimensionless
         """
         self.T[timestep] = temp
         self.prev_t_idx = timestep
@@ -225,9 +227,9 @@ class THSuperComponent(object):
         and the temperature of the coolant
         '''
         for envname, d in self.conv.iteritems():
-            h = self.conv[envname]["h"]
-            k = self.conv[envname]["k"]
-            dr = self.conv[envname]["dr"]
+            h = self.conv[envname]["h"].magnitude
+            k = self.conv[envname]["k"].magnitude
+            dr = self.conv[envname]["dr"].magnitude
         return (-h/k*t_env+t_innercomp/dr)/(1/dr-h/k)
 
     def add_component(self, a_component):

@@ -65,5 +65,5 @@ class DensityModel(object):
         :param temp: The temperature of the object
         :type temp: float. units of kelvin
         """
-        ret = self.a + self.b*temp
+        ret = self.a + self.b*temp*units.kelvin
         return ret
