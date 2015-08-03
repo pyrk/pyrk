@@ -169,7 +169,7 @@ def y0():
         i += 1
         f[i] = 0
     for idx, comp in enumerate(si.components):
-        f[i+idx+1] = comp.T0.magnitude
+        f[i+idx+1] = comp.T0
     assert len(f) == si.n_entries()
     _y[0] = f
     return f

@@ -15,15 +15,15 @@ class THComponent(object):
 
     def __init__(self, name=None,
                  mat=Material(),
-                 vol=0*units.meter**3,
-                 T0=0*units.kelvin,
+                 vol=0.0,#*units.meter**3,
+                 T0=0.0,#*units.kelvin,
                  alpha_temp=0*units.delta_k/units.kelvin,
                  timer=Timer(),
                  heatgen=False,
                  power_tot=0*units.watt,
                  sph=False,
-                 ri=0*units.meter,
-                 ro=0*units.meter
+                 ri=0,#*units.meter,
+                 ro=0,#*units.meter
                  ):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
@@ -51,20 +51,18 @@ class THComponent(object):
         :param ri and ro: inner radius and outer radius of the sph/annular component
         """
         self.name = name
-        self.vol = vol.to('meter**3')
-        validation.validate_ge("vol", vol, 0*units.meter**3)
+        self.vol = vol
         self.mat = mat
         self.k = mat.k
         self.cp = mat.cp
         self.dm = mat.dm
         self.name = name
         self.timer = timer
-        self.T0 = T0.to('kelvin')
-        validation.validate_num("T", T0)
         #self.T = #units.Quantity(np.zeros(shape=(timer.timesteps(),),
                                  #        dtype=float), 'kelvin')
         self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
-        self.T[0] = T0.magnitude
+        self.T[0] = T0
+        self.T0=T0
         self.alpha_temp = alpha_temp.to('delta_k/kelvin')
         self.heatgen = heatgen
         self.power_tot = power_tot
@@ -80,7 +78,7 @@ class THComponent(object):
     def mesh(self, size):
         '''cut a THComponent into a list of smaller component
         return: a list of components'''
-        N = int(round((self.ro-self.ri)/size.to('meter')))
+        N = int(round((self.ro-self.ri)/size))
         #todo implement: assert (N*size).magnitude == (self.ro-self.ri).magnitude
         to_ret = []
         for i in range(0, N):
@@ -92,7 +90,7 @@ class THComponent(object):
             to_ret.append(THComponent(name=self.name+'%d'%i,
                                       mat=self.mat,
                                       vol=vol,
-                                      T0=self.T0,
+                                      T0=self.T[0],
                                       alpha_temp=alpha_temp,
                                       timer=self.timer,
                                       heatgen=self.heatgen,
@@ -154,7 +152,7 @@ class THComponent(object):
     def add_convection(self, env, h, area):
         self.conv[env] = {
             "h": h.to('joule/second/kelvin/meter**2'),
-            "area": area.to('meter**2')
+            "area": area
         }
 
     def addConvBC(self, env, prev_comp, h, R):
@@ -191,12 +189,11 @@ class THSuperComponent(object):
         self.name = name
         # for a super component, T is the outer surface temperature
         self.timer = timer
-        self.T0 = T0.to('kelvin')
-        validation.validate_num("T", T0)
+        self.T0 = T0
         #self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
         #                                 dtype=float), 'kelvin')
         self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
-        self.T[0] = T0.magnitude
+        self.T[0] = T0
         self.conv = {}
     def update_temp_R(self, timestep, t_env, t_innercomp):
         """ TODO this function is not used
@@ -229,7 +226,7 @@ class THSuperComponent(object):
         for envname, d in self.conv.iteritems():
             h = self.conv[envname]["h"].magnitude
             k = self.conv[envname]["k"].magnitude
-            dr = self.conv[envname]["dr"].magnitude
+            dr = self.conv[envname]["dr"]
         return (-h/k*t_env+t_innercomp/dr)/(1/dr-h/k)
 
     def add_component(self, a_component):

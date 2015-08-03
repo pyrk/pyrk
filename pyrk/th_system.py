@@ -133,7 +133,7 @@ class THSystemSphFVM(THSystem):
             return to_ret
         else:
             cap = (component.rho(t_idx)*component.cp.magnitude)
-            if component.sph and component.ri.magnitude == 0.0:
+            if component.sph and component.ri == 0.0:
                 # U0=0
                 Qcent = self.BC_center(component,
                                        t_b=component.T[t_idx],
@@ -181,13 +181,13 @@ class THSystemSphFVM(THSystem):
                     #assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
                     #    component.name, env.name, component.T[t_idx].magnitude,
                     #    env.T[t_idx].magnitude, Qconv.magnitude)
-                to_ret -= Qconv/cap/component.vol.magnitude
+                to_ret -= Qconv/cap/component.vol
             for name, d in component.adv.iteritems():
                 Qadv = self.advection(t_out=component.T[t_idx]*2.0 - d['t_in'].magnitude,
                                       t_in=d['t_in'].magnitude,
                                       m_flow=d['m_flow'],
                                       cp=d['cp'])
-                to_ret -= Qadv/cap/component.vol.magnitude
+                to_ret -= Qadv/cap/component.vol
                 if Qadv< 0:
                     print '''at step %d, %s is heating the system by %f watts???
                 Tin is %f, tout is %f, tcomp is %f''' % (
@@ -201,23 +201,23 @@ class THSystemSphFVM(THSystem):
         physical meaning is watts/meter**3
         return : dimensionless quantity
         '''
-        return component.k.magnitude*t_b/dr.magnitude**2
+        return component.k.magnitude*t_b/dr**2
 
     def convBoundary(self, component, t_b, t_env, h, R):
         '''
         convective boundray Qconv
         return: dimensionless quantity of Qconv
         '''
-        r_b = component.ro.magnitude
+        r_b = component.ro
         k = component.k.magnitude
-        dr = component.ri.magnitude-component.ro.magnitude
+        dr = component.ri-component.ro
         T_R = (-h.magnitude/k*t_env + t_b/dr)/(1/dr-h.magnitude/k)
-        to_ret = 1/r_b*k*(r_b*t_b-R.magnitude*T_R)/dr**2
+        to_ret = 1/r_b*k*(r_b*t_b-R*T_R)/dr**2
         return to_ret
 
     def heatgenFVM(self, component, power, omegas):
         '''to do: change this return to include decay heat'''
-        return power*component.power_tot.magnitude/component.vol.magnitude
+        return power*component.power_tot.magnitude/component.vol
 
     def conductionFVM(self, t_b, t_env, r_b, r_env, dr, k):
         """
@@ -234,8 +234,8 @@ class THSystemSphFVM(THSystem):
         :param A: the surface area of heat transfer
         :type A: float.
         """
-        return k.magnitude/r_b.magnitude*(
-            r_b.magnitude*t_b - r_env.magnitude*t_env)/(dr.magnitude**2)
+        return k.magnitude/r_b*(
+            r_b*t_b - r_env*t_env)/(dr**2)
         #return k/r_b*(r_b*t_b - r_env*t_env)/dr**2
 
     def advection(self, t_out, t_in, m_flow, cp):
@@ -261,5 +261,5 @@ class THSystemSphFVM(THSystem):
         :type A: float.
         """
         num = (t_b-t_env)
-        denom = (1.0/(h.magnitude*A.magnitude))
+        denom = (1.0/(h.magnitude*A))
         return num/denom

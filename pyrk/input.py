@@ -25,7 +25,7 @@ t0 = 0.00*units.seconds
 # Timestep
 dt = 0.01*units.seconds
 # Final Time
-tf = 2.00*units.seconds
+tf = 10.00*units.seconds
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
 alpha_fuel =-3.19 *units.pcm/units.kelvin
@@ -36,27 +36,24 @@ alpha_cool =0.23 *units.pcm/units.kelvin
 #random.gauss(0.23, 0.11)*units.pcm/units.kelvin
 
 #initial temperature
-t_mod = (800+273.15)*units.kelvin
-t_fuel = (800+273.15)*units.kelvin
-t_shell = (770+273.15)*units.kelvin
-t_cool = (650+273.15)*units.kelvin
+t_mod = (800+273.15)#*units.kelvin
+t_fuel = (800+273.15)#*units.kelvin
+t_shell = (770+273.15)#*units.kelvin
+t_cool = (650+273.15)#*units.kelvin
 
 kappa = 0.0
 
 def area_sphere(r):
-    assert(r >= 0*units.meter)
-    return (4.0)*math.pi*pow(r.to('meter'), 2)
-
+    return (4.0)*math.pi*pow(r, 2)
 
 def vol_sphere(r):
-    assert(r >= 0*units.meter)
-    return (4./3.)*math.pi*pow(r.to('meter'), 3)
+    return (4./3.)*math.pi*pow(r, 3)
 
 # volumes
 n_pebbles = 470000
-r_mod = 1.25*units.centimeter
-r_fuel = 1.4*units.centimeter
-r_shell = 1.5*units.centimeter
+r_mod = 1.25/100.0
+r_fuel = 1.4/100.0
+r_shell = 1.5/100.0
 
 vol_mod = vol_sphere(r_mod)
 vol_fuel = vol_sphere(r_fuel) - vol_sphere(r_mod)
@@ -119,22 +116,22 @@ nsteps = 5000
 
 k_mod =random.gauss(17, 17*0.05)*units.watt/(units.meter*units.kelvin)
 cp_mod=random.gauss(1650.0, 1650.0*0.05)*units.joule/(units.kg*units.kelvin)
-rho_mod = DensityModel(a=1740, model="constant")
+rho_mod = DensityModel(a=1740.0, b=0.0)
 Moderator=Material('mod', k_mod, cp_mod, rho_mod)
 
 k_fuel=random.uniform(15.0, 19.0)*units.watt/(units.meter*units.kelvin)
 cp_fuel=random.gauss(1818.0, 1818*0.05)*units.joule/units.kg/units.kelvin # [J/kg/K]
-rho_fuel=DensityModel(a=2200.0, model="constant")
+rho_fuel=DensityModel(a=2200.0, b=0.0)
 Fuel=Material('fuel', k_fuel, cp_fuel, rho_fuel)
 
 k_shell =random.gauss(17, 17*0.05)*units.watt/(units.meter*units.kelvin)
 cp_shell=random.gauss(1650.0, 1650.0*0.05)*units.joule/(units.kg*units.kelvin)
-rho_shell = DensityModel(a=1740, model="constant")
+rho_shell = DensityModel(a=1740.0, b=0.0)
 Shell=Material('shell', k_shell, cp_shell, rho_shell)
 
 k_cool=1*units.watt/(units.meter*units.kelvin)
 cp_cool=random.gauss(2415.78, 2415.78*0.05)*units.joule/(units.kg*units.kelvin)
-rho_cool = DensityModel(a=2415.6, b=-0.49072, model="linear")
+rho_cool = DensityModel(a=2415.6, b=-0.49072)
 cool=Material('cool', k_cool, cp_cool, rho_cool)
 
 mod = th.THComponent(name="mod",
@@ -144,7 +141,7 @@ mod = th.THComponent(name="mod",
                      alpha_temp=alpha_mod,
                      timer=ti,
                      sph=True,
-                     ri=0.0*units.meter,
+                     ri=0.0,
                      ro=r_mod)
 
 fuel = th.THComponent(name="fuel",
@@ -156,9 +153,9 @@ fuel = th.THComponent(name="fuel",
                       heatgen=True,
                       power_tot=power_tot/n_pebbles,
                       sph=True,
-                      ri=r_mod.to('meter'),
-                      ro=r_fuel.to('meter'))
-
+                      ri=r_mod,
+                      ro=r_fuel
+                      )
 shell = th.THComponent(name="shell",
                        mat=Shell,
                        vol=vol_shell,
@@ -166,11 +163,11 @@ shell = th.THComponent(name="shell",
                        alpha_temp=alpha_shell,
                        timer=ti,
                        sph=True,
-                       ri=r_fuel.to('meter'),
-                       ro=r_shell.to('meter'))
+                       ri=r_fuel,
+                       ro=r_shell)
 
 # mesh size for the fuel pebble FVM calculation
-l = 0.05*units.centimeter
+l = 0.0005
 comp_list = mod.mesh(l)
 comp_list.extend(fuel.mesh(l))
 comp_list.extend(shell.mesh(l))
