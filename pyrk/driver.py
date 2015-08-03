@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 """
 This is an example driver for the simulation. It should soon be refactored to
@@ -9,11 +11,11 @@ import numpy as np
 from scipy.integrate import ode
 import importlib
 import argparse
-from utils import logger
-from utils.logger import pyrklog
+from utilities import logger
+from utilities.logger import pyrklog
 from inp import sim_info
-from ur import units
-from utils import plotter
+from utilities.ur import units
+from utilities import plotter
 import os
 
 def update_n(t, y_n, si):
@@ -182,7 +184,6 @@ def main(args, curr_dir):
                           rho_ext=infile.rho_ext,
                           plotdir=args.plotdir)
     print_logo(curr_dir)
-    # n_components = len(si.components)
     sol = solve(si=si, y=si.y, infile=infile)
     log_results(si)
     plotter.plot(sol, si)

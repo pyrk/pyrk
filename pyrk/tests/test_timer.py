@@ -1,7 +1,7 @@
 from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 
-from ur import units
+from utilities.ur import units
 import timer
 import numpy as np
 

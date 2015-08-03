@@ -1,9 +1,9 @@
 import numpy as np
 from inp import validation
-from ur import units
+from utilities.ur import units
 from density_model import DensityModel
 from timer import Timer
-from material import Material
+from materials.material import Material
 
 class THComponent(object):
     """This class represents a component of the system it has material and

@@ -22,3 +22,10 @@ matplotlibrc
 
 # Ignore rope files introduced by python-mode
 .ropeproject
+
+# Ignore produced image files
+*.eps
+*.pdf
+
+# Ignore log files
+*.log

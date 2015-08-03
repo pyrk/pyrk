@@ -3,7 +3,7 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
 
 from pyrk.inp import sim_info as si
 
-from ur import units
+from utilities.ur import units
 import th_system
 import th_component
 from timer import Timer
