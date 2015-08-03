@@ -183,8 +183,8 @@ class THSystemSphFVM(THSystem):
                     #    env.T[t_idx].magnitude, Qconv.magnitude)
                 to_ret -= Qconv/cap/component.vol.magnitude
             for name, d in component.adv.iteritems():
-                Qadv = self.advection(t_out=component.T[t_idx]*2.0 - d['t_in'],
-                                      t_in=d['t_in'],
+                Qadv = self.advection(t_out=component.T[t_idx]*2.0 - d['t_in'].magnitude,
+                                      t_in=d['t_in'].magnitude,
                                       m_flow=d['m_flow'],
                                       cp=d['cp'])
                 to_ret -= Qadv/cap/component.vol.magnitude
@@ -201,7 +201,7 @@ class THSystemSphFVM(THSystem):
         physical meaning is watts/meter**3
         return : dimensionless quantity
         '''
-        return component.k.magnitude*t_b.magnitude/dr.magnitude**2
+        return component.k.magnitude*t_b/dr.magnitude**2
 
     def convBoundary(self, component, t_b, t_env, h, R):
         '''
@@ -211,8 +211,8 @@ class THSystemSphFVM(THSystem):
         r_b = component.ro.magnitude
         k = component.k.magnitude
         dr = component.ri.magnitude-component.ro.magnitude
-        T_R = (-h.magnitude/k*t_env.magnitude + t_b.magnitude/dr)/(1/dr-h.magnitude/k)
-        to_ret = 1/r_b*k*(r_b*t_b.magnitude-R.magnitude*T_R)/dr**2
+        T_R = (-h.magnitude/k*t_env + t_b/dr)/(1/dr-h.magnitude/k)
+        to_ret = 1/r_b*k*(r_b*t_b-R.magnitude*T_R)/dr**2
         return to_ret
 
     def heatgenFVM(self, component, power, omegas):
@@ -235,7 +235,7 @@ class THSystemSphFVM(THSystem):
         :type A: float.
         """
         return k.magnitude/r_b.magnitude*(
-            r_b.magnitude*t_b.magnitude - r_env.magnitude*t_env.magnitude)/(dr.magnitude**2)
+            r_b.magnitude*t_b - r_env.magnitude*t_env)/(dr.magnitude**2)
         #return k/r_b*(r_b*t_b - r_env*t_env)/dr**2
 
     def advection(self, t_out, t_in, m_flow, cp):
@@ -244,7 +244,7 @@ class THSystemSphFVM(THSystem):
         '''
         if t_out > t_in:
             #return m_flow*cp*(t_out-t_in)
-            return m_flow.magnitude*cp.magnitude*(t_out.magnitude-t_in.magnitude)
+            return m_flow.magnitude*cp.magnitude*(t_out-t_in)
         else:
             return 0.0
 
@@ -260,6 +260,6 @@ class THSystemSphFVM(THSystem):
         :param A: the surface area of heat transfer
         :type A: float.
         """
-        num = (t_b.magnitude-t_env.magnitude)
+        num = (t_b-t_env)
         denom = (1.0/(h.magnitude*A.magnitude))
         return num/denom
