@@ -25,7 +25,7 @@ t0 = 0.00*units.seconds
 # Timestep
 dt = 0.01*units.seconds
 # Final Time
-tf = 0.50*units.seconds
+tf = 2.00*units.seconds
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
 alpha_fuel =-3.19 *units.pcm/units.kelvin
@@ -119,24 +119,22 @@ nsteps = 5000
 
 k_mod =random.gauss(17, 17*0.05)*units.watt/(units.meter*units.kelvin)
 cp_mod=random.gauss(1650.0, 1650.0*0.05)*units.joule/(units.kg*units.kelvin)
-rho_mod = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
+rho_mod = DensityModel(a=1740, model="constant")
 Moderator=Material('mod', k_mod, cp_mod, rho_mod)
 
 k_fuel=random.uniform(15.0, 19.0)*units.watt/(units.meter*units.kelvin)
 cp_fuel=random.gauss(1818.0, 1818*0.05)*units.joule/units.kg/units.kelvin # [J/kg/K]
-rho_fuel=DensityModel(a=2200.0*units.kg/(units.meter**3), model="constant")
+rho_fuel=DensityModel(a=2200.0, model="constant")
 Fuel=Material('fuel', k_fuel, cp_fuel, rho_fuel)
 
 k_shell =random.gauss(17, 17*0.05)*units.watt/(units.meter*units.kelvin)
 cp_shell=random.gauss(1650.0, 1650.0*0.05)*units.joule/(units.kg*units.kelvin)
-rho_shell = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
+rho_shell = DensityModel(a=1740, model="constant")
 Shell=Material('shell', k_shell, cp_shell, rho_shell)
 
 k_cool=1*units.watt/(units.meter*units.kelvin)
 cp_cool=random.gauss(2415.78, 2415.78*0.05)*units.joule/(units.kg*units.kelvin)
-rho_cool = DensityModel(a=2415.6*units.kg/(units.meter**3),
-                            b=-0.49072*units.kg/(units.meter**3)/units.kelvin,
-                            model="linear")
+rho_cool = DensityModel(a=2415.6, b=-0.49072, model="linear")
 cool=Material('cool', k_cool, cp_cool, rho_cool)
 
 mod = th.THComponent(name="mod",

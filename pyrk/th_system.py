@@ -132,7 +132,7 @@ class THSystemSphFVM(THSystem):
         if isinstance(component, THSuperComponent):
             return to_ret
         else:
-            cap = (component.rho(t_idx).magnitude*component.cp.magnitude)
+            cap = (component.rho(t_idx)*component.cp.magnitude)
             if component.sph and component.ri.magnitude == 0.0:
                 # U0=0
                 Qcent = self.BC_center(component,
