@@ -23,14 +23,14 @@ matplotlibrc
 # Ignore rope files introduced by python-mode
 .ropeproject
 
-.pdf
-.eps
+*.pdf
+*.eps
 
 .DS_Store
 
 # Ignore cluster files
-.out
-.log
-.serr
-.err
-.sub
+*.out
+*.log
+*.serr
+*.err
+*.sub

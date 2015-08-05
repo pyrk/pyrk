@@ -205,7 +205,7 @@ def log_results():
     logger.info('\nUncertainty param: \n' + str(si.uncertainty_param))
     logger.info("\nFinal Result : \n"+np.array_str(_y))
     for comp in si.components:
-        logger.info("\n" + comp.name + ":\n" + np.array_str(comp.T.magnitude))
+        logger.info("\n" + comp.name + ":\n" + np.array_str(comp.T))
     logger.info("\nPrecursor lambdas: \n"+str(si.ne._pd.lambdas()))
     logger.info("\nDelayed neutron frac: \n"+str(si.ne._pd.beta()))
     logger.info("\nPrecursor betas: \n"+str(si.ne._pd.betas()))
