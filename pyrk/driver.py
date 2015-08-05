@@ -191,20 +191,11 @@ def y0_th():
 
 def solve():
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
-    #eqn = ode(f).set_integrator('vode', method='bdf', nsteps=infile.nsteps, max_step=1.0)
-
     eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps, max_step=0.01)
-    #eqn = ode(f)
-    #eqn._integrator= my_vode(method='bdf', order=2, nsteps=infile.nsteps, max_step=1.0)
     eqn.set_initial_value(y0(), si.timer.t0.magnitude)
-    #print si.timer.t0.magnitude
-    while (eqn.successful() and eqn.t < si.timer.tf.magnitude): #si.timer.tf1.magnitude):
-      #TODO: change eqn.t limit to input
+    while (eqn.successful() and eqn.t < si.timer.tf.magnitude):
         si.timer.advance_one_timestep()
-        #print 'timer time %f' %si.timer.current_time().magnitude
-        #print 'eqn time %f' %eqn.t
         eqn.integrate(si.timer.current_time().magnitude)
-        #print 'success'
         update_f(eqn.t, eqn.y)
     return _y
 
@@ -230,8 +221,8 @@ if __name__ == "__main__":
                         "Your simulation is starting.\n" +
                         "Perhaps it's time for a coffee.\n" +
                         logo.read())
-    #sol = solve()
-    profile.run('print solve(); print')
+    sol = solve()
+    #profile.run('print solve(); print')
     log_results()
     plotter.plot(sol, si, sys.argv[3])
     logger.critical("\nSimulation succeeded.\n")
