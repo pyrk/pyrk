@@ -27,3 +27,10 @@ matplotlibrc
 .eps
 
 .DS_Store
+
+# Ignore cluster files
+.out
+.log
+.serr
+.err
+.sub
