@@ -3,14 +3,8 @@ from inp import validation
 from utilities.ur import units
 from density_model import DensityModel
 from timer import Timer
-<<<<<<< HEAD
-from material import Material
 import math
-||||||| merged common ancestors
-from material import Material
-=======
 from materials.material import Material
->>>>>>> upstream/master
 
 class THComponent(object):
 
