@@ -1,10 +1,16 @@
 import numpy as np
 from inp import validation
-from ur import units
+from utilities.ur import units
 from density_model import DensityModel
 from timer import Timer
+<<<<<<< HEAD
 from material import Material
 import math
+||||||| merged common ancestors
+from material import Material
+=======
+from materials.material import Material
+>>>>>>> upstream/master
 
 class THComponent(object):
 
@@ -15,8 +21,8 @@ class THComponent(object):
 
     def __init__(self, name=None,
                  mat=Material(),
-                 vol=0.0,#*units.meter**3,
-                 T0=0.0,#*units.kelvin,
+                 vol=0.0*units.meter**3,
+                 T0=0.0*units.kelvin,
                  alpha_temp=0*units.delta_k/units.kelvin,
                  timer=Timer(),
                  heatgen=False,
@@ -51,7 +57,7 @@ class THComponent(object):
         :param ri and ro: inner radius and outer radius of the sph/annular component
         """
         self.name = name
-        self.vol = vol
+        self.vol = vol.magnitude
         self.mat = mat
         self.k = mat.k
         self.cp = mat.cp
@@ -61,7 +67,7 @@ class THComponent(object):
         #self.T = #units.Quantity(np.zeros(shape=(timer.timesteps(),),
                                  #        dtype=float), 'kelvin')
         self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
-        self.T[0] = T0
+        self.T[0] = T0.magnitude
         self.T0=T0
         self.alpha_temp = alpha_temp.to('delta_k/kelvin')
         self.heatgen = heatgen
@@ -69,6 +75,8 @@ class THComponent(object):
         self.cond = {}
         self.conv = {}
         self.adv = {}
+        self.mass = {}
+        self.cust = {}
         self.prev_t_idx = 0
         self.convBC = {}
         self.sph = sph
@@ -106,8 +114,8 @@ class THComponent(object):
         :return: the temperature of the component at the chosen timestep
         :rtype: float, in units of kelvin
         """
-        #validation.validate_ge("timestep", timestep, 0)
-        #validation.validate_le("timestep", timestep, self.timer.timesteps())
+        validation.validate_ge("timestep", timestep, 0)
+        validation.validate_le("timestep", timestep, self.timer.timesteps())
         return self.T[timestep]
 
     def rho(self, timestep):
@@ -136,17 +144,12 @@ class THComponent(object):
             return 0.0*units.kelvin
         else:
             T0=self.T[T0_timestep]
-            #print self.T[5400]
-            #print 'self.T'
-            #print self.T
             #TODO: hard coded initial steady state temp, at 49s with dt=0.01
             return self.T[timestep-1]-T0
         #return (self.T[self.prev_t_idx] - self.T[self.prev_t_idx-1])
 
     def temp_reactivity(self, timestep, T0_timestep):
         '''alpha_temp is converted to deltak/kelvin'''
-        #print self.alpha_temp
-        #print self.dtemp(timestep)
         return self.alpha_temp*self.dtemp(timestep, T0_timestep)
 
     def add_convection(self, env, h, area):
@@ -154,6 +157,16 @@ class THComponent(object):
             "h": h.to('joule/second/kelvin/meter**2'),
             "area": area
         }
+
+    def add_conduction(self, env, area):
+        self.cond[env] = area.to('meter**2')
+
+    def add_mass_trans(self, env, H, u):
+        self.mass[env] = {"H": H,
+                          "u": u}
+
+    def add_custom(self, env, res):
+        self.cust[env] = {"res": res.to(units.kelvin/units.watt)}
 
     def addConvBC(self, env, prev_comp, h, R):
         self.convBC[env] = {

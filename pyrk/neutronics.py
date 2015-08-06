@@ -32,8 +32,8 @@ class Neutronics(object):
         :returns: A Neutronics object that holds neutronics simulation info
         """
 
-        self._iso = v.validate_supported("iso", iso, ['u235', 'pu239'])
-        """_iso (str): Fissioning isotope. 'u235' or 'pu239' are supported."""
+        self._iso = v.validate_supported("iso", iso, ['u235', 'pu239', 'sfr'])
+        """_iso (str): Fissioning isotope. 'u235', 'pu239', or 'sfr' are supported."""
 
         self._e = v.validate_supported("e", e, ['thermal', 'fast'])
         """_e (str): Energy spectrum 'thermal' or 'fast' are supported."""

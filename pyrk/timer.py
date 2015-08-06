@@ -1,6 +1,6 @@
 import numpy as np
 from inp import validation
-from ur import units
+from utilities.ur import units
 import logging
 log = logging.getLogger(__name__)
 

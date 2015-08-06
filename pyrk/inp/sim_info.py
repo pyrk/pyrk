@@ -1,9 +1,11 @@
 # Licensed under a 3-clause BSD style license - see LICENSE
+import numpy as np
 
 from timer import Timer
 import neutronics
 import reactivity_insertion as ri
 import th_system
+
 
 class SimInfo(object):
     """This class holds information about a reactor kinetics simulation"""
@@ -11,8 +13,14 @@ class SimInfo(object):
     def __init__(self,
                  timer=Timer(),
                  components={},
-                 iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 kappa=0.0, rho_ext=None, feedback=False, uncertainty_param=None):
+                 iso="u235",
+                 e="thermal",
+                 n_precursors=6,
+                 n_decay=11,
+                 kappa=0.0,
+                 rho_ext=None,
+                 feedback=False,
+                 plotdir='images'):
         """This class holds information about a reactor kinetics simulation
         """
         self.timer = timer
@@ -23,9 +31,11 @@ class SimInfo(object):
         self.n_dg = n_decay
         self.rho_ext = self.init_rho_ext(rho_ext)
         self.feedback = feedback
-        self.uncertainty_param=uncertainty_param
         self.ne = self.init_ne()
-        self.th = th_system.THSystemSphFVM(kappa=kappa, components=components)
+        self.th = th_system.THSystem(kappa=kappa, components=components)
+        self.y = np.zeros(shape=(timer.timesteps(), self.n_entries()),
+                          dtype=float)
+        self.plotdir = plotdir
 
     def init_rho_ext(self, rho_ext):
         if rho_ext is None:
@@ -40,6 +50,10 @@ class SimInfo(object):
                                    rho_ext=self.rho_ext,
                                    feedback=self.feedback)
         return ne
+
+    def n_components(self):
+        to_ret = len(self.components)
+        return to_ret
 
     def n_entries(self):
         to_ret = 1 + self.n_pg + self.n_dg + len(self.components)

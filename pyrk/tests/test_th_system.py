@@ -4,7 +4,7 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
 import numpy as np
 import th_system
 import th_component
-from ur import units
+from utilities.ur import units
 
 
 def test_dtempfueldt_returns_numbers():
@@ -18,3 +18,4 @@ def test_dtempfueldt_returns_numbers():
     for c in components:
         obs = th.dtempdt(c, p, omegas, 0)
         assert(obs + T*units.kelvin/units.second > 0*units.kelvin/units.second)
+

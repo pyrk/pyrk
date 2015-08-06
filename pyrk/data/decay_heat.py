@@ -24,7 +24,7 @@ class DecayData(object):
 
     def __init__(self, nuc, e, n):
         """Initializes the decay group data for the fissioning nuclide (u235,
-        pu238, etc.... currently only u235 is supported).
+        pu238, etc.... currently only u235 and sfr are supported).
 
 
         :param e: The energy spectrum type. This should be 'thermal' or 'fast'
@@ -60,14 +60,15 @@ class DecayData(object):
         :param e: The energy spectrum type. This should be 'thermal' or 'fast'
             to indicate the energy spectrum.
         :type e: str.
-        :param n: The number of decay heat groups. Currently, only 11 is
-            supported.
-        :type n: int.
+        :param nuc: The fissioning nuclide or custom reactor type. Currently
+        only u235, sfr, or pu239 are supported
+        :type nuc: str.
         :returns: a list of floats
             the lambdas (decay constants) for each decay heat group
         """
         lambda_dict = {}
         lambda_dict["u235"] = {}
+        lambda_dict["sfr"] = {}
         lambda_dict["pu239"] = {}
 
         # ANS/ANSI 5.1-1971 for 235U thermal fission standard, 11 groups
@@ -79,6 +80,7 @@ class DecayData(object):
                                           1.214*10**(-9)]
 
         lambda_dict["u235"]["fast"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        lambda_dict["sfr"]["fast"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         lambda_dict["pu239"]["thermal"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         lambda_dict["pu239"]["fast"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         return lambda_dict[nuc][e]
@@ -88,13 +90,15 @@ class DecayData(object):
         :param e: The energy spectrum type. This should be 'thermal' or 'fast'
             to indicate the energy spectrum.
         :type e: str.
-        :param n: The number of decay heat groups. Currently, only 11 is
-            supported.
-        :type n: int.
+        :param nuc: The fissioning nuclide or custom reactor type. Currently
+        only u235, sfr, or pu239 are supported
+        :type nuc: str.
+        :returns: a list of floats
         :returns: a list of floats
             the kappas (decay heat values) for each decay heat group
         """
         kappa_dict = {}
+        kappa_dict["sfr"] = {}
         kappa_dict["u235"] = {}
         kappa_dict["pu239"] = {}
 
@@ -111,6 +115,7 @@ class DecayData(object):
                                          1.893*10**(-9),
                                          1.633*10**(-10)]
         kappa_dict["u235"]["fast"] = [0.0, 0.0, 0.0]
+        kappa_dict["sfr"]["fast"] = [0.0, 0.0, 0.0]
         kappa_dict["pu239"]["thermal"] = [0.0, 0.0, 0.0]
         kappa_dict["pu239"]["fast"] = [0.0, 0.0, 0.0]
         return kappa_dict[nuc][e]

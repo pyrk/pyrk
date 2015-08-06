@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 """
 This is an example driver for the simulation. It should soon be refactored to
@@ -8,55 +10,20 @@ scripts.
 import numpy as np
 from scipy.integrate import ode
 import importlib
-import sys
-import profile
-
-import logging
-logger = logging.getLogger("pyrk logger")
-logger.setLevel(logging.DEBUG)
-# create file handler which logs even debug messages
-fh = logging.FileHandler(filename=sys.argv[2], mode="w")
-fh.setLevel(level=logging.DEBUG)
-# create console handler with a higher log level
-ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
-# create formatter and add it to the handlers
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s \n %(message)s')
-fh.setFormatter(formatter)
-ch.setFormatter(formatter)
-# add the handlers to the logger
-logger.addHandler(fh)
-logger.addHandler(ch)
-
-
-#from utils.logger import logger
+import argparse
+from utilities import logger
+from utilities.logger import pyrklog
 from inp import sim_info
-from ur import units
-from utils import plotter
 
 from th_component import THSuperComponent
-
-np.set_printoptions(precision=5, threshold=np.inf)
-
-infile = importlib.import_module(sys.argv[1])
-
-si = sim_info.SimInfo(timer=infile.ti,
-                      components=infile.components,
-                      iso=infile.fission_iso,
-                      e=infile.spectrum,
-                      n_precursors=infile.n_pg,
-                      n_decay=infile.n_dg,
-                      kappa=infile.kappa,
-                      feedback=infile.feedback,
-                      rho_ext=infile.rho_ext,
-                      uncertainty_param=infile.uncertainty_param)
-
 n_components = len(si.components)
 
-_y = np.zeros(shape=(si.timer.timesteps(), si.n_entries()), dtype=float)
 
+from utilities.ur import units
+from utilities import plotter
+import os
 
-def update_n(t, y_n):
+def update_n(t, y_n, si):
     """This function updates the neutronics block.
 
     :param t: the time [s] at which the update is occuring.
@@ -66,39 +33,26 @@ def update_n(t, y_n):
     """
     t_idx = si.timer.t_idx(t*units.seconds)
     n_n = len(y_n)
-    _y[t_idx][:n_n] = y_n
+    si.y[t_idx][:n_n] = y_n
 
 
-def update_th(t, y_n, y_th):
+def update_th(t, y_n, y_th, si):
     """This function updates the thermal hydraulics block.
 
     :param t: the time [s] at which the update is occuring.
     :type t: float.
+
     :param y_th: The array that solves thermal hydraulics block at time t
     :type y_th: np.ndarray.
     """
     t_idx = si.timer.t_idx(t*units.seconds)
     for idx, comp in enumerate(si.components):
-        #if isinstance(comp, THSuperComponent):
-        #    comp.update_temp_R(t_idx, y_th[idx+1]*units.kelvin, y_th[idx-1]*units.kelvin)
-        #else:
         comp.update_temp(t_idx, y_th[idx])#*units.kelvin)
     n_n = len(y_n)
-    _y[t_idx][n_n:] = y_th
+    si.y[t_idx][n_n:] = y_th
 
 
-def update_f(t, y):
-    """ update f by updating n(neutronics) and th(thermal-hydraulics) arrays
-    """
-    #print 'update_f at %f' %t
-    idx = 1+si.n_pg+si.n_dg
-    y_n = y[:idx]
-    y_th = y[idx:]
-    update_n(t, y_n)
-    update_th(t, y_n, y_th)
-
-
-def f_n(t, y):
+def f_n(t, y, si):
     """Returns the neutronics block solution at time t
 
     :param t: the time [s] at which the update is occuring.
@@ -121,7 +75,7 @@ def f_n(t, y):
     return f
 
 
-def f_th(t, y_th):
+def f_th(t, y_th, si):
     """Returns the thermal hydraulics solution at time t
 
     :param t: the time [s] at which the update is occuring.
@@ -129,17 +83,12 @@ def f_th(t, y_th):
     :param y: TODO
     :type y: np.ndarray
     """
-    #print 'time in f_th %f' %t
     t_idx = si.timer.t_idx(t*units.seconds)
-    #print 't_idx %d' %t_idx
-    #f = units.Quantity(np.zeros(shape=(n_components,), dtype=float),
-    #                   'kelvin / second')
     f = np.zeros(shape=(n_components,), dtype=float)
     power = _y[t_idx][0]
-    #print 'power %f' %power
     o_i = 1+si.n_pg
     o_f = 1+si.n_pg+si.n_dg
-    omegas = _y[t_idx][o_i:o_f]
+    omegas = si.y[t_idx][o_i:o_f]
     for idx, comp in enumerate(si.components):
         f[idx] = si.th.dtempdt(component=comp,
                                power=power,
@@ -148,81 +97,116 @@ def f_th(t, y_th):
     return f
 
 
-def f(t, y):
-    #print 't in f %f' %t
-    i_th = 1+si.n_pg+si.n_dg
-    y_th = y[i_th:]
-    to_ret = np.concatenate((f_n(t, y), f_th(t, y_th)))
-    return to_ret
-
-def y0():
+def y0(si):
     """The initial conditions for y"""
     i = 0
     f = np.zeros(shape=(si.n_entries(),), dtype=float)
-    f[i] = 1 # todo change the code to have this from input
-    # real power is 236 MWth, but normalized is 1
+    f[i] = 1.0  # power is normalized is 1
     for j in range(0, si.n_pg):
         i += 1
         f[i] = f[0]*si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
+        # i added f[0] here, check if this is correct
     for k in range(0, si.n_dg):
         i += 1
         f[i] = 0
     for idx, comp in enumerate(si.components):
         f[i+idx+1] = comp.T0
     assert len(f) == si.n_entries()
-    _y[0] = f
+    si.y[0] = f
     return f
 
 
-def y0_n():
+def y0_n(si):
     """The initial conditions for y_n, the neutronics sub-block of y"""
     idx = si.n_pg+si.n_dg + 1
-    y = y0()[:idx]
+    y = y0(si)[:idx]
     return y
 
 
-def y0_th():
+def y0_th(si):
     """The initial conditions for y_th, the thermal hydraulics sub-block of
     y"""
-    tidx = si.n_pg+si.n_dg + 1
-    y = y0()[tidx:]
+    thidx = si.n_pg+si.n_dg + 1
+    y = y0(si)[thidx:]
     return y
 
 
-def solve():
+def solve(si, y, infile):
     """Conducts the solution step, based on the dopri5 integrator in scipy"""
-    eqn = ode(f).set_integrator('dopri5', nsteps=infile.nsteps, max_step=0.01)
-    eqn.set_initial_value(y0(), si.timer.t0.magnitude)
-    while (eqn.successful() and eqn.t < si.timer.tf.magnitude):
+    n = ode(f_n).set_integrator('dopri5')
+    n.set_initial_value(y0_n(si), si.timer.
+                        t0.magnitude)
+    n.set_f_params(si)
+    th = ode(f_th).set_integrator('dopri5', nsteps=infile.nsteps)
+    th.set_initial_value(y0_th(si), si.timer.t0.magnitude)
+    th.set_f_params(si)
+    while (n.successful()
+           and n.t < si.timer.tf.magnitude
+           and th.t < si.timer.tf.magnitude):
         si.timer.advance_one_timestep()
-        eqn.integrate(si.timer.current_time().magnitude)
-        update_f(eqn.t, eqn.y)
-    return _y
+        n.integrate(si.timer.current_time().magnitude)
+        update_n(n.t, n.y, si)
+        th.integrate(si.timer.current_time().magnitude)
+        update_th(th.t, n.y, th.y, si)
+    return si.y
 
 
-def log_results():
-    logger.info("\nReactivity : \n"+str(si.ne._rho))
-    logger.info('\nUncertainty param: \n' + str(si.uncertainty_param))
-    logger.info("\nFinal Result : \n"+np.array_str(_y))
+def log_results(si):
+    pyrklog.info("\nReactivity : \n"+str(si.ne._rho))
+    pyrklog.info("\nFinal Result : \n"+np.array_str(si.y))
+    pyrklog.info('\nUncertainty param: \n' + str(si.uncertainty_param))
     for comp in si.components:
-        logger.info("\n" + comp.name + ":\n" + np.array_str(comp.T))
-    logger.info("\nPrecursor lambdas: \n"+str(si.ne._pd.lambdas()))
-    logger.info("\nDelayed neutron frac: \n"+str(si.ne._pd.beta()))
-    logger.info("\nPrecursor betas: \n"+str(si.ne._pd.betas()))
-    logger.info("\nDecay kappas: \n"+str(si.ne._dd.kappas()))
-    logger.info("\nDecay lambdas: \n"+str(si.ne._dd.lambdas()))
+        pyrklog.info("\n" + comp.name + ":\n" + np.array_str(comp.T.magnitude))
+    pyrklog.info("\nPrecursor lambdas: \n"+str(si.ne._pd.lambdas()))
+    pyrklog.info("\nDelayed neutron frac: \n"+str(si.ne._pd.beta()))
+    pyrklog.info("\nPrecursor betas: \n"+str(si.ne._pd.betas()))
+    pyrklog.info("\nDecay kappas: \n"+str(si.ne._dd.kappas()))
+    pyrklog.info("\nDecay lambdas: \n"+str(si.ne._dd.lambdas()))
+
+
+def print_logo(curr_dir):
+    filename = os.path.join(curr_dir, 'logo.txt')
+    with open(filename, 'r') as logo:
+        pyrklog.critical("\nWelcome to PyRK.\n" +
+                         "(c) Kathryn D. Huff\n" +
+                         "Your simulation is starting.\n" +
+                         "Perhaps it's time for a coffee.\n" +
+                         logo.read())
+
+
+def main(args, curr_dir):
+    np.set_printoptions(precision=5, threshold=np.inf)
+    logger.set_up_pyrklog(args.logfile)
+    infile = importlib.import_module(args.infile)
+
+    si = sim_info.SimInfo(timer=infile.ti,
+                          components=infile.components,
+                          iso=infile.fission_iso,
+                          e=infile.spectrum,
+                          n_precursors=infile.n_pg,
+                          n_decay=infile.n_dg,
+                          kappa=infile.kappa,
+                          feedback=infile.feedback,
+                          rho_ext=infile.rho_ext,
+                          plotdir=args.plotdir)
+    print_logo(curr_dir)
+    sol = solve(si=si, y=si.y, infile=infile)
+    log_results(si)
+    plotter.plot(sol, si)
+    pyrklog.critical("\nSimulation succeeded.\n")
 
 
 """Run it as a script"""
 if __name__ == "__main__":
-    with open('logo.txt', 'r') as logo:
-        logger.critical("\nWelcome to PyRK.\n" +
-                        "(c) Kathryn D. Huff\n" +
-                        "Your simulation is starting.\n" +
-                        "Perhaps it's time for a coffee.\n" +
-                        logo.read())
-    sol = solve()
-    #profile.run('print solve(); print')
-    log_results()
-    plotter.plot(sol, si, sys.argv[3])
-    logger.critical("\nSimulation succeeded.\n")
+    curr_dir = os.path.dirname(__file__)
+    ap = argparse.ArgumentParser(description='PyRK parameters')
+    ap.add_argument('--infile', help='the name of the input file',
+                    default='input')
+    ap.add_argument('--logfile', help='the name of the log file',
+                    default='pyrk.log')
+    ap.add_argument('--plotdir', help='the name of the directory of output plots',
+                    default='images')
+    ap.add_argument('--outfile', help='the name of the output database',
+                    default='pyrk.h5')
+    args = ap.parse_args()
+    main(args, curr_dir)
