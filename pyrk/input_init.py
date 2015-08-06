@@ -1,7 +1,7 @@
 ''' changed from the initial input file
 to represent a simplified model for the FHR core
 '''
-from ur import units
+from utilities import ur
 import th_component as th
 import math
 from cool import Cool

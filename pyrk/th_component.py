@@ -51,7 +51,7 @@ class THComponent(object):
         :param ri and ro: inner radius and outer radius of the sph/annular component
         """
         self.name = name
-        self.vol = vol.magnitude
+        self.vol = vol
         self.mat = mat
         self.k = mat.k
         self.cp = mat.cp
@@ -81,7 +81,6 @@ class THComponent(object):
         '''cut a THComponent into a list of smaller component
         return: a list of components'''
         N = int(round((self.ro-self.ri)/size))
-        #todo implement: assert (N*size).magnitude == (self.ro-self.ri).magnitude
         to_ret = []
         for i in range(0, N):
             ri = self.ri+i*size
@@ -92,7 +91,7 @@ class THComponent(object):
             to_ret.append(THComponent(name=self.name+'%d'%i,
                                       mat=self.mat,
                                       vol=vol,
-                                      T0=self.T[0],
+                                      T0=self.T0,
                                       alpha_temp=alpha_temp,
                                       timer=self.timer,
                                       heatgen=self.heatgen,
@@ -200,7 +199,7 @@ class THSuperComponent(object):
         #self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
         #                                 dtype=float), 'kelvin')
         self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
-        self.T[0] = T0
+        self.T[0] = T0.magnitude
         self.conv = {}
     def update_temp_R(self, timestep, t_env, t_innercomp):
         """ TODO this function is not used
@@ -233,7 +232,7 @@ class THSuperComponent(object):
         for envname, d in self.conv.iteritems():
             h = self.conv[envname]["h"].magnitude
             k = self.conv[envname]["k"].magnitude
-            dr = self.conv[envname]["dr"]
+            dr = self.conv[envname]["dr"].magnitude
         return (-h/k*t_env+t_innercomp/dr)/(1/dr-h/k)
 
     def add_component(self, a_component):

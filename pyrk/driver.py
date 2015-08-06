@@ -14,11 +14,7 @@ import argparse
 from utilities import logger
 from utilities.logger import pyrklog
 from inp import sim_info
-
 from th_component import THSuperComponent
-n_components = len(si.components)
-
-
 from utilities.ur import units
 from utilities import plotter
 import os
@@ -84,8 +80,8 @@ def f_th(t, y_th, si):
     :type y: np.ndarray
     """
     t_idx = si.timer.t_idx(t*units.seconds)
-    f = np.zeros(shape=(n_components,), dtype=float)
-    power = _y[t_idx][0]
+    f = np.zeros(shape=(len(si.components)), dtype=float)
+    power = si.y[t_idx][0]
     o_i = 1+si.n_pg
     o_f = 1+si.n_pg+si.n_dg
     omegas = si.y[t_idx][o_i:o_f]
@@ -110,7 +106,7 @@ def y0(si):
         i += 1
         f[i] = 0
     for idx, comp in enumerate(si.components):
-        f[i+idx+1] = comp.T0
+        f[i+idx+1] = comp.T0.magnitude
     assert len(f) == si.n_entries()
     si.y[0] = f
     return f
@@ -154,9 +150,9 @@ def solve(si, y, infile):
 def log_results(si):
     pyrklog.info("\nReactivity : \n"+str(si.ne._rho))
     pyrklog.info("\nFinal Result : \n"+np.array_str(si.y))
-    pyrklog.info('\nUncertainty param: \n' + str(si.uncertainty_param))
+    #pyrklog.info('\nUncertainty param: \n' + str(si.uncertainty_param))
     for comp in si.components:
-        pyrklog.info("\n" + comp.name + ":\n" + np.array_str(comp.T.magnitude))
+        pyrklog.info("\n" + comp.name + ":\n" + np.array_str(comp.T))
     pyrklog.info("\nPrecursor lambdas: \n"+str(si.ne._pd.lambdas()))
     pyrklog.info("\nDelayed neutron frac: \n"+str(si.ne._pd.beta()))
     pyrklog.info("\nPrecursor betas: \n"+str(si.ne._pd.betas()))

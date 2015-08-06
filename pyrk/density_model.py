@@ -56,14 +56,14 @@ class DensityModel(object):
         :param temp: The temperature of the object
         :type temp: float.
         """
-        return self.a.to(units.kg/pow(units.meter, 3))
+        return self.a.to(units.kg/pow(units.meter, 3)).magnitude
 
-    def linear(self, temp=0.0*units.kelvin):
+    def linear(self, temp=0.0):
         """
         Returns a linear dependence on temperature ($ a + b*temp$) .
 
         :param temp: The temperature of the object
         :type temp: float. units of kelvin
         """
-        ret = self.a + self.b*temp
-        return ret.to(units.kg/pow(units.meter, 3))
+        ret = self.a.magnitude + self.b.magnitude*temp
+        return ret
