@@ -26,7 +26,7 @@ t0 = 0.00*units.seconds
 # Timestep
 dt = 0.02*units.seconds
 # Final Time
-tf = 0.06*units.seconds
+tf = 500.0*units.seconds
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
 alpha_fuel =random.gauss(-3.19, 0.1595)*units.pcm/units.kelvin
