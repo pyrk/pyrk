@@ -56,8 +56,6 @@ class THSystem(object):
         msg += name
         raise KeyError(msg)
 
-    def dtempdt(self):
-        pass
 
 
 class THSystemSphPS(THSystem):
