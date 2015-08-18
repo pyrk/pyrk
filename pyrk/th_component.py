@@ -58,10 +58,10 @@ class THComponent(object):
         self.dm = mat.dm
         self.name = name
         self.timer = timer
-        #self.T = #units.Quantity(np.zeros(shape=(timer.timesteps(),),
-                                 #        dtype=float), 'kelvin')
-        self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
-        self.T[0] = T0.magnitude
+        self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
+                                         dtype=float), 'kelvin')
+        #self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
+        self.T[0] = T0
         self.T0=T0
         self.alpha_temp = alpha_temp.to('delta_k/kelvin')
         self.heatgen = heatgen
@@ -137,7 +137,6 @@ class THComponent(object):
             return 0.0*units.kelvin
         else:
             T0=self.T[T0_timestep]
-            #TODO: hard coded initial steady state temp, at 49s with dt=0.01
             return self.T[timestep-1]-T0
         #return (self.T[self.prev_t_idx] - self.T[self.prev_t_idx-1])
 
@@ -196,10 +195,10 @@ class THSuperComponent(object):
         # for a super component, T is the outer surface temperature
         self.timer = timer
         self.T0 = T0
-        #self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
-        #                                 dtype=float), 'kelvin')
-        self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
-        self.T[0] = T0.magnitude
+        self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
+                                         dtype=float), 'kelvin')
+        #self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
+        self.T[0] = T0#.magnitude
         self.conv = {}
     def update_temp_R(self, timestep, t_env, t_innercomp):
         """ TODO this function is not used

@@ -178,20 +178,21 @@ class THSystemSphFVM(THSystem):
         '''
         to_ret = 0.0#*units.kelvin/units.second
         if isinstance(component, THSuperComponent):
-            return to_ret
+            return to_ret*units.kelvin/units.second
+
         else:
-            cap = (component.rho(t_idx)*component.cp.magnitude)
+            cap = (component.rho(t_idx).magnitude*component.cp.magnitude)
             if component.sph and component.ri == 0.0:
                 # U0=0
                 Qcent = self.BC_center(component,
-                                       t_b=component.T[t_idx],
+                                       t_b=component.T[t_idx].magnitude,
                                        dr=component.ro - component.ri)
                 to_ret -= Qcent/cap
             for interface, d in component.convBC.iteritems():
                 env = self.comp_from_name(interface)
                 QconvBC = self.convBoundary(component,
-                                            t_b=component.T[t_idx],
-                                            t_env=env.T[t_idx],
+                                            t_b=component.T[t_idx].magnitude,
+                                            t_env=env.T[t_idx].magnitude,
                                             h=d["h"],
                                             R=d["R"])
                 to_ret -= QconvBC/cap
@@ -200,38 +201,38 @@ class THSystemSphFVM(THSystem):
             for interface, d in component.cond.iteritems():
                 env = self.comp_from_name(interface)
                 Qcond = self.conductionFVM(
-                                           t_b=component.T[t_idx],
-                                           t_env=env.T[t_idx],
+                                           t_b=component.T[t_idx].magnitude,
+                                           t_env=env.T[t_idx].magnitude,
                                            r_b=component.ro,
                                            r_env=env.ro,
                                            dr=component.ro-component.ri,
                                            k=component.k)
                 to_ret -= Qcond/cap
-                #assert (Qcond*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'conduction from %s to %s, from temp %f to %f is wrong %f' % ( component.name, env.name, component.T[t_idx].magnitude,
-                #    env.T[t_idx].magnitude, Qcond.magnitude)
+                #assert (Qcond*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'conduction from %s to %s, from temp %f to %f is wrong %f, rb and renv is %f and %f' % ( component.name, env.name, component.T[t_idx].magnitude,
+                #env.T[t_idx].magnitude, Qcond, component.ro.magnitude, env.ro.magnitude)
             for interface, d in component.conv.iteritems():
                 env = self.comp_from_name(interface)
                 if isinstance(env, THSuperComponent):
-                    Tr = env.compute_tr(component.T[t_idx],
-                                        env.sub_comp[-2].T[t_idx])
-                    Qconv = self.convection(t_b=component.T[t_idx],
+                    Tr = env.compute_tr(component.T[t_idx].magnitude,
+                                        env.sub_comp[-2].T[t_idx].magnitude)
+                    Qconv = self.convection(t_b=component.T[t_idx].magnitude,
                                             t_env=Tr,
                                             h=d['h'],
                                             A=d['area'])
-                    #assert (Qconv*(component.T[t_idx]-Tr)).magnitude >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
-                    #    component.name, env.name, component.T[t_idx].magnitude,
-                    #    Tr, Qconv.magnitude)
+                    assert (Qconv*(component.T[t_idx].magnitude-Tr)) >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
+                        component.name, env.name, component.T[t_idx].magnitude,
+                        Tr, Qconv.magnitude)
                 else:
-                    Qconv = self.convection(t_b=component.T[t_idx],
-                                            t_env=env.T[t_idx],
+                    Qconv = self.convection(t_b=component.T[t_idx].magnitude,
+                                            t_env=env.T[t_idx].magnitude,
                                             h=d['h'],
                                             A=d['area'])
-                    #assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
-                    #    component.name, env.name, component.T[t_idx].magnitude,
-                    #    env.T[t_idx].magnitude, Qconv.magnitude)
+                    assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
+                        component.name, env.name, component.T[t_idx].magnitude,
+                        env.T[t_idx].magnitude, Qconv.magnitude)
                 to_ret -= Qconv/cap/component.vol.magnitude
             for name, d in component.adv.iteritems():
-                Qadv = self.advection(t_out=component.T[t_idx]*2.0 - d['t_in'].magnitude,
+                Qadv = self.advection(t_out=component.T[t_idx].magnitude*2.0 - d['t_in'].magnitude,
                                       t_in=d['t_in'].magnitude,
                                       m_flow=d['m_flow'],
                                       cp=d['cp'])
@@ -241,7 +242,7 @@ class THSystemSphFVM(THSystem):
                 Tin is %f, tout is %f, tcomp is %f''' % (
                         t_idx, component.name, Qadv, d['t_in'].magnitude,
                         (component.T[t_idx]*2 - d['t_in']).magnitude, component.T[t_idx].magnitude)
-            return to_ret
+            return to_ret*units.kelvin/units.seconds
 
     def BC_center(self, component, t_b, dr):
         '''
@@ -282,8 +283,7 @@ class THSystemSphFVM(THSystem):
         :param A: the surface area of heat transfer
         :type A: float.
         """
-        return k.magnitude/r_b.magnitude*(
-            r_b.magnitude*t_b - r_env.magnitude*t_env)/(dr.magnitude**2)
+        return k.magnitude/r_b.magnitude*(r_b.magnitude*t_b - r_env.magnitude*t_env)/(dr.magnitude**2)
         #return k/r_b*(r_b*t_b - r_env*t_env)/dr**2
 
     def advection(self, t_out, t_in, m_flow, cp):

@@ -43,7 +43,7 @@ def update_th(t, y_n, y_th, si):
     """
     t_idx = si.timer.t_idx(t*units.seconds)
     for idx, comp in enumerate(si.components):
-        comp.update_temp(t_idx, y_th[idx])#*units.kelvin)
+        comp.update_temp(t_idx, y_th[idx]*units.kelvin)
     n_n = len(y_n)
     si.y[t_idx][n_n:] = y_th
 
@@ -80,7 +80,9 @@ def f_th(t, y_th, si):
     :type y: np.ndarray
     """
     t_idx = si.timer.t_idx(t*units.seconds)
-    f = np.zeros(shape=(len(si.components)), dtype=float)
+    f = units.Quantity(np.zeros(shape=(si.n_components(),), dtype=float),
+                                              'kelvin / second')
+    #f = np.zeros(shape=(len(si.components)), dtype=float)
     power = si.y[t_idx][0]
     o_i = 1+si.n_pg
     o_f = 1+si.n_pg+si.n_dg
@@ -152,7 +154,7 @@ def log_results(si):
     pyrklog.info("\nFinal Result : \n"+np.array_str(si.y))
     #pyrklog.info('\nUncertainty param: \n' + str(si.uncertainty_param))
     for comp in si.components:
-        pyrklog.info("\n" + comp.name + ":\n" + np.array_str(comp.T))
+        pyrklog.info("\n" + comp.name + ":\n" + np.array_str(comp.T.magnitude))
     pyrklog.info("\nPrecursor lambdas: \n"+str(si.ne._pd.lambdas()))
     pyrklog.info("\nDelayed neutron frac: \n"+str(si.ne._pd.beta()))
     pyrklog.info("\nPrecursor betas: \n"+str(si.ne._pd.betas()))
