@@ -181,7 +181,7 @@ class THSystemSphFVM(THSystem):
             return to_ret
         else:
             cap = (component.rho(t_idx)*component.cp.magnitude)
-            if component.sph and component.ri == 0.0:
+            if component.sph and component.ri.magnitude == 0.0:
                 # U0=0
                 Qcent = self.BC_center(component,
                                        t_b=component.T[t_idx],
@@ -226,9 +226,9 @@ class THSystemSphFVM(THSystem):
                                             t_env=env.T[t_idx],
                                             h=d['h'],
                                             A=d['area'])
-                    #assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
-                    #    component.name, env.name, component.T[t_idx].magnitude,
-                    #    env.T[t_idx].magnitude, Qconv.magnitude)
+                    assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, 'convection from %s to %s, from temp %f to %f is wrong %f' % (
+                        component.name, env.name, component.T[t_idx].magnitude,
+                        env.T[t_idx].magnitude, Qconv.magnitude)
                 to_ret -= Qconv/cap/component.vol.magnitude
             for name, d in component.adv.iteritems():
                 Qadv = self.advection(t_out=component.T[t_idx]*2.0 - d['t_in'].magnitude,
