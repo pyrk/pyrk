@@ -180,7 +180,7 @@ class THSystemSphFVM(THSystem):
 
         else:
             cap = (component.rho(t_idx).magnitude*component.cp.magnitude)
-            if component.sph and component.ri == 0.0:
+            if component.sph and component.ri.magnitude == 0.0:
                 # U0=0
                 Qcent = self.BC_center(component,
                                        t_b=component.T[t_idx].magnitude,

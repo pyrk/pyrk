@@ -26,7 +26,7 @@ t0 = 0.00*units.seconds
 # Timestep
 dt = 0.02*units.seconds
 # Final Time
-tf = 10.0*units.seconds
+tf = 100.0*units.seconds
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
 alpha_fuel =random.gauss(-3.19, 0.1595)*units.pcm/units.kelvin
@@ -37,8 +37,8 @@ alpha_cool =random.gauss(0.23, 0.11)*units.pcm/units.kelvin
 #initial temperature
 t_mod = (800+273.15)*units.kelvin
 t_fuel = (800+273.15)*units.kelvin
-t_shell = (800+273.15)*units.kelvin
-t_cool = (800+273.15)*units.kelvin
+t_shell = (770+273.15)*units.kelvin
+t_cool = (650+273.15)*units.kelvin
 
 kappa = 0.0
 
@@ -67,7 +67,7 @@ a_pb = area_sphere(r_shell)
 # 4700TODO implement h(T) model
 h_cool = random.gauss(4700.0, 4700.0*0.05)*units.watt/units.kelvin/units.meter**2
 m_flow = 976.0*units.kg/units.second  # 976*units.kg/units.second
-t_inlet = units.Quantity(800.0, units.degC)  # degrees C
+t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 
 #############################################
 #
@@ -76,7 +76,7 @@ t_inlet = units.Quantity(800.0, units.degC)  # degrees C
 #############################################
 
 # Total power, Watts, thermal
-power_tot =0*units.watt #234000000.0*units.watt
+power_tot =234000000.0*units.watt
 #power_tot = 0.0*units.watt
 
 # Timer instance, based on t0, tf, dt
