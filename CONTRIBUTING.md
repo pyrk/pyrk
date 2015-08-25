@@ -3,7 +3,7 @@
 Contributing is so kind of you. In pyrk, all contributions, bug reports, bug
 fixes, documentation improvements, enhancements and ideas are welcome.
 
-The [GitHub "issues" tab](https://github.com/katyhuff/pyrk/issues)
+The [GitHub "issues" tab](https://github.com/pyrk/pyrk/issues)
 contains some issues labeled "first PR". Those are open issues that would be a
 good quick way to get started. Browse them to see if you want to get started on
 one.
@@ -28,7 +28,7 @@ one.
   - When you start working on a PR, start by creating a new branch pointing at the latest
     commit on github master.
   - Please avoid rebasing if possible. Nothing wrong with rebase... it is just confusing for @katyhuff .
-  - The pyrk copyright policy is detailed in the pyrk [LICENSE](https://github.com/katyhuff/pyrk/blob/master/LICENSE).
+  - The pyrk copyright policy is detailed in the pyrk [LICENSE](https://github.com/pyrk/pyrk/blob/master/LICENSE).
 
 #### More developer docs
 
