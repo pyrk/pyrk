@@ -13,7 +13,8 @@ class Timer(object):
                  tf=1.0*units.seconds,
                  dt=1.0*units.seconds):
         self.t0 = validation.validate_ge("t0", t0, 0.0*units.seconds)
-        self.tf = validation.validate_ge("tf", tf, t0)
+        #TODO : commented out validation on tf
+        self.tf = tf#validation.validate_ge("tf", tf, t0)
         self.dt = validation.validate_ge("dt", dt, 0.0*units.seconds)
         self.series = units.Quantity(np.linspace(start=t0.magnitude,
                                                  stop=tf.magnitude,

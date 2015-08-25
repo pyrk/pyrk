@@ -3,8 +3,14 @@ from inp import validation
 from utilities.ur import units
 from density_model import DensityModel
 from timer import Timer
+<<<<<<< HEAD
+from material import Material
 import math
+||||||| merged common ancestors
+from material import Material
+=======
 from materials.material import Material
+>>>>>>> upstream/master
 
 class THComponent(object):
 
@@ -15,8 +21,8 @@ class THComponent(object):
 
     def __init__(self, name=None,
                  mat=Material(),
-                 vol=0.0*units.meter**3,
-                 T0=0.0*units.kelvin,
+                 vol=0.0,#*units.meter**3,
+                 T0=0.0,#*units.kelvin,
                  alpha_temp=0*units.delta_k/units.kelvin,
                  timer=Timer(),
                  heatgen=False,
@@ -61,16 +67,20 @@ class THComponent(object):
         #self.T = #units.Quantity(np.zeros(shape=(timer.timesteps(),),
                                  #        dtype=float), 'kelvin')
         self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
-        self.T[0] = T0.magnitude
+        self.T[0] = T0
         self.T0=T0
         self.alpha_temp = alpha_temp.to('delta_k/kelvin')
         self.heatgen = heatgen
         self.power_tot = power_tot
         self.cond = {}
         self.conv = {}
+<<<<<<< HEAD
         self.adv = {}
+||||||| merged common ancestors
+=======
         self.mass = {}
         self.cust = {}
+>>>>>>> upstream/master
         self.prev_t_idx = 0
         self.convBC = {}
         self.sph = sph
@@ -81,6 +91,7 @@ class THComponent(object):
         '''cut a THComponent into a list of smaller component
         return: a list of components'''
         N = int(round((self.ro-self.ri)/size))
+        #todo implement: assert (N*size).magnitude == (self.ro-self.ri).magnitude
         to_ret = []
         for i in range(0, N):
             ri = self.ri+i*size
@@ -91,7 +102,7 @@ class THComponent(object):
             to_ret.append(THComponent(name=self.name+'%d'%i,
                                       mat=self.mat,
                                       vol=vol,
-                                      T0=self.T0,
+                                      T0=self.T[0],
                                       alpha_temp=alpha_temp,
                                       timer=self.timer,
                                       heatgen=self.heatgen,
@@ -107,8 +118,8 @@ class THComponent(object):
         :return: the temperature of the component at the chosen timestep
         :rtype: float, in units of kelvin
         """
-        validation.validate_ge("timestep", timestep, 0)
-        validation.validate_le("timestep", timestep, self.timer.timesteps())
+        #validation.validate_ge("timestep", timestep, 0)
+        #validation.validate_le("timestep", timestep, self.timer.timesteps())
         return self.T[timestep]
 
     def rho(self, timestep):
@@ -134,32 +145,27 @@ class THComponent(object):
 
     def dtemp(self, timestep, T0_timestep):
         if self.prev_t_idx == 0:
-            return 0.0#*units.kelvin
+            return 0.0*units.kelvin
         else:
             T0=self.T[T0_timestep]
+            #print self.T[5400]
+            #print 'self.T'
+            #print self.T
             #TODO: hard coded initial steady state temp, at 49s with dt=0.01
             return self.T[timestep-1]-T0
         #return (self.T[self.prev_t_idx] - self.T[self.prev_t_idx-1])
 
     def temp_reactivity(self, timestep, T0_timestep):
         '''alpha_temp is converted to deltak/kelvin'''
-        return self.alpha_temp*self.dtemp(timestep, T0_timestep)*units.kelvin
+        #print self.alpha_temp
+        #print self.dtemp(timestep)
+        return self.alpha_temp*self.dtemp(timestep, T0_timestep)
 
     def add_convection(self, env, h, area):
         self.conv[env] = {
             "h": h.to('joule/second/kelvin/meter**2'),
             "area": area
         }
-
-    def add_conduction(self, env, area):
-        self.cond[env] = area.to('meter**2')
-
-    def add_mass_trans(self, env, H, u):
-        self.mass[env] = {"H": H,
-                          "u": u}
-
-    def add_custom(self, env, res):
-        self.cust[env] = {"res": res.to(units.kelvin/units.watt)}
 
     def addConvBC(self, env, prev_comp, h, R):
         self.convBC[env] = {
@@ -178,6 +184,7 @@ class THComponent(object):
             "r_env": r_env.to('meter')
         }
 
+<<<<<<< HEAD
     def add_advection(self, name, m_flow, t_in, cp):
         self.adv[name] = {
             "m_flow": m_flow.to('kg/second'),
@@ -199,7 +206,7 @@ class THSuperComponent(object):
         #self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
         #                                 dtype=float), 'kelvin')
         self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
-        self.T[0] = T0.magnitude
+        self.T[0] = T0
         self.conv = {}
     def update_temp_R(self, timestep, t_env, t_innercomp):
         """ TODO this function is not used
@@ -232,7 +239,7 @@ class THSuperComponent(object):
         for envname, d in self.conv.iteritems():
             h = self.conv[envname]["h"].magnitude
             k = self.conv[envname]["k"].magnitude
-            dr = self.conv[envname]["dr"].magnitude
+            dr = self.conv[envname]["dr"]
         return (-h/k*t_env+t_innercomp/dr)/(1/dr-h/k)
 
     def add_component(self, a_component):
@@ -258,3 +265,17 @@ class THSuperComponent(object):
             self.sub_comp[i].add_conduction(self.sub_comp[i+1].name, self.sub_comp[i].k)
         # element i=elementNb-2
         self.sub_comp[N-2].add_conduction(self.sub_comp[N-3].name, self.sub_comp[N-2].k)
+||||||| merged common ancestors
+    def add_conduction(self, env, area):
+        self.cond[env] = area.to('meter**2')
+=======
+    def add_conduction(self, env, area):
+        self.cond[env] = area.to('meter**2')
+
+    def add_mass_trans(self, env, H, u):
+        self.mass[env] = {"H": H,
+                          "u": u}
+
+    def add_custom(self, env, res):
+        self.cust[env] = {"res": res.to(units.kelvin/units.watt)}
+>>>>>>> upstream/master

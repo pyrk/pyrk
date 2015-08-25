@@ -1,0 +1,18 @@
+#!/bin/sh
+#SBATCH --job-name=uncert
+#SBATCH --output=uncert.log
+#SBATCH --error=uncert.serr
+#SBATCH --partition=savio
+#SBATCH --time=4:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=20
+# QoS:
+#SBATCH --qos=nuclear_normal
+# Account:
+#SBATCH -A co_nuclear
+#Mail
+#SBATCH --mail-type=all
+#mail user
+#SBATCH --mail-user=imwangxin@gmail.com
+
+python driver.py 'input' 'output1' 'image'

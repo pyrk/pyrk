@@ -6,6 +6,7 @@ from data import precursors as pr
 from data import decay_heat as dh
 from reactivity_insertion import ReactivityInsertion
 from timer import Timer
+from th_component import THSuperComponent
 
 class Neutronics(object):
     """This class handles calculations and data related to the
@@ -13,7 +14,7 @@ class Neutronics(object):
     """
 
     def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 timer=Timer(), rho_ext=None, feedback=False):
+                 timer=Timer(), rho_ext=None, feedback=False, feedback_onset_time=50):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
@@ -31,7 +32,7 @@ class Neutronics(object):
         :returns: A Neutronics object that holds neutronics simulation info
         """
 
-        self._iso = v.validate_supported("iso", iso, ['u235', 'pu239', 'sfr'])
+        self._iso = v.validate_supported("iso", iso, ['u235', 'pu239', 'sfr', 'FHR'])
         """_iso (str): Fissioning isotope. 'u235', 'pu239', or 'sfr' are supported."""
 
         self._e = v.validate_supported("e", e, ['thermal', 'fast'])
@@ -61,6 +62,8 @@ class Neutronics(object):
 
         self.feedback =  feedback
         """feedback (bool): False if no reactivity feedbacks, true otherwise"""
+
+        self.feedback_onset_time = feedback_onset_time
 
     def init_rho_ext(self, rho_ext):
         if rho_ext is None:
@@ -130,10 +133,16 @@ class Neutronics(object):
         :type components: list of THComponent objects
         """
         rho = {}
-        if self.feedback:
+        if self.feedback and t_idx >3000: #TODO: run heat transfer mode only for 50s, but should not specify 5000 here
+            T0_timestep = 3000 -5  # T0_timestep is the reference 'steady state' time step for calculating temeprature feedback rho_feedback=alpha*(T_current - T0_timestep)
             for component in components:
-                rho[component.name] = component.temp_reactivity()
+                if not isinstance(component, THSuperComponent):
+                    rho[component.name] = component.temp_reactivity(t_idx, T0_timestep)
         rho["external"] = self._rho_ext(t_idx=t_idx).to('delta_k')
         to_ret = sum(rho.values()).magnitude
+        #print 'external rho %f' %rho["external"]
+        #print 'total rho %f' %to_ret
+        #print 'rho list'
+        #print rho.values()
         self._rho[t_idx] = to_ret
         return to_ret

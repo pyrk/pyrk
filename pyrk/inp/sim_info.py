@@ -32,7 +32,7 @@ class SimInfo(object):
         self.rho_ext = self.init_rho_ext(rho_ext)
         self.feedback = feedback
         self.ne = self.init_ne()
-        self.th = th_system.THSystem(kappa=kappa, components=components)
+        self.th = th_system.THSystemSphFVM(kappa=kappa, components=components)
         self.y = np.zeros(shape=(timer.timesteps(), self.n_entries()),
                           dtype=float)
         self.plotdir = plotdir

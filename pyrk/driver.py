@@ -14,6 +14,7 @@ import argparse
 from utilities import logger
 from utilities.logger import pyrklog
 from inp import sim_info
+from th_component import THSuperComponent
 from utilities.ur import units
 from utilities import plotter
 import os
@@ -42,7 +43,7 @@ def update_th(t, y_n, y_th, si):
     """
     t_idx = si.timer.t_idx(t*units.seconds)
     for idx, comp in enumerate(si.components):
-        comp.update_temp(t_idx, y_th[idx]*units.kelvin)
+        comp.update_temp(t_idx, y_th[idx])#*units.kelvin)
     n_n = len(y_n)
     si.y[t_idx][n_n:] = y_th
 
@@ -79,8 +80,7 @@ def f_th(t, y_th, si):
     :type y: np.ndarray
     """
     t_idx = si.timer.t_idx(t*units.seconds)
-    f = units.Quantity(np.zeros(shape=(si.n_components(),), dtype=float),
-                       'kelvin / second')
+    f = np.zeros(shape=(len(si.components)), dtype=float)
     power = si.y[t_idx][0]
     o_i = 1+si.n_pg
     o_f = 1+si.n_pg+si.n_dg
@@ -100,7 +100,8 @@ def y0(si):
     f[i] = 1.0  # power is normalized is 1
     for j in range(0, si.n_pg):
         i += 1
-        f[i] = si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
+        f[i] = f[0]*si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
+        # i added f[0] here, check if this is correct
     for k in range(0, si.n_dg):
         i += 1
         f[i] = 0
@@ -149,8 +150,9 @@ def solve(si, y, infile):
 def log_results(si):
     pyrklog.info("\nReactivity : \n"+str(si.ne._rho))
     pyrklog.info("\nFinal Result : \n"+np.array_str(si.y))
+    #pyrklog.info('\nUncertainty param: \n' + str(si.uncertainty_param))
     for comp in si.components:
-        pyrklog.info("\n" + comp.name + ":\n" + np.array_str(comp.T.magnitude))
+        pyrklog.info("\n" + comp.name + ":\n" + np.array_str(comp.T))
     pyrklog.info("\nPrecursor lambdas: \n"+str(si.ne._pd.lambdas()))
     pyrklog.info("\nDelayed neutron frac: \n"+str(si.ne._pd.beta()))
     pyrklog.info("\nPrecursor betas: \n"+str(si.ne._pd.betas()))
