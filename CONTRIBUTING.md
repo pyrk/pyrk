@@ -23,8 +23,8 @@ one.
   - Changes should be PEP8 compatible [PEP8](http://www.python.org/dev/peps/pep-0008/).
   - Keep style fixes to a separate commit to make your PR more readable.
   - Docstrings ideally follow the [sphinx autodoc](https://pythonhosted.org/an_example_pypi_project/sphinx.html#function-definitions)
-  - Write tests.
-  - When writing tests, please.
+  - Write tests. 
+  - When writing tests, please make sure they are in a `test` directory.
   - When you start working on a PR, start by creating a new branch pointing at the latest
     commit on github master.
   - Please avoid rebasing if possible. Nothing wrong with rebase... it is just confusing for @katyhuff .
