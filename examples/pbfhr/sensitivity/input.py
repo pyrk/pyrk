@@ -11,6 +11,7 @@ import th_component as th
 import math
 from materials.material import Material
 from density_model import DensityModel
+import random
 from timer import Timer
 import numpy as np
 #############################################
@@ -25,13 +26,13 @@ t0 = 0.00*units.seconds
 # Timestep
 dt = 0.02*units.seconds
 # Final Time
-tf = 200.0*units.seconds
+tf = 100.0*units.seconds
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
-alpha_fuel =-3.19*units.pcm/units.kelvin
+alpha_fuel =random.gauss(-3.19, 0.1595)*units.pcm/units.kelvin
 alpha_mod = -0.7*units.pcm/units.kelvin
 alpha_shell = 0*units.pcm/units.kelvin
-alpha_cool =0.23*units.pcm/units.kelvin
+alpha_cool =random.gauss(0.23, 0.11)*units.pcm/units.kelvin
 
 #initial temperature
 t_mod = (800+273.15)*units.kelvin
@@ -64,7 +65,7 @@ a_pb = area_sphere(r_shell)
 
 # Coolant flow properties
 # 4700TODO implement h(T) model
-h_cool = 4700.0*units.watt/units.kelvin/units.meter**2
+h_cool = random.gauss(4700.0, 4700.0*0.05)*units.watt/units.kelvin/units.meter**2
 m_flow = 976.0*units.kg/units.second  # 976*units.kg/units.second
 t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 
@@ -88,7 +89,8 @@ n_pg = 6
 n_dg = 0
 
 # Fissioning Isotope
-fission_iso = "FHR"
+fission_iso = "u235"
+#fission_iso = "FHR"
 # Spectrum
 spectrum = "thermal"
 
@@ -114,24 +116,24 @@ rho_ext = RampReactivityInsertion(timer=ti,
 # maximum number of internal steps that the ode solver will take
 nsteps = 5000
 
-k_mod = 17*units.watt/(units.meter*units.kelvin)
-cp_mod = 1650.0*units.joule/(units.kg*units.kelvin)
+k_mod =random.gauss(17, 17*0.05)*units.watt/(units.meter*units.kelvin)
+cp_mod=random.gauss(1650.0, 1650.0*0.05)*units.joule/(units.kg*units.kelvin)
 rho_mod =DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
-Moderator = Material('mod', k_mod, cp_mod, rho_mod)
+Moderator=Material('mod', k_mod, cp_mod, rho_mod)
 
-k_fuel = 15*units.watt/(units.meter*units.kelvin)
-cp_fuel = 1818.0*units.joule/units.kg/units.kelvin # [J/kg/K]
+k_fuel=random.uniform(15.0, 19.0)*units.watt/(units.meter*units.kelvin)
+cp_fuel=random.gauss(1818.0, 1818*0.05)*units.joule/units.kg/units.kelvin # [J/kg/K]
 rho_fuel=DensityModel(a=2220.0*units.kg/(units.meter**3), model="constant")
 Fuel=Material('fuel', k_fuel, cp_fuel, rho_fuel)
 
-k_shell = 17*units.watt/(units.meter*units.kelvin)
-cp_shell = 1650.0*units.joule/(units.kg*units.kelvin)
+k_shell =random.gauss(17, 17*0.05)*units.watt/(units.meter*units.kelvin)
+cp_shell=random.gauss(1650.0, 1650.0*0.05)*units.joule/(units.kg*units.kelvin)
 rho_shell =DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
 Shell=Material('shell', k_shell, cp_shell, rho_shell)
 
-k_cool = 1*units.watt/(units.meter*units.kelvin)
-cp_cool = 2415.78*units.joule/(units.kg*units.kelvin)
-rho_cool = DensityModel(a=2415.6*units.kg/(units.meter**3), b=0.49072*units.kg/(units.meter**3)/units.kelvin, model="linear")
+k_cool=1*units.watt/(units.meter*units.kelvin)
+cp_cool=random.gauss(2415.78, 2415.78*0.05)*units.joule/(units.kg*units.kelvin)
+rho_cool =  DensityModel(a=2415.6*units.kg/(units.meter**3), b=0.49072*units.kg/(units.meter**3)/units.kelvin, model="linear")
 cool=Material('cool', k_cool, cp_cool, rho_cool)
 
 mod = th.THComponent(name="mod",
