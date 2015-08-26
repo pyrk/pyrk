@@ -60,7 +60,7 @@ def f_n(t, y, si):
     end_pg = 1 + si.n_pg
     f = np.zeros(shape=(n_n,), dtype=float)
     i = 0
-    f[i] = si.ne.dpdt(si.timer.ts, si.components, y[0], y[1:end_pg])
+    f[i] = si.ne.dpdt(si.timer.ts, si.timer.t_idx_feedback, si.components, y[0], y[1:end_pg])
     for j in range(0, si.n_pg):
         i += 1
         f[i] = si.ne.dzetadt(t, y[0], y[i], j)

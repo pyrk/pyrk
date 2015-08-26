@@ -26,12 +26,15 @@ t0 = 0.00*units.seconds
 dt = 0.02*units.seconds
 # Final Time
 tf = 200.0*units.seconds
+# Time to turn on feedback
+t_feedback = 60.0*units.seconds
+
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
-alpha_fuel =-3.19*units.pcm/units.kelvin
+alpha_fuel = -3.19*units.pcm/units.kelvin
 alpha_mod = -0.7*units.pcm/units.kelvin
 alpha_shell = 0*units.pcm/units.kelvin
-alpha_cool =0.23*units.pcm/units.kelvin
+alpha_cool = 0.23*units.pcm/units.kelvin
 
 #initial temperature
 t_mod = (800+273.15)*units.kelvin
@@ -75,11 +78,11 @@ t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 #############################################
 
 # Total power, Watts, thermal
-power_tot =234000000.0*units.watt
+power_tot = 234000000.0*units.watt
 #power_tot = 0.0*units.watt
 
 # Timer instance, based on t0, tf, dt
-ti = Timer(t0=t0, tf=tf, dt=dt)
+ti = Timer(t0=t0, tf=tf, dt=dt, t_feedback=t_feedback)
 
 # Number of precursor groups
 n_pg = 6
@@ -88,7 +91,7 @@ n_pg = 6
 n_dg = 0
 
 # Fissioning Isotope
-fission_iso = "FHR"
+fission_iso = "u235"
 # Spectrum
 spectrum = "thermal"
 

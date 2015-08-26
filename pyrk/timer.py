@@ -11,16 +11,17 @@ class Timer(object):
     def __init__(self,
                  t0=0.0*units.seconds,
                  tf=1.0*units.seconds,
-                 dt=1.0*units.seconds):
+                 dt=1.0*units.seconds,
+                 t_feedback=0.0*units.seconds):
         self.t0 = validation.validate_ge("t0", t0, 0.0*units.seconds)
-        #TODO : commented out validation on tf
-        self.tf = tf#validation.validate_ge("tf", tf, t0)
+        self.tf = validation.validate_ge("tf", tf, t0)
         self.dt = validation.validate_ge("dt", dt, 0.0*units.seconds)
         self.series = units.Quantity(np.linspace(start=t0.magnitude,
                                                  stop=tf.magnitude,
                                                  num=self.timesteps()),
                                      'seconds')
         self.ts = 0
+        self.t_idx_feedback = self.t_idx(t_feedback)
 
     def t_idx(self, time):
         """given the actual time, in seconds, this returns the index of t."""
