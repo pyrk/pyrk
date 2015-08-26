@@ -52,6 +52,7 @@ class PrecursorData(object):
         beta_dict["u235"] = {}
         beta_dict["pu239"] = {}
         beta_dict["sfr"] = {}
+        beta_dict["fhr"] = {}
         beta_dict["u235"]["thermal"] = [0.00247, 0.0013845, 0.001222,
                                         0.0026455, 0.000832, 0.000169]
         beta_dict["u235"]["fast"] = [0.000266, 0.001491, 0.001316, 0.002849,
@@ -59,6 +60,7 @@ class PrecursorData(object):
         beta_dict["pu239"]["thermal"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         beta_dict["pu239"]["fast"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         beta_dict["sfr"]["fast"] = [0.009, 0.087, 0.070, 0.0014, 0.0060, 0.0055]
+        beta_dict["fhr"]["thermal"] = [1.48756E-04, 9.45436E-04, 8.29928E-04, 2.21997E-03, 6.90778E-04, 2.31801E-04]
         return beta_dict[nuc][e]
 
     def _get_lambdas(self, nuc, e):
@@ -70,6 +72,7 @@ class PrecursorData(object):
         lambda_dict["u235"] = {}
         lambda_dict["pu239"] = {}
         lambda_dict["sfr"] = {}
+        lambda_dict["fhr"] = {}
         lambda_dict["u235"]["thermal"] = [math.log(2)/x for x in
                                           [54.51, 21.84, 6.00, 2.23, 0.496,
                                            0.179]]
@@ -77,6 +80,7 @@ class PrecursorData(object):
         lambda_dict["pu239"]["thermal"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         lambda_dict["pu239"]["fast"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         lambda_dict["sfr"]["fast"] = [0.0124, 0.0305, 0.111, 0.301, 1.14, 3.01]
+        lambda_dict["fhr"]["thermal"] = [1.25723E-02, 3.11643E-02, 1.09837E-01, 3.16355E-01, 1.27045E+00, 7.83939E+00]
         return lambda_dict[nuc][e]
 
     def _get_Lambda(self, nuc, e):
@@ -86,10 +90,12 @@ class PrecursorData(object):
         Lambda_dict = {}
         Lambda_dict["u235"] = {}
         Lambda_dict["pu239"] = {}
-        Lambda_dict["u235"]["thermal"] = 1.08e-5
         Lambda_dict["sfr"] = {}
+        Lambda_dict["fhr"] = {}
+        Lambda_dict["u235"]["thermal"] = 1.08e-5
         Lambda_dict["u235"]["fast"] = 0
         Lambda_dict["pu239"]["thermal"] = 0
         Lambda_dict["pu239"]["fast"] = 0
         Lambda_dict["sfr"]["fast"] = 1.0e-5
+        Lambda_dict["fhr"]["thermal"] = 5.35878E-04 #ADJ_NAUCHI_LIFETIME from serpent
         return Lambda_dict[nuc][e]
