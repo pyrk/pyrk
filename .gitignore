@@ -2,6 +2,7 @@
 docs/_build/
 build/
 pyrk.egg_info/
+dist/
 # Ignore temp files
 *.pyc
 *.save
