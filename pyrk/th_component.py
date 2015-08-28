@@ -58,7 +58,6 @@ class THComponent(object):
         self.k = mat.k
         self.cp = mat.cp
         self.dm = mat.dm
-        self.name = name
         self.timer = timer
         self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
                                          dtype=float), 'kelvin')
