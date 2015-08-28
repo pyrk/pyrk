@@ -84,13 +84,8 @@ def f_th(t, y_th, si):
     :type y: np.ndarray
     """
     t_idx = si.timer.t_idx(t*units.seconds)
-    f = units.Quantity(
-        np.zeros(
-            shape=(
-                si.n_components(),
-            ),
-            dtype=float),
-        'kelvin / second')
+    f = units.Quantity(np.zeros(shape=(si.n_components(),), dtype=float),
+                       'kelvin / second')
     power = si.y[t_idx][0]
     o_i = 1+si.n_pg
     o_f = 1+si.n_pg+si.n_dg
