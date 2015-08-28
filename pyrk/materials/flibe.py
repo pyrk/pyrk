@@ -7,7 +7,7 @@ class Flibe(Material):
     """This class represents FLiBe. It inherits from the material
     class and possesses attributes intrinsic to flibe.
     All properties from the report: Temperature-Dependent Thermophysical Properties
-    for Fluoride Salts and Simulant Fluids
+    for Fluoride Salts and Simulant Fluids[TH lab at UCB]
     """
     def __init__(self, name="flibe"):
         """Initalizes a material
