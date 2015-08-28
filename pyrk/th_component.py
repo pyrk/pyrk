@@ -22,15 +22,16 @@ class THComponent(object):
                  heatgen=False,
                  power_tot=0*units.watt,
                  sph=False,
-                 ri=0,  # *units.meter,
-                 ro=0,  # *units.meter
-                 ):
+                 ri=0,
+                 ro=0):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.
 
         :param name: The name of the component (i.e., "fuel" or "cool")
         :type name: str.
+        :param mat: The material of this component
+        :type mat: Material object
         :param vol: The volume of the component
         :type vol: float meter**3
         :param T0: The initial temperature of the component
@@ -41,14 +42,15 @@ class THComponent(object):
         :type timer: Timer object
         :param heatgen: is this component a heat generator (fuel)
         :type heatgen: bool
-        :param adv: is this component losses heat from advection
-        :type adv: bool
-        :param advheat: heat transfered through advection(watts), positive if
-        gain heat, negative is loss heat
+        :param power_tot: power generated in this component
+        :type power_tot: float
         :param sph: is this component a spherical component, spherical equations
         for heatgen, conduction are different, post-processing is different too
         :type sph: bool
-        :param ri and ro: inner radius and outer radius of the sph/annular component
+        :param ri: inner radius of the sph/annular component, ri=0 for sphere
+        :type ri: float
+        :param ro: outer radius of the sph/annular component, ro=radius for sphere
+        :type ro: float
         """
         self.name = name
         self.vol = vol
@@ -60,7 +62,6 @@ class THComponent(object):
         self.timer = timer
         self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
                                          dtype=float), 'kelvin')
-        #self.T = np.zeros(shape=(timer.timesteps(),), dtype=float)
         self.T[0] = T0
         self.T0 = T0
         self.alpha_temp = alpha_temp.to('delta_k/kelvin')
@@ -78,8 +79,13 @@ class THComponent(object):
         self.ro = ro
 
     def mesh(self, size):
-        '''cut a THComponent into a list of smaller component
-        return: a list of components'''
+        '''cut a THComponent into a list of smaller components
+        uniform meshing method, only implemented for spherical components
+        :param size: size of uniform mesh element
+        :type size: float.
+        :return: list of components
+        '''
+        assert self.sph, '''mesh function only implemented for spherical component'''
         N = int(round((self.ro-self.ri)/size))
         to_ret = []
         for i in range(0, N):
@@ -133,18 +139,31 @@ class THComponent(object):
         return self.T[timestep]
 
     def dtemp(self, timestep, T0_timestep):
-        if self.prev_t_idx == 0:
-            return 0.0*units.kelvin
-        else:
-            T0 = self.T[T0_timestep]
-            return self.T[timestep-1]-T0
-        # return (self.T[self.prev_t_idx] - self.T[self.prev_t_idx-1])
+        T0 = self.T[T0_timestep]
+        return self.T[timestep-1]-T0
 
     def temp_reactivity(self, timestep, T0_timestep):
-        '''alpha_temp is converted to deltak/kelvin'''
+        '''calculate reactivity of a component from temperature feedback
+        :param timestep: the timestep at which to calculate reactivity feedback
+        :type timestep: int
+        :param T0_timestep: the timestep at which the temperature is used as
+        reference temperature
+        :type T0_timestep: int
+        '''
+        assert timestep > T0_timestep, """reference timestep T0_timestep %f should
+        be prior to the timestep %f for temp feedback calculation""" % (
+            T0_timestep, timestep)
         return self.alpha_temp*self.dtemp(timestep, T0_timestep)
 
     def add_convection(self, env, h, area):
+        '''add convection in the self.conv dictionary
+        :param env: name of the component that heat is transfered to/from
+        :type env: str
+        :param h: heat transfer coefficient
+        :type h: float
+        :param area: heat transfer area
+        :type area: float
+        '''
         self.conv[env] = {
             "h": h.to('joule/second/kelvin/meter**2'),
             "area": area
@@ -170,14 +189,19 @@ class THComponent(object):
         '''Add parameters for conduction heat transfer calculation
         area and L are used for slab geometry
         r_b and r_env are used for spherical heat diffusion
-        Args:
-            env(str): name of the component that this component conduct heat to
-            k(float quantity with units): thermal conductivity of the material
-            that heat is conducted in(may not be the 'self' component)
-            area(float quantity with units): conduction surface
-            L(float quantity with units): thickness of slab
-            r_b(float quantity with units): outer radius of the component
-            r_env(float quantity with units): outer radius of the environment
+
+        :param env: name of the component that this component conduct heat to
+        :type env: str
+        :param k: thermal conductivity of the material that heat is conducted in(may not be the 'self' component)
+        :type k:float
+        :param area: conduction surface for the slab
+        :type area: float
+        :param L: thickness of the slab
+        :type L: float
+        :param r_b: outer radius of the component
+        :type r_b: float
+        :param r_env: outer radius of the environment
+        :type r_env: float
         '''
         self.cond[env] = {
             "k": k.to('watts/meter/kelvin'),
@@ -190,10 +214,13 @@ class THComponent(object):
     def add_advection(self, name, m_flow, t_in, cp):
         '''Add advection dictionary to the fluid component(coolant) that has
         advective heat tranfer
-        Args:
-            m_flow(float with units): mass flow rate
-            t_in(float with units): inlet temperature
-            cp(float with units): specific heat capacity
+
+        :param m_flow: mass flow rate
+        :type m_flow: float
+        :param t_in: temperature at the inlet of the control volume
+        :type t_in: float
+        :param cp: specific heat capacity
+        :type cp: float
         '''
         self.adv[name] = {
             "m_flow": m_flow.to('kg/second'),
@@ -209,31 +236,46 @@ class THSuperComponent(object):
     mesh elements'''
 
     def __init__(self, name, T0, sub_comp=[], timer=Timer()):
-        self.sub_comp = sub_comp
+
+        """Initalizes a thermal hydraulic super component.
+
+        :param name: The name of the supercomponent (i.e., "fuel" or "cool")
+        :type name: str.
+        :param T0: The initial temperature of the supercomponent
+        :type T0: float.
+        :param sub_comp: List of components that makes up the supercomponent.
+        The sub_components should be in order from the center to the outside
+        :type sub_comp: list of THComponent
+        :param timer: The timer instance for the sim
+        :type timer: Timer object
+        """
         self.name = name
-        # for a super component, T is the outer surface temperature
-        self.timer = timer
         self.T0 = T0
+        self.sub_comp = sub_comp
+        self.timer = timer
         self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
                                          dtype=float), 'kelvin')
         self.T[0] = T0
         self.conv = {}
-        # Add conductions between the mesh cells
         self.add_conduction_in_mesh()
+        self.alpha_temp = 0.0*units.delta_k/units.kelvin
 
-    def update_temp_R(self, timestep, t_env, t_innercomp):
-        """ TODO this function is not used
-        Updates the temperature
-        :param timestep: the timestep at which to query the temperature
+    def dtemp(self, timestep, T0_timestep):
+        T0 = self.T[T0_timestep]
+        return self.T[timestep-1]-T0
+
+    def temp_reactivity(self, timestep, T0_timestep):
+        '''calculate reactivity of a component from temperature feedback
+        :param timestep: the timestep at which to calculate reactivity feedback
         :type timestep: int
-        :param temp: the new tempterature
-        :type float: float, units of kelvin
-        """
-
-        tr = self.compute_tr(t_env, t_innercomp)
-        self.T[timestep] = tr
-        self.prev_t_idx = timestep
-        return self.T[timestep]
+        :param T0_timestep: the timestep at which the temperature is used as
+        reference temperature
+        :type T0_timestep: int
+        '''
+        assert timestep > T0_timestep, """reference timestep T0_timestep %f should
+        be prior to the timestep %f for temp feedback calculation""" % (
+            T0_timestep, timestep)
+        return self.alpha_temp*self.dtemp(timestep, T0_timestep)
 
     def update_temp(self, timestep, temp):
         """Updates the temperature
@@ -247,8 +289,13 @@ class THSuperComponent(object):
         return self.T[timestep]
 
     def compute_tr(self, t_env, t_innercomp):
-        '''compute temperature at r=R for the sphere, from the temperature at r=R-dr
-        and the temperature of the coolant
+        '''compute temperature at r=R for the sphere from the temperature at r=R-dr
+        and the temperature of the env/fluid/coolant
+
+        :param t_env: temperature of the component(env) that self tranfers heat with
+        :type t_env: float
+        :param t_innercomp: temperature of the component that is inside self
+        :type t_innercomp: float
         '''
         for envname, d in self.conv.iteritems():
             h = self.conv[envname]["h"].magnitude
@@ -260,6 +307,12 @@ class THSuperComponent(object):
         self.sub_comp.append(a_component)
 
     def add_conv_bc(self, envname, h):
+        '''add convective boundary condition to the supercomponent
+        :param envname: the name of the component that self tranfer heat with
+        :type envname: str
+        :param h: convective heat transfer coefficient
+        :type h: float
+        '''
         self.sub_comp[-2].addConvBC(envname,
                                     self.sub_comp[-1],
                                     h,
@@ -270,6 +323,8 @@ class THSuperComponent(object):
                               }
 
     def add_conduction_in_mesh(self):
+        '''add conduction between the mesh elements
+        '''
         N = len(self.sub_comp)
         # element i=0:
         self.sub_comp[0].add_conduction(

@@ -6,7 +6,7 @@ from data import precursors as pr
 from data import decay_heat as dh
 from reactivity_insertion import ReactivityInsertion
 from timer import Timer
-from th_component import THSuperComponent
+
 
 class Neutronics(object):
     """This class handles calculations and data related to the
@@ -33,8 +33,8 @@ class Neutronics(object):
         """
 
         self._iso = v.validate_supported("iso", iso,
-                                         ['u235', 'pu239', 'sfr', 'FHR'])
-        """_iso (str): Fissioning isotope. 'u235', 'pu239', or 'sfr', "FHR"
+                                         ['u235', 'pu239', 'sfr', 'fhr'])
+        """_iso (str): Fissioning isotope. 'u235', 'pu239', or 'sfr', "fhr"
         are supported."""
 
         self._e = v.validate_supported("e", e, ['thermal', 'fast'])
@@ -64,7 +64,6 @@ class Neutronics(object):
 
         self.feedback = feedback
         """feedback (bool): False if no reactivity feedbacks, true otherwise"""
-
 
     def init_rho_ext(self, rho_ext):
         if rho_ext is None:
@@ -131,14 +130,13 @@ class Neutronics(object):
         :param t_idx_feedback: time step
         :type t_idx: int, index
         :param components: thermal hydraulic component objects
-        :type components: list of THComponent objects
+        :type components: list of THComponent and/or THSuperComponent objects
         """
         rho = {}
         if self.feedback and t_idx > t_idx_feedback:
             for component in components:
-                if not isinstance(component, THSuperComponent):
-                    rho[component.name] = component.temp_reactivity(t_idx,
-                                                                    t_idx_feedback)
+                rho[component.name] = component.temp_reactivity(t_idx,
+                                                                t_idx_feedback)
         rho["external"] = self._rho_ext(t_idx=t_idx).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret
