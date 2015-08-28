@@ -2,10 +2,10 @@ from ur import units
 from material import Material
 from density_model import DensityModel
 
-class Fuel(Material):
-    """This class represents the material properties of the fuel layer in the
-    FHR fuel pebble"""
-    def __init__(self, name='fuel'):
+class Fhrfuel(Material):
+    """This class represents the material properties of the homogenized fuel
+    layer in the FHR fuel pebble"""
+    def __init__(self, name='fhrfuel'):
         """Initalizes a material based on the fuel kernel in a TRISO particle.
         A material has intensive (as opposed to extensive) material properties.
         :param name: The name of the material (i.e., "fuel" or "cool")
