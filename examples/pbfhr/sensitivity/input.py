@@ -66,7 +66,7 @@ a_pb = area_sphere(r_shell)
 # Coolant flow properties
 # 4700TODO implement h(T) model
 h_cool = random.gauss(4700.0, 4700.0*0.05)*units.watt/units.kelvin/units.meter**2
-m_flow = 976.0*units.kg/units.second  # 976*units.kg/units.second
+m_flow = 976.0*units.kg/units.second
 t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 
 #############################################
@@ -90,7 +90,7 @@ n_dg = 0
 
 # Fissioning Isotope
 fission_iso = "u235"
-#fission_iso = "FHR"
+
 # Spectrum
 spectrum = "thermal"
 
@@ -98,13 +98,6 @@ spectrum = "thermal"
 feedback = True
 
 # External Reactivity
-#from reactivity_insertion import ImpulseReactivityInsertion
-#rho_ext = ImpulseReactivityInsertion(timer=ti,
-#                                     t_start=50.0*units.seconds,
-#                                     t_end=120.0*units.seconds,
-#                                     rho_init=0.0*units.delta_k,
-#                                     rho_max=600*units.pcm)
-
 from reactivity_insertion import RampReactivityInsertion
 rho_ext = RampReactivityInsertion(timer=ti,
                                      t_start=60.0*units.seconds,

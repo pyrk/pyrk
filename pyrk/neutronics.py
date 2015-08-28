@@ -9,6 +9,7 @@ from timer import Timer
 
 
 class Neutronics(object):
+
     """This class handles calculations and data related to the
     neutronics subblock
     """
@@ -125,10 +126,10 @@ class Neutronics(object):
 
     def reactivity(self, t_idx, t_idx_feedback, components):
         """Returns the reactivity, in $\Delta k$, at time t
-        :param t_idx: time step
+        :param t_idx: time step that reactivity is calculated
         :type t_idx: int, index
-        :param t_idx_feedback: time step
-        :type t_idx: int, index
+        :param t_idx_feedback: time step that temperature feedback starts
+        :type t_idx_feedback: int, index
         :param components: thermal hydraulic component objects
         :type components: list of THComponent and/or THSuperComponent objects
         """

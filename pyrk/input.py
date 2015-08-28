@@ -25,9 +25,9 @@ t0 = 0.00*units.seconds
 # Timestep
 dt = 0.02*units.seconds
 # Final Time
-tf = 20.0*units.seconds
+tf = 250.0*units.seconds
 # Time to turn on feedback
-t_feedback = 0.0*units.seconds
+t_feedback = 150.0*units.seconds
 
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
