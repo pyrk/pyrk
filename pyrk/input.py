@@ -25,9 +25,9 @@ t0 = 0.00*units.seconds
 # Timestep
 dt = 0.02*units.seconds
 # Final Time
-tf = 200.0*units.seconds
+tf = 20.0*units.seconds
 # Time to turn on feedback
-t_feedback = 60.0*units.seconds
+t_feedback = 0.0*units.seconds
 
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
@@ -68,8 +68,8 @@ a_pb = area_sphere(r_shell)
 # Coolant flow properties
 # 4700TODO implement h(T) model
 h_cool = 4700.0*units.watt/units.kelvin/units.meter**2
-m_flow = 976.0*units.kg/units.second  # 976*units.kg/units.second
-t_inlet = units.Quantity(600.0, units.degC)  # degrees C
+m_flow = 976.0*units.kg/units.seconds
+t_inlet = units.Quantity(600.0, units.degC)
 
 #############################################
 #
@@ -79,7 +79,6 @@ t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 
 # Total power, Watts, thermal
 power_tot = 234000000.0*units.watt
-#power_tot = 0.0*units.watt
 
 # Timer instance, based on t0, tf, dt
 ti = Timer(t0=t0, tf=tf, dt=dt, t_feedback=t_feedback)
@@ -91,7 +90,7 @@ n_pg = 6
 n_dg = 0
 
 # Fissioning Isotope
-fission_iso = "u235"
+fission_iso = "fhr"
 # Spectrum
 spectrum = "thermal"
 
@@ -99,20 +98,13 @@ spectrum = "thermal"
 feedback = True
 
 # External Reactivity
-#from reactivity_insertion import ImpulseReactivityInsertion
-#rho_ext = ImpulseReactivityInsertion(timer=ti,
-#                                     t_start=50.0*units.seconds,
-#                                     t_end=120.0*units.seconds,
-#                                     rho_init=0.0*units.delta_k,
-#                                     rho_max=600*units.pcm)
-
 from reactivity_insertion import RampReactivityInsertion
 rho_ext = RampReactivityInsertion(timer=ti,
-                                     t_start=60.0*units.seconds,
-                                     t_end=70.0*units.seconds,
-                                     rho_init=0.0*units.delta_k,
-                                     rho_rise=600.0*units.pcm,
-                                     rho_final=600.0*units.pcm)
+                                  t_start=t_feedback + 10.0*units.seconds,
+                                  t_end=t_feedback + 20.0*units.seconds,
+                                  rho_init=0.0*units.delta_k,
+                                  rho_rise=600.0*units.pcm,
+                                  rho_final=600.0*units.pcm)
 
 # maximum number of internal steps that the ode solver will take
 nsteps = 5000
@@ -123,7 +115,7 @@ rho_mod =DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
 Moderator = Material('mod', k_mod, cp_mod, rho_mod)
 
 k_fuel = 15*units.watt/(units.meter*units.kelvin)
-cp_fuel = 1818.0*units.joule/units.kg/units.kelvin # [J/kg/K]
+cp_fuel = 1818.0*units.joule/units.kg/units.kelvin
 rho_fuel=DensityModel(a=2220.0*units.kg/(units.meter**3), model="constant")
 Fuel=Material('fuel', k_fuel, cp_fuel, rho_fuel)
 

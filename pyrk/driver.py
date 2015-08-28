@@ -14,10 +14,10 @@ import argparse
 from utilities import logger
 from utilities.logger import pyrklog
 from inp import sim_info
-from th_component import THSuperComponent
 from utilities.ur import units
 from utilities import plotter
 import os
+
 
 def update_n(t, y_n, si):
     """This function updates the neutronics block.
@@ -60,7 +60,11 @@ def f_n(t, y, si):
     end_pg = 1 + si.n_pg
     f = np.zeros(shape=(n_n,), dtype=float)
     i = 0
-    f[i] = si.ne.dpdt(si.timer.ts, si.timer.t_idx_feedback, si.components, y[0], y[1:end_pg])
+    f[i] = si.ne.dpdt(si.timer.ts,
+                      si.timer.t_idx_feedback,
+                      si.components,
+                      y[0],
+                      y[1:end_pg])
     for j in range(0, si.n_pg):
         i += 1
         f[i] = si.ne.dzetadt(t, y[0], y[i], j)
@@ -80,9 +84,13 @@ def f_th(t, y_th, si):
     :type y: np.ndarray
     """
     t_idx = si.timer.t_idx(t*units.seconds)
-    f = units.Quantity(np.zeros(shape=(si.n_components(),), dtype=float),
-                                              'kelvin / second')
-    #f = np.zeros(shape=(len(si.components)), dtype=float)
+    f = units.Quantity(
+        np.zeros(
+            shape=(
+                si.n_components(),
+            ),
+            dtype=float),
+        'kelvin / second')
     power = si.y[t_idx][0]
     o_i = 1+si.n_pg
     o_f = 1+si.n_pg+si.n_dg
@@ -102,8 +110,8 @@ def y0(si):
     f[i] = 1.0  # power is normalized is 1
     for j in range(0, si.n_pg):
         i += 1
-        f[i] = f[0]*si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
-        # i added f[0] here, check if this is correct
+        f[i] = f[0] * \
+            si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
     for k in range(0, si.n_dg):
         i += 1
         f[i] = 0
@@ -152,7 +160,6 @@ def solve(si, y, infile):
 def log_results(si):
     pyrklog.info("\nReactivity : \n"+str(si.ne._rho))
     pyrklog.info("\nFinal Result : \n"+np.array_str(si.y))
-    #pyrklog.info('\nUncertainty param: \n' + str(si.uncertainty_param))
     for comp in si.components:
         pyrklog.info("\n" + comp.name + ":\n" + np.array_str(comp.T.magnitude))
     pyrklog.info("\nPrecursor lambdas: \n"+str(si.ne._pd.lambdas()))
@@ -202,8 +209,10 @@ if __name__ == "__main__":
                     default='input')
     ap.add_argument('--logfile', help='the name of the log file',
                     default='pyrk.log')
-    ap.add_argument('--plotdir', help='the name of the directory of output plots',
-                    default='images')
+    ap.add_argument(
+        '--plotdir',
+        help='the name of the directory of output plots',
+        default='images')
     ap.add_argument('--outfile', help='the name of the output database',
                     default='pyrk.h5')
     args = ap.parse_args()
