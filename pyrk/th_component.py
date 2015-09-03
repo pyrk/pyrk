@@ -93,7 +93,7 @@ class THComponent(object):
         if self.prev_t_idx == 0:
             return 0.0*units.kelvin
         else:
-            return (self.T[self.prev_t_idx] - self.T[self.prev_t_idx-1])
+            return (self.T[self.prev_t_idx] - self.T0)
 
     def temp_reactivity(self):
         return self.alpha_temp*self.dtemp()
