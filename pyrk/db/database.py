@@ -13,11 +13,22 @@ class Database(object):
                                    mode="w",
                                    title="PyRK Database")
 
-    def add_table(self, tablename):
+    def add_group(self, groupname, grouptitle):
+        """Creates a new group in the file"""
+        group = self.h5file.create_group("/",
+                                         groupname,
+                                         grouptitle)
+
+    def add_table(self, groupname, tablename, description, tabletitle):
         """Creates a new table"""
+        table = self.h5file.create_table(groupname,
+                                         tablename,
+                                         description,
+                                         tabletitle)
 
     def add_timestep(self, timestep):
         """Adds data from a timestep"""
 
     def open_db(self):
         """Returns a handle to the open db"""
+        return self.h5file
