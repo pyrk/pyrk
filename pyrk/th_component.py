@@ -176,6 +176,18 @@ class THComponent(object):
         self.cust[env] = {"res": res.to(units.kelvin/units.watt)}
 
     def addConvBC(self, env, prev_comp, h, R):
+        '''add convective boundary condition
+        :param env: name of the environment for convective heat transfer
+        (the fluid)
+        :type env: str
+        :param prev_comp: name of the component that is immediately inside the
+        boundary component
+        :type prev_comp: str
+        :param h: convective heat transfer coefficient
+        :type h: float
+        :param R: radius of the sphere
+        :type R: float
+        '''
         self.convBC[env] = {
             "h": h.to('joule/second/kelvin/meter**2'),
             "prev_comp": prev_comp,
@@ -259,33 +271,40 @@ class THSuperComponent(object):
         self.add_conduction_in_mesh()
         self.alpha_temp = 0.0*units.delta_k/units.kelvin
 
-    def dtemp(self, timestep, T0_timestep):
-        T0 = self.T[T0_timestep]
-        return self.T[timestep-1]-T0
-
-    def temp_reactivity(self, timestep, T0_timestep):
-        '''calculate reactivity of a component from temperature feedback
-        :param timestep: the timestep at which to calculate reactivity feedback
-        :type timestep: int
-        :param T0_timestep: the timestep at which the temperature is used as
+    def dtemp(self, t_idx, t_feedback_idx):
+        '''calculate temperature different between two timesteps
+        :param t_idx: the timestep at which to calculate reactivity feedback
+        :type t_idx: int
+        :param t_feedback_idx: the timestep at which the temperature is used as
         reference temperature
-        :type T0_timestep: int
+        :type t_feedback_idx: int
         '''
-        assert timestep > T0_timestep, """reference timestep T0_timestep %f should
-        be prior to the timestep %f for temp feedback calculation""" % (
-            T0_timestep, timestep)
-        return self.alpha_temp*self.dtemp(timestep, T0_timestep)
+        T0 = self.T[t_feedback_idx]
+        return self.T[t_idx-1]-T0
 
-    def update_temp(self, timestep, temp):
+    def temp_reactivity(self, t_idx, t_feedback_idx):
+        '''calculate reactivity of a component from temperature feedback
+        :param t_idx: the timestep at which to calculate reactivity feedback
+        :type t_idx: int
+        :param t_feedback_idx: the timestep at which the temperature is used as
+        reference temperature
+        :type t_feedback_idx: int
+        '''
+        assert t_idx > t_feedback_idx, """reference timestep t_feedback_idx %f should
+        be prior to the timestep %f for temp feedback calculation""" % (
+            t_feedback_idx, t_idx)
+        return self.alpha_temp*self.dtemp(t_idx, t_feedback_idx)
+
+    def update_temp(self, t_idx, temp):
         """Updates the temperature
-        :param timestep: the timestep at which to query the temperature
-        :type timestep: int
+        :param t_idx: the timestep at which to query the temperature
+        :type t_idx: int
         :param temp: the new tempterature
         :type float: float, dimensionless
         """
-        self.T[timestep] = temp
-        self.prev_t_idx = timestep
-        return self.T[timestep]
+        self.T[t_idx] = temp
+        self.prev_t_idx = t_idx
+        return self.T[t_idx]
 
     def compute_tr(self, t_env, t_innercomp):
         '''compute temperature at r=R for the sphere from the temperature at r=R-dr
