@@ -49,7 +49,6 @@ class DensityModel(object):
         return self.implemented[self.model](temp)
 
     def constant(self, temp=0*units.kelvin):
-        # yes, we're ignoring the temperature here.
         """
         Returns a constant density, a.
 
