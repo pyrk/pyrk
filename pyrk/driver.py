@@ -18,6 +18,7 @@ from utilities.ur import units
 from utilities import plotter
 import os
 
+
 def update_n(t, y_n, si):
     """This function updates the neutronics block.
 
@@ -52,7 +53,7 @@ def f_n(t, y, si):
 
     :param t: the time [s] at which the update is occuring.
     :type t: float.
-    :param y: TODO
+    :param y: solution vector
     :type y: np.ndarray
     """
     n_n = 1 + si.n_pg + si.n_dg
@@ -75,8 +76,10 @@ def f_th(t, y_th, si):
 
     :param t: the time [s] at which the update is occuring.
     :type t: float.
-    :param y: TODO
+    :param y: the solution vector
     :type y: np.ndarray
+    :param si: the simulation info object
+    :type si: SimInfo
     """
     t_idx = si.timer.t_idx(t*units.seconds)
     f = units.Quantity(np.zeros(shape=(si.n_components(),), dtype=float),
@@ -94,7 +97,11 @@ def f_th(t, y_th, si):
 
 
 def y0(si):
-    """The initial conditions for y"""
+    """The initial conditions for y
+
+    :param si: the simulation info object
+    :type si: SimInfo
+    """
     i = 0
     f = np.zeros(shape=(si.n_entries(),), dtype=float)
     f[i] = 1.0  # power is normalized is 1
@@ -112,22 +119,37 @@ def y0(si):
 
 
 def y0_n(si):
-    """The initial conditions for y_n, the neutronics sub-block of y"""
+    """Initial conditions for y_n, the neutronics sub-block of y
+
+    :param si: the simulation info object
+    :type si: SimInfo
+    """
     idx = si.n_pg+si.n_dg + 1
     y = y0(si)[:idx]
     return y
 
 
 def y0_th(si):
-    """The initial conditions for y_th, the thermal hydraulics sub-block of
-    y"""
+    """Initial conditions for y_th, the thermal hydraulics sub-block of y
+
+    :param si: the simulation info object
+    :type si: SimInfo
+    """
     thidx = si.n_pg+si.n_dg + 1
     y = y0(si)[thidx:]
     return y
 
 
 def solve(si, y, infile):
-    """Conducts the solution step, based on the dopri5 integrator in scipy"""
+    """Conducts the solution step, based on the dopri5 integrator in scipy
+
+    :param si: the simulation info object
+    :type si: SimInfo
+    :param y: the solution vector
+    :type y: np.ndarray
+    :param infile: the imported infile module
+    :type infile: imported module
+    """
     n = ode(f_n).set_integrator('dopri5')
     n.set_initial_value(y0_n(si), si.timer.
                         t0.magnitude)
@@ -198,7 +220,8 @@ if __name__ == "__main__":
                     default='input')
     ap.add_argument('--logfile', help='the name of the log file',
                     default='pyrk.log')
-    ap.add_argument('--plotdir', help='the name of the directory of output plots',
+    ap.add_argument('--plotdir', help='the name of the directory of output \
+                    plots',
                     default='images')
     ap.add_argument('--outfile', help='the name of the output database',
                     default='pyrk.h5')
