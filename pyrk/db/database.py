@@ -15,9 +15,8 @@ class Database(object):
 
     def add_group(self, groupname, grouptitle):
         """Creates a new group in the file"""
-        group = self.h5file.create_group("/",
-                                         groupname,
-                                         grouptitle)
+        group = self.h5file.create_group("/", groupname, grouptitle)
+        self.groups.append(group)
 
     def add_table(self, groupname, tablename, description, tabletitle):
         """Creates a new table"""
@@ -25,10 +24,12 @@ class Database(object):
                                          tablename,
                                          description,
                                          tabletitle)
+        self.tables.append(table)
 
     def add_timestep(self, timestep):
         """Adds data from a timestep"""
 
     def open_db(self):
         """Returns a handle to the open db"""
+        #  make sure that it's open.
         return self.h5file

@@ -11,10 +11,10 @@ import tables as tb
 
 class ThComponentRow(tb.IsDescription):
     """This describes a Component record structure"""
+
     name = tb.StringCol(itemize=16)  # 16 character string
     vol = tb.Float32Col()            # 32 bit float
     component_id = tb.Int32Col()     # 32 bit integer column
-
 
 
 def make_components_table(db, components):
