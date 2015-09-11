@@ -57,10 +57,12 @@ class DecayData(object):
 
     def _get_lambdas(self, nuc, e):
         """
-        :param e: The energy spectrum type. This should be 'thermal' or 'fast'
+        Returns the heat decay constant for fissioning nuclide nuc, spectrum e
+
+        :param e: The energy spectrum type. This should be 'thermal' or 'fast' \
             to indicate the energy spectrum.
         :type e: str.
-        :param nuc: The fissioning nuclide or custom reactor type. Currently
+        :param nuc: The fissioning nuclide or custom reactor type. Currently \
         only u235, sfr, or pu239 are supported
         :type nuc: str.
         :returns: a list of floats
@@ -87,11 +89,13 @@ class DecayData(object):
 
     def _get_kappas(self, nuc, e):
         """
-        :param e: The energy spectrum type. This should be 'thermal' or 'fast'
+        Returns the decay heat value for fissioning nuclide nuc and spectrum e
+
+        :param e: The energy spectrum type. This should be 'thermal' or 'fast' \
             to indicate the energy spectrum.
         :type e: str.
-        :param nuc: The fissioning nuclide or custom reactor type. Currently
-        only u235, sfr, or pu239 are supported
+        :param nuc: The fissioning nuclide or custom reactor type. Currently \
+            only u235, sfr, or pu239 are supported
         :type nuc: str.
         :returns: a list of floats
         :returns: a list of floats
