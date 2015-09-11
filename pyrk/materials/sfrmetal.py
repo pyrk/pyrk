@@ -4,7 +4,7 @@ from material import Material
 
 
 class SFRMetal(Material):
-    """This class represents SFRMetal. It inherits from the material
+    """This class represents SFR Metal fuel. It inherits from the material
     class and possesses attributes intrinsic to SFR metal fuel, as reported in
     T. Sofu, A review of inherent safety characteristics of metal alloy
     sfrmetal-cooled fast reactor fuel against postulated accidents
@@ -37,7 +37,8 @@ class SFRMetal(Material):
         The CODATA equation gives the relation:
 
         .. math ::
-        c_p = 1.6582 - 8.4790\times10{-4}T + 4.4541times{-7}T^2 - 2992.6*pow(T, -2)
+
+          c_p = 1.6582 - 8.4790\times10{-4}T + 4.4541times{-7}T^2 - 2992.6*pow(T, -2)
 
         Below is a constant estimate of sfrmetal cp at temperatures around 400C
         based on table 1.1-5 in http://www.ne.anl.gov/eda/ANL-RE-95-2.pdf
