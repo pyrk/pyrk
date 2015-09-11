@@ -1,5 +1,5 @@
 from utilities.ur import units
-from th import THComponent
+from th_component import THComponent
 from density_model import DensityModel
 
 
