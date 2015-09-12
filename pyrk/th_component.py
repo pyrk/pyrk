@@ -8,7 +8,7 @@ from materials.material import Material
 class THComponent(object):
     """This class represents a component of the system it has material and
     geometric properties essential to thermal modeling and heat transfer in
-    support of calculations related to the thermal hydraulics subblock
+    support of calculations related to the thermal hydraulics sub block
     """
 
     def __init__(self, name=None,
@@ -82,7 +82,7 @@ class THComponent(object):
         """Updates the temperature
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
-        :param temp: the new tempterature
+        :param temp: the new temperature
         :type float: float, units of kelvin
         """
         self.T[timestep] = temp
