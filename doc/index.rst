@@ -61,7 +61,7 @@ See also
 
 .. _SciPy2015 talk: https://www.youtube.com/watch?v=2HToG61wMWI
 .. _SciPy2015 slides: http://pyrk.github.io/scipy-2015
-.. _SciPy2015 paper: http://conference.scipy.org/proceedings/scipy2015/huff.html
+.. _SciPy2015 paper: http://conference.scipy.org/proceedings/scipy2015/kathryn_huff.html
 
 Get in touch
 ------------
