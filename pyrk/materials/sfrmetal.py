@@ -38,7 +38,8 @@ class SFRMetal(Material):
 
         .. math ::
 
-          c_p = 1.6582 - 8.4790\times10{-4}T + 4.4541times{-7}T^2 - 2992.6*pow(T, -2)
+          c_p &= 1.6582 - 8.4790\\times10^{-4}T\\\\
+              &+ 4.4541\\times10^{-7}T^2 - 2992.6T^{-2}
 
         Below is a constant estimate of sfrmetal cp at temperatures around 400C
         based on table 1.1-5 in http://www.ne.anl.gov/eda/ANL-RE-95-2.pdf

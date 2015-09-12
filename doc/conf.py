@@ -23,6 +23,10 @@ sys.path.append(os.path.abspath('../'))
 sys.path.append(os.path.abspath('../pyrk'))
 sys.path.append(os.path.abspath('../pyrk/inp'))
 
+# -- Option for mathjax
+#mathjax_path="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -191,7 +195,6 @@ html_static_path = ['_static']
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'pyrkdoc'
-
 
 # -- Options for LaTeX output ---------------------------------------------
 
