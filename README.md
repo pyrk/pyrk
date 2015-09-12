@@ -17,7 +17,7 @@ variable.
 
 ## Documentation
 
-The documentation for this software package can be found at 
+The documentation for pyrk can be found at 
 [pyrk.github.io](pyrk.github.io). Additionally, the entire contents of that 
 website can be built from the doc directory in the source code using the 
 following steps
@@ -49,7 +49,4 @@ how to do that.](https://github.com/katyhuff/pyrk/blob/master/CONTRIBUTING.md).
 
 - You will find the current state of the test suite on our [Travis continuous
 integration servers](https://travis-ci.org/katyhuff/pyrk).
-- A website with documentation is forthcoming. Currently, you can build the
-  documnetation locally in the doc directory by typing "make html". You must
-  have sphinx installed.
 
