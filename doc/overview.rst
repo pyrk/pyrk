@@ -21,12 +21,16 @@ Kinetics) was created. PyRK is the first open source tool capable of:
 The PRKE
 ---------
 
-The point reactor kinetics equations are implemented.
+The point reactor kinetics equations are implemented in this software as a 
+suite of pdes. These are solved using the integration tools in the scipy 
+package.
 
 Lumped Parameter TH
 -------------------
 
-TH is represented in 1-D
+TH is represented in 1-D, lumped paramter model, by default. That is, 
+components that make up the reactor system are treated as material lumps and 
+the system is treated as a thermal circuit.
 
 Material Library
 ------------------
@@ -42,6 +46,9 @@ reactor neutronics for canonical reactors has been provided.
 
 The Future
 -----------
+
+Soon, a finite volume model will be added to PyRK to represent components that 
+are not well approximated by the lumped capacitance assumption.
 
 Our target audience is anyone interested in conducting analyses of nuclear
 reactor safety. In the short term, we hope that users will add material
