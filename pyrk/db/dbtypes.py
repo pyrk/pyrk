@@ -2,19 +2,12 @@
 import tables as tb
 
 
-class DBTypes(object):
-    """The DBTypes class, which should be treated as pure virtual,
-    interrogates a class and generates an appropriate isDescription class from
-    it.
-    """
+type_lookup = {bool: tb.BoolCol(),
+               int: tb.Int32Col(),
+               long: tb.Int64Col(),
+               float: tb.Float64Col(),
+               str: tb.StringCol(16)
+               }
 
-    def __init__(self):
-        """"""
-
-    def convert_to_pytables_type(self, var):
-        """Uses the function dictionary to convert var to a pytables type
-        function
-
-        :param var: the variable to convert
-        :type var: any
-        """
+def pytables_type(prim_type):
+    return type_lookup[prim_type]

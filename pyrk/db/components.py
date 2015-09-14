@@ -5,16 +5,21 @@ simulation.
 
 from __future__ import print_function
 
-import numpy as np
 import tables as tb
+from dbtypes import pytables_type
 
 
 class ThComponentRow(tb.IsDescription):
     """This describes a Component record structure"""
 
-    name = tb.StringCol(itemize=16)  # 16 character string
-    vol = tb.Float32Col()            # 32 bit float
-    component_id = tb.Int32Col()     # 32 bit integer column
+    name = tb.StringCol(16)  # 16 character string
+    vol = tb.Float64Col()            # 32 bit float
+    k = tb.Int32Col()     # 32 bit integer column
+    cp = tb.Float64Col()
+    T0 = tb.Float64Col()
+    alpha_temp = tb.Float64Col()
+    heatgen = tb.Float64Col()
+    power_tot = pytables_type(float)
 
 
 def make_components_table(db, components):
@@ -27,30 +32,19 @@ def make_components_table(db, components):
     :type components: list(Component)
     """
 
-    # Define data types involved in a component
-    component_dtype = np.dtype([
-        ('id', int),
-        ('vol', float),
-        ('name', 'S10')
-    ])
-
-    # Convert to numpy array
-    component_array = np.array(components, dtype=component_dtype)
-
     # Open the hdf5 file
     db_file = tb.openFile(db, 'a')
 
     # Create a group for the table
-    input_group = db_file.createGroup("/", "input", "Input")
+    th_group = db_file.createGroup("/", "th", "TH")
 
     # Make the new table
-    component_table = db_file.createTable(input_group, 'Components',
-                                          component_array, 'Component ID, \
-                                          Component Volume [m^3], \
-                                          Component Name')
+    th_params_table = db_file.create_table(th_group, 'th_params',
+                                           ThComponentRow,
+                                           "TH Component Params")
 
     # Ensure that data was written to table
-    component_table.flush()
+    th_params_table.flush()
 
     # Close the hdf5 file
     db_file.close()

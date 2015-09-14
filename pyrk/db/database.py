@@ -12,6 +12,8 @@ class Database(object):
         self.h5file = tb.open_file(filepath,
                                    mode="w",
                                    title="PyRK Database")
+        self.filepath = filepath
+        self.h5file.close()
 
     def add_group(self, groupname, grouptitle):
         """Creates a new group in the file"""
@@ -32,4 +34,7 @@ class Database(object):
     def open_db(self):
         """Returns a handle to the open db"""
         #  make sure that it's open.
-        return self.h5file
+        self.h5file = tb.open_file(self.filepath, mode='a')
+
+    def close_db(self):
+        self.h5file = self.h5file.close()
