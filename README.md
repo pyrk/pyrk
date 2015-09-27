@@ -33,7 +33,7 @@ After these steps, the website will be found in `pyrk/doc/_build/html`.
 ## License
 
 The license for this work can be found
-[here](https://github.com/katyhuff/pyrk/blob/master/licenses/LICENSE). Please
+[here](https://github.com/pyrk/pyrk/blob/master/licenses/LICENSE). Please
 be respectful of my intellectual work by communicating with me about its use,
 understanding its limitations, and citing me where appropriate. I would be
 thrilled to work with you on improving it.
@@ -43,10 +43,10 @@ thrilled to work with you on improving it.
 
 This repository is a work in progress. I would love it if you wanted to
 contribute to this code here in this repository. [Here is some information about
-how to do that.](https://github.com/katyhuff/pyrk/blob/master/CONTRIBUTING.md).
+how to do that.](https://github.com/pyrk/pyrk/blob/master/CONTRIBUTING.md).
 
 ## Other
 
 - You will find the current state of the test suite on our [Travis continuous
-integration servers](https://travis-ci.org/katyhuff/pyrk).
+integration servers](https://travis-ci.org/pyrk/pyrk).
 
