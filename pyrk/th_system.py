@@ -3,7 +3,7 @@ from utilities.ur import units
 
 class THSystem(object):
     """This class handles calculations and data related to the
-    thermal hydraulics subblock
+    thermal hydraulics sub block
     """
 
     def __init__(self, kappa, components):
@@ -37,8 +37,8 @@ class THSystem(object):
         for interface, d in component.cust.iteritems():
             env = self.comp_from_name(interface)
             to_ret -= self.custom(t_b=component.T[t_idx],
-                                      t_env=env.T[t_idx],
-                                      res=d['res'])/cap
+                                  t_env=env.T[t_idx],
+                                  res=d['res'])/cap
 
         return to_ret.to('kelvin/second')
 

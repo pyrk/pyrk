@@ -8,7 +8,7 @@ class Sodium(Material):
     class and possesses attributes intrinsic to flibe.
     """
     def __init__(self, name="sodium"):
-        """Initalizes a material
+        """Initalizes a material, specifically sodium
 
         :param name: The name of the component (i.e., "fuel" or "cool")
         :type name: str.
@@ -24,7 +24,10 @@ class Sodium(Material):
         TODO, Issue #3
 
         .. math::
-        k = 124.67 - 0.11381*T + 5.5226\times10^{-5}T^2 - 1.1842\times10^8T^3
+
+           k &= 124.67 - 0.11381\\times T
+             &+ 5.5226 \\times 10^{-5}T^2
+             &- 1.1842\\times 10^8T^3
 
         Below is an estimate of sodium k_th at temperatures around 400C
         based on table 2.1-1 in http://www.ne.anl.gov/eda/ANL-RE-95-2.pdf
@@ -41,7 +44,10 @@ class Sodium(Material):
         The CODATA equation gives the relation:
 
         .. math ::
-        c_p = 1.6582 - 8.4790\times10{-4}T + 4.4541times{-7}T^2 - 2992.6*pow(T, -2)
+
+           c_p &= 1.6582 - 8.4790\\times10{-4}T
+               &+ 4.4541times{-7}T^2 \\\\
+               &- 2992.6\\times T^{-2}
 
         Below is a constant estimate of sodium cp at temperatures around 400C
         based on table 1.1-5 in http://www.ne.anl.gov/eda/ANL-RE-95-2.pdf
@@ -56,21 +62,25 @@ class Sodium(Material):
         The relation is
 
         .. math::
-        \rho_l = \rho_c + f(1-T/T_c) + g(1-T/T_c)^h
-        p_c = 219 [kg/m^3]
-        f = 275.32 [?]
-        g = 511.58 [?]
-        h = 0.5
+
+          \\rho_l &= \\rho_c + f(1-T/T_c) + g(1-T/T_c)^h\\\\
+          p_c &= 219 [kg/m^3]\\\\
+          f &= 275.32 [-]\\\\
+          g &= 511.58 [-]\\\\
+          h &= 0.5[-]
 
         This is based on
         http://www.ne.anl.gov/eda/ANL-RE-95-2.pdf
         It is valid between the melting point and the critical point
 
         .. math::
-        t_m = 371.0K
+
+           t_m = 371.0K
 
         .. math::
-        t_c = 2503.7K
+
+           t_c = 2503.7K
+
         """
         return SodiumDensity()
 
@@ -78,26 +88,29 @@ class Sodium(Material):
 class SodiumDensity(DensityModel):
     def __init__(self):
         """
-        Sodium density as a funciton of T. [kg/m^3]
+        Sodium density as a function of T. [kg/m^3]
 
         The relation is
 
         .. math::
-        \rho_l = \rho_c + f(1-T/T_c) + g(1-T/T_c)^h
-        p_c = 219 [kg/m^3]
-        f = 275.32 [?]
-        g = 511.58 [?]
-        h = 0.5
+
+            \rho_l &= \rho_c + f(1-T/T_c) + g(1-T/T_c)^h\\\\
+            p_c &= 219 [kg/m^3]\\\\
+            f &= 275.32 [?]\\\\
+            g &= 511.58 [?]\\\\
+            h &= 0.5
 
         This is based on
         http://www.ne.anl.gov/eda/ANL-RE-95-2.pdf
         It is valid between the melting point and the critical point
 
         .. math::
-        t_m = 371.0K
+
+           t_m = 371.0K
 
         .. math::
-        t_c = 2503.7K
+
+           t_c = 2503.7K
         """
 
         self.rho_c = 219.0*units.kg/pow(units.meter, 3)
@@ -108,9 +121,17 @@ class SodiumDensity(DensityModel):
         self.h = 0.5
 
     def hornung(self, temp=0.0*units.kelvin):
-        to_ret = self.rho_c + self.f*(1 - temp/self.T_c) + self.g*pow((1 - temp/self.T_c), self.h)
+        """In the hornung model, K. Hornung [Hornung, 1985] used the available
+        data on the sound velocity and the density of Na to determine its
+        adiabatic and isothermal compressibility.
+
+        :param temp: the temperature of the sodium
+        :type temp: Quantity (units of kelvin)
+
+        """
+        to_ret = self.rho_c + self.f*(1 - temp/self.T_c) + \
+            self.g*pow((1 - temp/self.T_c), self.h)
         return to_ret.to('kg/m**3')
 
     def rho(self, temp=0.0*units.kelvin):
         return self.hornung(temp)
-

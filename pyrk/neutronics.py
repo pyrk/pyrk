@@ -7,6 +7,7 @@ from data import decay_heat as dh
 from reactivity_insertion import ReactivityInsertion
 from timer import Timer
 
+
 class Neutronics(object):
     """This class handles calculations and data related to the
     neutronics subblock
@@ -32,7 +33,8 @@ class Neutronics(object):
         """
 
         self._iso = v.validate_supported("iso", iso, ['u235', 'pu239', 'sfr'])
-        """_iso (str): Fissioning isotope. 'u235', 'pu239', or 'sfr' are supported."""
+        """_iso (str): Fissioning isotope. 'u235', 'pu239', or 'sfr' are
+        supported."""
 
         self._e = v.validate_supported("e", e, ['thermal', 'fast'])
         """_e (str): Energy spectrum 'thermal' or 'fast' are supported."""
@@ -59,7 +61,7 @@ class Neutronics(object):
         """_rho_ext (ReactivityInsertion): Reactivity function from the
         reactivity insertion model"""
 
-        self.feedback =  feedback
+        self.feedback = feedback
         """feedback (bool): False if no reactivity feedbacks, true otherwise"""
 
     def init_rho_ext(self, rho_ext):
@@ -69,6 +71,7 @@ class Neutronics(object):
 
     def dpdt(self, t_idx, components, power, zetas):
         """Calculates the power term. The first in the neutronics block.
+
         :param t: the time
         :type t: float.
         :param dt: the timestep
@@ -92,6 +95,8 @@ class Neutronics(object):
 
     def dzetadt(self, t, power, zeta, j):
         """
+        Calculates the change in zeta over time at t for j
+
         :param t: time
         :type t: float, units of seconds
         :param power: the reactor power at this timestep
@@ -108,6 +113,7 @@ class Neutronics(object):
 
     def dwdt(self, power, omega, k):
         """Returns the change in decay heat for $\omega_k$ at a certain power
+
         :param power: the reactor power at this timestep
         :type power: float, in units of watts
         :param omega: $\omega_k$ for fission product decay heat group k
@@ -122,6 +128,7 @@ class Neutronics(object):
 
     def reactivity(self, t_idx, components):
         """Returns the reactivity, in $\Delta k$, at time t
+
         :param t: time
         :type t: float, units of seconds
         :param dt: timestep size, units of seconds

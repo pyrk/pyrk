@@ -23,6 +23,10 @@ sys.path.append(os.path.abspath('../'))
 sys.path.append(os.path.abspath('../pyrk'))
 sys.path.append(os.path.abspath('../pyrk/inp'))
 
+# -- Option for mathjax
+#mathjax_path="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -131,12 +135,12 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = None
+#html_logo = './images/logo.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-#html_favicon = None
+#html_favicon = './images/logo.ico'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -191,7 +195,6 @@ html_static_path = ['_static']
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'pyrkdoc'
-
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -347,4 +350,7 @@ intersphinx_mapping = {'http://docs.python.org/': None}
 
 
 # autodoc default flags
-autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance', 'private-members', 'special-members']
+autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance',
+                         'private-members'
+                         #,special-members
+                         ]

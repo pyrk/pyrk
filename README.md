@@ -15,6 +15,21 @@ for now, install this as you would any other pure python module
 If you use --prefix, be sure to add the path to your PYTHONPATH environment
 variable.
 
+## Documentation
+
+The documentation for pyrk can be found at 
+[pyrk.github.io](pyrk.github.io). Additionally, the entire contents of that 
+website can be built from the doc directory in the source code using the 
+following steps
+
+#. `pip install sphinx` 
+#. `pip install sphinx_rtd_theme`.
+#. `sphinx-apidoc --separate --force --output-dir=src/ ../pyrk`
+#. `make clean`
+#. `make html`
+
+After these steps, the website will be found in `pyrk/doc/_build/html`.
+
 ## License
 
 The license for this work can be found
@@ -34,7 +49,4 @@ how to do that.](https://github.com/katyhuff/pyrk/blob/master/CONTRIBUTING.md).
 
 - You will find the current state of the test suite on our [Travis continuous
 integration servers](https://travis-ci.org/katyhuff/pyrk).
-- A website with documentation is forthcoming. Currently, you can build the
-  documnetation locally in the doc directory by typing "make html". You must
-  have sphinx installed.
 
