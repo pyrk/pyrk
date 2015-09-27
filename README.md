@@ -22,11 +22,11 @@ The documentation for pyrk can be found at
 website can be built from the doc directory in the source code using the 
 following steps
 
-#. `pip install sphinx` 
-#. `pip install sphinx_rtd_theme`.
-#. `sphinx-apidoc --separate --force --output-dir=src/ ../pyrk`
-#. `make clean`
-#. `make html`
+1. `pip install sphinx` 
+2. `pip install sphinx_rtd_theme`.
+3. `sphinx-apidoc --separate --force --output-dir=src/ ../pyrk`
+4. `make clean`
+5. `make html`
 
 After these steps, the website will be found in `pyrk/doc/_build/html`.
 
