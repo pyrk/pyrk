@@ -9,5 +9,12 @@ type_lookup = {bool: tb.BoolCol(),
                str: tb.StringCol(16)
                }
 
+
 def pytables_type(prim_type):
-    return type_lookup[prim_type]
+    if prim_type in type_lookup:
+        return type_lookup[prim_type]
+    else:
+        msg = "The type "
+        msg += str(prim_type)
+        msg += " is not yet supported in the dbtypes class."
+        raise KeyError(msg)
