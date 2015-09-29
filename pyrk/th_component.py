@@ -80,11 +80,12 @@ class THComponent(object):
     def mesh(self, size):
         '''cut a THComponent into a list of smaller components
         uniform meshing method, only implemented for spherical components
+
         :param size: size of uniform mesh element
         :type size: float.
         :return: list of components
         '''
-        assert self.sph, '''mesh function only implemented for spherical component'''
+        assert self.sph, 'mesh function only implemented for spherical component'
         N = int(round((self.ro-self.ri)/size))
         to_ret = []
         for i in range(0, N):
@@ -128,6 +129,7 @@ class THComponent(object):
 
     def update_temp(self, timestep, temp):
         """Updates the temperature
+
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
         :param temp: the new tempterature
@@ -137,22 +139,30 @@ class THComponent(object):
         self.prev_t_idx = timestep
         return self.T[timestep]
 
-    def dtemp(self, timestep, T0_timestep):
-        T0 = self.T[T0_timestep]
+    def dtemp(self, timestep):
+        """calculate temperature difference between the given timestep and the
+        timestep where feedback is turned on
+
+        :param timestep: the timestep at which to query the tempareture
+        :type timestep: int
+        """
+        T0 = self.T[self.timer.t_idx_feedback]
+        # timestep -1 because timestep hasn't been updated yet, is 0
         return self.T[timestep-1]-T0
 
-    def temp_reactivity(self, timestep, T0_timestep):
+    def temp_reactivity(self, timestep):
         '''calculate reactivity of a component from temperature feedback
+
         :param timestep: the timestep at which to calculate reactivity feedback
         :type timestep: int
         :param T0_timestep: the timestep at which the temperature is used as
         reference temperature
         :type T0_timestep: int
         '''
-        assert timestep > T0_timestep, """reference timestep T0_timestep %f should
+        assert timestep > self.timer.t_idx_feedback, """timestep that feedback starts %f should
         be prior to the timestep %f for temp feedback calculation""" % (
-            T0_timestep, timestep)
-        return self.alpha_temp*self.dtemp(timestep, T0_timestep)
+            self.timer.t_idx_feedback, timestep)
+        return self.alpha_temp*self.dtemp(timestep)
 
     def add_convection(self, env, h, area):
         '''add convection in the self.conv dictionary
@@ -240,14 +250,13 @@ class THComponent(object):
         }
 
 
-class THSuperComponent(object):
+class THSuperComponent(THComponent):
 
     '''A 'component' containing a list of component
     Creating a superComponent would automatically define conduction between the
     mesh elements'''
 
     def __init__(self, name, T0, sub_comp=[], timer=Timer()):
-
         """Initalizes a thermal hydraulic super component.
 
         :param name: The name of the supercomponent (i.e., "fuel" or "cool")
@@ -260,51 +269,24 @@ class THSuperComponent(object):
         :param timer: The timer instance for the sim
         :type timer: Timer object
         """
-        self.name = name
-        self.T0 = T0
+        THComponent.__init__(self, name=name,
+                             mat=Material(),
+                             vol=0.0*units.meter**3,
+                             T0=T0,
+                             alpha_temp=0*units.delta_k/units.kelvin,
+                             timer=timer,
+                             heatgen=False,
+                             power_tot=0*units.watt,
+                             sph=False,
+                             ri=0,
+                             ro=0)
         self.sub_comp = sub_comp
-        self.timer = timer
         self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
                                          dtype=float), 'kelvin')
         self.T[0] = T0
         self.conv = {}
         self.add_conduction_in_mesh()
         self.alpha_temp = 0.0*units.delta_k/units.kelvin
-
-    def dtemp(self, t_idx, t_feedback_idx):
-        '''calculate temperature different between two timesteps
-        :param t_idx: the timestep at which to calculate reactivity feedback
-        :type t_idx: int
-        :param t_feedback_idx: the timestep at which the temperature is used as
-        reference temperature
-        :type t_feedback_idx: int
-        '''
-        T0 = self.T[t_feedback_idx]
-        return self.T[t_idx-1]-T0
-
-    def temp_reactivity(self, t_idx, t_feedback_idx):
-        '''calculate reactivity of a component from temperature feedback
-        :param t_idx: the timestep at which to calculate reactivity feedback
-        :type t_idx: int
-        :param t_feedback_idx: the timestep at which the temperature is used as
-        reference temperature
-        :type t_feedback_idx: int
-        '''
-        assert t_idx > t_feedback_idx, """reference timestep t_feedback_idx %f should
-        be prior to the timestep %f for temp feedback calculation""" % (
-            t_feedback_idx, t_idx)
-        return self.alpha_temp*self.dtemp(t_idx, t_feedback_idx)
-
-    def update_temp(self, t_idx, temp):
-        """Updates the temperature
-        :param t_idx: the timestep at which to query the temperature
-        :type t_idx: int
-        :param temp: the new tempterature
-        :type float: float, dimensionless
-        """
-        self.T[t_idx] = temp
-        self.prev_t_idx = t_idx
-        return self.T[t_idx]
 
     def compute_tr(self, t_env, t_innercomp):
         '''compute temperature at r=R for the sphere from the temperature at r=R-dr
@@ -326,6 +308,7 @@ class THSuperComponent(object):
 
     def add_conv_bc(self, envname, h):
         '''add convective boundary condition to the supercomponent
+
         :param envname: the name of the component that self tranfer heat with
         :type envname: str
         :param h: convective heat transfer coefficient

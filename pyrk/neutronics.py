@@ -71,7 +71,7 @@ class Neutronics(object):
             rho_ext = ReactivityInsertion(self._timer)
         return rho_ext
 
-    def dpdt(self, t_idx, t_idx_feedback, components, power, zetas):
+    def dpdt(self, t_idx, components, power, zetas):
         """Calculates the power term. The first in the neutronics block.
         :param t: the time
         :type t: float.
@@ -84,7 +84,7 @@ class Neutronics(object):
         :param zetas: the current delayed neutron precursor populations, zeta_i
         :type zetas: np.ndarray.
         """
-        rho = self.reactivity(t_idx, t_idx_feedback, components)
+        rho = self.reactivity(t_idx, components)
         beta = self._pd.beta()
         lams = self._pd.lambdas()
         Lambda = self._pd.Lambda()
@@ -124,7 +124,7 @@ class Neutronics(object):
         lam = self._dd.lambdas()[k]
         return kappa*p-lam*omega
 
-    def reactivity(self, t_idx, t_idx_feedback, components):
+    def reactivity(self, t_idx, components):
         """Returns the reactivity, in $\Delta k$, at time t
         :param t_idx: time step that reactivity is calculated
         :type t_idx: int, index
@@ -134,10 +134,9 @@ class Neutronics(object):
         :type components: list of THComponent and/or THSuperComponent objects
         """
         rho = {}
-        if self.feedback and t_idx > t_idx_feedback:
+        if self.feedback and t_idx > self._timer.t_idx_feedback:
             for component in components:
-                rho[component.name] = component.temp_reactivity(t_idx,
-                                                                t_idx_feedback)
+                rho[component.name] = component.temp_reactivity(t_idx)
         rho["external"] = self._rho_ext(t_idx=t_idx).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret

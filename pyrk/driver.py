@@ -61,7 +61,6 @@ def f_n(t, y, si):
     f = np.zeros(shape=(n_n,), dtype=float)
     i = 0
     f[i] = si.ne.dpdt(si.timer.ts,
-                      si.timer.t_idx_feedback,
                       si.components,
                       y[0],
                       y[1:end_pg])
