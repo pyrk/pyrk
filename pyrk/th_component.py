@@ -85,7 +85,9 @@ class THComponent(object):
         :type size: float.
         :return: list of components
         '''
-        assert self.sph, 'mesh function only implemented for spherical component'
+        if not self.sph:
+            msg = 'mesh function only implemented for spherical component'
+            raise TypeError(msg)
         N = int(round((self.ro-self.ri)/size))
         to_ret = []
         for i in range(0, N):
@@ -108,6 +110,7 @@ class THComponent(object):
 
     def temp(self, timestep):
         """The temperature of this component at the chosen timestep
+
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
         :return: the temperature of the component at the chosen timestep
@@ -119,6 +122,7 @@ class THComponent(object):
 
     def rho(self, timestep):
         """The density of this component's materials
+
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
         :return: the density of this component
@@ -159,13 +163,14 @@ class THComponent(object):
         reference temperature
         :type T0_timestep: int
         '''
-        assert timestep > self.timer.t_idx_feedback, """timestep that feedback starts %f should
-        be prior to the timestep %f for temp feedback calculation""" % (
-            self.timer.t_idx_feedback, timestep)
+        assert timestep > self.timer.t_idx_feedback, "timestep that feedback\
+            starts %f should be prior to the timestep %f for temp feedback\
+            calculation" % (self.timer.t_idx_feedback, timestep)
         return self.alpha_temp*self.dtemp(timestep)
 
     def add_convection(self, env, h, area):
         '''add convection in the self.conv dictionary
+
         :param env: name of the component that heat is transfered to/from
         :type env: str
         :param h: heat transfer coefficient
@@ -187,6 +192,7 @@ class THComponent(object):
 
     def addConvBC(self, env, prev_comp, h, R):
         '''add convective boundary condition
+
         :param env: name of the environment for convective heat transfer
         (the fluid)
         :type env: str
@@ -213,7 +219,8 @@ class THComponent(object):
 
         :param env: name of the component that this component conduct heat to
         :type env: str
-        :param k: thermal conductivity of the material that heat is conducted in(may not be the 'self' component)
+        :param k: thermal conductivity of the material that heat is conducted
+        in(may not be the 'self' component)
         :type k:float
         :param area: conduction surface for the slab
         :type area: float
@@ -292,7 +299,8 @@ class THSuperComponent(THComponent):
         '''compute temperature at r=R for the sphere from the temperature at r=R-dr
         and the temperature of the env/fluid/coolant
 
-        :param t_env: temperature of the component(env) that self tranfers heat with
+        :param t_env: temperature of the component(env) that self tranfers
+        heat with
         :type t_env: float
         :param t_innercomp: temperature of the component that is inside self
         :type t_innercomp: float

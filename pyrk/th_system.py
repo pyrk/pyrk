@@ -197,15 +197,27 @@ class THSystemSphPS(THSystem):
 
 class THSystemSphFVM(THSystem):
 
-    """This class models 1-D heat diffusion in spherical geometry,
-    and convective heat transfer at the solid surface to fluid.
+    """This class models
+    - 1-D heat diffusion in spherical geometry, for heat
+    generation at any radius in the sphere,
+    - advective heat transfer by fluid
+    - convective heat transfer at the solid surface to fluid.
     """
 
     def __init__(self, kappa, components):
         THSystem.__init__(self, kappa, components)
 
     def dtempdt(self, component, power, omegas, t_idx):
-        '''
+        '''compute the derivative dtemperature/dt
+
+        :param component: name of the component that dtemp/dt is calculated
+        :type component: str
+        :param power: nuclear power density
+        :type power: float
+        :param omegas: decay heat nuclear data?
+        :type omegas: list?
+        :param t_idx: the timestep that dtempdt is calculated for
+        :type t_idx: int
         :return: value of dtemp/dt
         :rtype: float, kelvin/s
         '''
