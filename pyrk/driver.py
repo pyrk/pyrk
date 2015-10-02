@@ -190,11 +190,25 @@ def print_logo(curr_dir):
                          logo.read())
 
 
+def load_infile(infile_path):
+    """Loads the input file as a python package import based on the path
+
+    :param infile_path: path to the infile
+    :type infile_path: string
+    """
+    import os.path
+    import sys
+    file_dir = os.path.dirname(infile_path)
+    sys.path.append(file_dir)
+    file_name = os.path.basename(infile_path).rstrip('.py')
+    infile = importlib.import_module(file_name)
+    return infile
+
+
 def main(args, curr_dir):
     np.set_printoptions(precision=5, threshold=np.inf)
     logger.set_up_pyrklog(args.logfile)
-    infile = importlib.import_module(args.infile)
-
+    infile = load_infile(args.infile)
     si = sim_info.SimInfo(timer=infile.ti,
                           components=infile.components,
                           iso=infile.fission_iso,
