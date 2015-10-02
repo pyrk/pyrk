@@ -6,8 +6,20 @@ from material import Material
 class Flibe(Material):
     """This class represents FLiBe. It inherits from the material
     class and possesses attributes intrinsic to flibe.
-    All properties from the report: Temperature-Dependent Thermophysical Properties
-    for Fluoride Salts and Simulant Fluids[TH lab at UCB]
+
+    Reference:
+    Williams, D. F., Toth, D. M. and Clarno, K. T. Assessment of Candidate
+    Molten Salt Coolants for the Advanced High-Temperature Reactor (AHTR).s.l.
+    Oakridge National Laboratory Technical Report, March 2006. ORNL/TM-2006/12.
+    Sohal MS, Ebner MA, Sabharwall P, Shape P (INL).
+    Engineering Database of Liquid Salt Thermophysical and Thermochemical
+    Properties. INL/EXT-10 18297. March 2010.
+    Allen, T. Molten Salt Database,
+    http://allen.neep.wisc.edu/shell/index.php/salts,
+    Nuclear Engineering and Engineering Physics Department,
+    University of Wisconsin. 2010
+    P. Bardet et al. Dynamics of liquid-protected fusion chambers.
+    Fusion science and technology, vol 47, 2005.
     """
     def __init__(self, name="flibe"):
         """Initalizes a material
