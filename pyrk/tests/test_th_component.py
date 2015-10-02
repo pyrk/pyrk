@@ -28,10 +28,12 @@ ti = Timer(t0=t0, tf=tf, dt=dt, t_feedback=tfeedback)
 tester = th.THComponent(name=name, mat=mat, vol=vol, T0=T0, timer=ti)
 si = sim_info.SimInfo(kappa=kappa, timer=ti)
 
+tester_sph = th.THComponent(name=name, mat=mat, vol=vol, T0=T0, timer=ti,
+                            sph=True, ri=0*units.meter, ro=1*units.meter)
 
 def test_constructor():
     assert_equal(tester.name, name)
-    assert_equal(tester.vol, vol)
+    assert_equal(tester.vol, vol.magnitude)
     assert_equal(tester.k, k)
     assert_equal(tester.rho(0), dm.rho())
     assert_equal(tester.T0, T0)
@@ -64,4 +66,8 @@ def test_dtemp():
 
 
 def test_meshing():
-    tester.mesh(2)
+    #tester.mesh(2)
+    tester_sph.mesh(2*units.meter)
+    l = 0.2*units.meter
+    mesh_list = tester_sph.mesh(l)
+    assert_equal(mesh_list[0].ro-mesh_list[0].ri, l.magnitude)

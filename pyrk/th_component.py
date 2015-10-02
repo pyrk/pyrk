@@ -22,8 +22,8 @@ class THComponent(object):
                  heatgen=False,
                  power_tot=0*units.watt,
                  sph=False,
-                 ri=0,
-                 ro=0):
+                 ri=0*units.meter,
+                 ro=0*units.meter):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.
@@ -53,7 +53,7 @@ class THComponent(object):
         :type ro: float
         """
         self.name = name
-        self.vol = vol
+        self.vol = vol.to('meter**3').magnitude
         self.mat = mat
         self.k = mat.k
         self.cp = mat.cp
@@ -74,20 +74,24 @@ class THComponent(object):
         self.prev_t_idx = 0
         self.convBC = {}
         self.sph = sph
-        self.ri = ri
-        self.ro = ro
+        self.ri = ri.to('meter').magnitude
+        self.ro = ro.to('meter').magnitude
 
     def mesh(self, size):
         '''cut a THComponent into a list of smaller components
         uniform meshing method, only implemented for spherical components
 
         :param size: size of uniform mesh element
-        :type size: float.
-        :return: list of components
+        :type size: float with length unit
+        :return: list of smaller components
         '''
+        size = size.magnitude
         if not self.sph:
             msg = 'mesh function only implemented for spherical component'
             raise TypeError(msg)
+        if size > self.ro-self.ri:
+            msg = 'mesh size can not be larger than the thickness of the shell'
+            raise ValueError(msg)
         N = int(round((self.ro-self.ri)/size))
         to_ret = []
         for i in range(0, N):
@@ -98,14 +102,14 @@ class THComponent(object):
             alpha_temp = self.alpha_temp/self.vol*vol
             to_ret.append(THComponent(name=self.name+'%d' % i,
                                       mat=self.mat,
-                                      vol=vol,
+                                      vol=vol*units.meter**3,
                                       T0=self.T0,
                                       alpha_temp=alpha_temp,
                                       timer=self.timer,
                                       heatgen=self.heatgen,
                                       power_tot=power_tot,
                                       sph=self.sph,
-                                      ri=ri, ro=ro))
+                                      ri=ri*units.meter, ro=ro*units.meter))
         return to_ret
 
     def temp(self, timestep):
