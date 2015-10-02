@@ -61,3 +61,7 @@ def test_dtemp():
     tester.update_temp(time1-1, T2)
     print tester.T[time1-1]
     assert_equal(tester.dtemp(time1), T2 - tester.T[ti.t_idx_feedback])
+
+
+def test_meshing():
+    tester.mesh(2)
