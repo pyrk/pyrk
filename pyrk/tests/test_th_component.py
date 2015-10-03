@@ -33,7 +33,7 @@ tester_sph = th.THComponent(name=name, mat=mat, vol=vol, T0=T0, timer=ti,
 
 def test_constructor():
     assert_equal(tester.name, name)
-    assert_equal(tester.vol, vol.magnitude)
+    assert_equal(tester.vol, vol)
     assert_equal(tester.k, k)
     assert_equal(tester.rho(0), dm.rho())
     assert_equal(tester.T0, T0)
@@ -66,8 +66,8 @@ def test_dtemp():
 
 
 def test_meshing():
-    #tester.mesh(2)
-    tester_sph.mesh(2*units.meter)
+    assert_raises(TypeError, tester.mesh, 2)
+    assert_raises(ValueError, tester_sph.mesh, 2)
     l = 0.2*units.meter
     mesh_list = tester_sph.mesh(l)
-    assert_equal(mesh_list[0].ro-mesh_list[0].ri, l.magnitude)
+    assert_equal(mesh_list[0].ro-mesh_list[0].ri, l)
