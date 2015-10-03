@@ -6,7 +6,7 @@ from utilities.ur import units
 class THSystem(object):
 
     """This class handles calculations and data related to the
-    thermal hydraulics subblock
+    thermal hydraulics sub block
     """
 
     def __init__(self, kappa, components):

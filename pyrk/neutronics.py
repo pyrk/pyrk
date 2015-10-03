@@ -76,6 +76,7 @@ class Neutronics(object):
 
     def dpdt(self, t_idx, components, power, zetas):
         """Calculates the power term. The first in the neutronics block.
+
         :param t: the time
         :type t: float.
         :param dt: the timestep
@@ -99,6 +100,8 @@ class Neutronics(object):
 
     def dzetadt(self, t, power, zeta, j):
         """
+        Calculates the change in zeta over time at t for j
+
         :param t: time
         :type t: float, units of seconds
         :param power: the reactor power at this timestep
@@ -115,6 +118,7 @@ class Neutronics(object):
 
     def dwdt(self, power, omega, k):
         """Returns the change in decay heat for $\omega_k$ at a certain power
+
         :param power: the reactor power at this timestep
         :type power: float, in units of watts
         :param omega: $\omega_k$ for fission product decay heat group k

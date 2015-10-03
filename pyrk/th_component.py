@@ -10,7 +10,7 @@ class THComponent(object):
 
     """This class represents a component of the system it has material and
     geometric properties essential to thermal modeling and heat transfer in
-    support of calculations related to the thermal hydraulics subblock
+    support of calculations related to the thermal hydraulics sub block
     """
 
     def __init__(self, name=None,
@@ -140,8 +140,16 @@ class THComponent(object):
 
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
+<<<<<<< HEAD
         :param temp: the new tempterature
         :type float: float, dimensionless
+||||||| merged common ancestors
+        :param temp: the new tempterature
+        :type float: float, units of kelvin
+=======
+        :param temp: the new temperature
+        :type float: float, units of kelvin
+>>>>>>> testing_merge
         """
         self.T[timestep] = temp
         self.prev_t_idx = timestep
