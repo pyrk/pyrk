@@ -9,52 +9,52 @@ class THSystem(object):
     thermal hydraulics sub block
     """
 
-    def __init__(self, kappa, components):
-        self.kappa = kappa
-        self.components = components
+    #def __init__(self, kappa, components):
+    #    self.kappa = kappa
+    #    self.components = components
 
-    def dtempdt(self, component, power, omegas, t_idx):
-        to_ret = 0*units.kelvin/units.second
-        cap = (component.rho(t_idx)*component.cp*component.vol)
-        if component.heatgen:
-            to_ret += self.heatgen(component, power, omegas)/cap
-        for interface, area in component.cond.iteritems():
-            env = self.comp_from_name(interface)
-            to_ret -= self.conduction(t_b=component.T[t_idx],
-                                      t_env=env.T[t_idx],
-                                      k=component.k,
-                                      L=component.vol/area,
-                                      A=area)/cap
-        for interface, d in component.conv.iteritems():
-            env = self.comp_from_name(interface)
-            to_ret -= self.convection(t_b=component.T[t_idx],
-                                      t_env=env.T[t_idx],
-                                      h=d['h'],
-                                      A=d['area'])/cap
-        for interface, d in component.mass.iteritems():
-            env = self.comp_from_name(interface)
-            to_ret -= self.mass_trans(t_b=component.T[t_idx],
-                                      t_inlet=env.T[t_idx],
-                                      H=d['H'],
-                                      u=d['u'])
-        for interface, d in component.cust.iteritems():
-            env = self.comp_from_name(interface)
-            to_ret -= self.custom(t_b=component.T[t_idx],
-                                  t_env=env.T[t_idx],
-                                  res=d['res'])/cap
+   # def dtempdt(self, component, power, omegas, t_idx):
+   #     to_ret = 0*units.kelvin/units.second
+   #     cap = (component.rho(t_idx)*component.cp*component.vol)
+   #     if component.heatgen:
+   #         to_ret += self.heatgen(component, power, omegas)/cap
+   #     for interface, area in component.cond.iteritems():
+   #         env = self.comp_from_name(interface)
+   #         to_ret -= self.conduction(t_b=component.T[t_idx],
+   #                                   t_env=env.T[t_idx],
+   #                                   k=component.k,
+   #                                   L=component.vol/area,
+   #                                   A=area)/cap
+   #     for interface, d in component.conv.iteritems():
+   #         env = self.comp_from_name(interface)
+   #         to_ret -= self.convection(t_b=component.T[t_idx],
+   #                                   t_env=env.T[t_idx],
+   #                                   h=d['h'],
+   #                                   A=d['area'])/cap
+   #     for interface, d in component.mass.iteritems():
+   #         env = self.comp_from_name(interface)
+   #         to_ret -= self.mass_trans(t_b=component.T[t_idx],
+   #                                   t_inlet=env.T[t_idx],
+   #                                   H=d['H'],
+   #                                   u=d['u'])
+   #     for interface, d in component.cust.iteritems():
+   #         env = self.comp_from_name(interface)
+   #         to_ret -= self.custom(t_b=component.T[t_idx],
+   #                               t_env=env.T[t_idx],
+   #                               res=d['res'])/cap
 
-        return to_ret.to('kelvin/second')
+   #     return to_ret.to('kelvin/second')
 
-    def comp_from_name(self, name):
-        """Returns the component with the matching name
-        """
-        for comp in self.components:
-            if comp.name == name:
-                return comp
-        # uh oh, none was found
-        msg = "There is no component with the name: "
-        msg += name
-        raise KeyError(msg)
+    #def comp_from_name(self, name):
+    #    """Returns the component with the matching name
+    #    """
+    #    for comp in self.components:
+    #        if comp.name == name:
+    #            return comp
+    #    # uh oh, none was found
+    #    msg = "There is no component with the name: "
+    #    msg += name
+    #    raise KeyError(msg)
 
     def heatgen(self, component, power, omegas):
         to_ret = (component.power_tot)*((1-self.kappa)*power + sum(omegas))
@@ -205,7 +205,20 @@ class THSystemSphFVM(THSystem):
     """
 
     def __init__(self, kappa, components):
-        THSystem.__init__(self, kappa, components)
+        self.kappa = kappa
+        self.components = components
+        #THSystem.__init__(self, kappa, components)
+
+    def comp_from_name(self, name):
+        """Returns the component with the matching name
+        """
+        for comp in self.components:
+            if comp.name == name:
+                return comp
+        # uh oh, none was found
+        msg = "There is no component with the name: "
+        msg += name
+        raise KeyError(msg)
 
     def dtempdt(self, component, power, omegas, t_idx):
         '''compute the derivative dtemperature/dt
@@ -243,7 +256,13 @@ class THSystemSphFVM(THSystem):
                 to_ret += self.heatgenFVM(component, power, omegas)/cap
             for interface, d in component.cond.iteritems():
                 env = self.comp_from_name(interface)
-                Qcond = self.conductionFVM(component, env, t_idx)
+                if component.sph:
+                    Qcond = self.conductionFVM(component, env, t_idx)
+                else:
+                    Qcond = self.conduction_slab(component, env, t_idx,
+                                                 L=d["L"],
+                                                 k=d["k"],
+                                                 A=d["area"])
                 to_ret -= Qcond/cap
             for interface, d in component.conv.iteritems():
                 env = self.comp_from_name(interface)
@@ -283,6 +302,8 @@ class THSystemSphFVM(THSystem):
                     (component.T[t_idx]*2 - d['t_in']).magnitude,
                     component.T[t_idx].magnitude)
             return to_ret*units.kelvin/units.seconds
+
+
 
     def BC_center(self, component, t_idx):
         '''Qconduction from the center of a sphere to the first boundary
@@ -325,7 +346,8 @@ class THSystemSphFVM(THSystem):
         return (power*component.power_tot.magnitude *
                 (1-self.kappa) + sum(omegas))/component.vol.magnitude
 
-    def conductionFVM(self, component, env, t_idx):
+    def conductionFVM(self, component, env, t_idx, L=0.0*units.meter,
+                      k=0.0*units.meter, A=0.0*units.meter**2):
         """
         heat transfer by conduction(watts/m3)
         :param component: name of the component
@@ -334,19 +356,49 @@ class THSystemSphFVM(THSystem):
         :type env: str
         :param t_idx: time step that conduction heat is computed
         :type t_idx: int
+        :param L: conduction distance
+        :type L: float, units meter
+        :pram k: conductivity
+        :type k: float, units w/mk
         :return: Qond, dimemsionless quantity
         :rtype: float
         """
         T_b = component.T[t_idx].magnitude
         T_env = env.T[t_idx].magnitude
-        r_b = component.ro.magnitude
-        r_env = env.ro.magnitude
-        dr = (component.ro-component.ri).magnitude
-        k = component.k.magnitude
-        return k/r_b * (r_b * T_b - r_env * T_env)/(dr**2)
+        if component.sph:
+            r_b = component.ro.magnitude
+            r_env = env.ro.magnitude
+            dr = (component.ro-component.ri).magnitude
+            k = component.k.magnitude
+            return k/r_b * (r_b * T_b - r_env * T_env)/(dr**2)
+
+    def conduction_slab(self, component, env, t_idx,
+                        L=0.0*units.meter,
+                        k=0.0*units.watt/units.meter/units.kelvin,
+                        A=0.0*units.meter**2):
+        """
+        heat transfer by conduction(watts/m3)
+
+        :param component: name of the component
+        :type component: str
+        :param env: name of the environment
+        :type env: str
+        :param t_idx: time step that conduction heat is computed
+        :type t_idx: int
+        :pram k: conductivity
+        :type k: float, units w/mk
+        :return: Qond, dimemsionless quantity
+        :rtype: float
+        """
+        T_b = component.T[t_idx].magnitude
+        T_env = env.T[t_idx].magnitude
+        num = (T_b-T_env)
+        denom = (L/(k*A)).magnitude
+        return num/denom
 
     def advection(self, t_out, t_in, m_flow, cp):
         ''' calculate heat transfer by advection in watts
+
         :param t_out: outlet temperature
         :type t_out: float
         :param t_in: inlet temperature
@@ -363,6 +415,17 @@ class THSystemSphFVM(THSystem):
         else:
             return 0.0
 
+    def mass_trans(self, t_b, t_inlet, H, u):
+        """
+        :param t_b: The temperature of the body
+        :type t_b: float.
+        :param t_inlet: The temperature of the flow inlet
+        :type t_inlet:
+        """
+        num = 2.0*u*(t_b - t_inlet)
+        denom = H
+        return num/denom
+
     def convection(self, t_b, t_env, h, A):
         """
         heat transfer by convection(watts)
@@ -377,4 +440,9 @@ class THSystemSphFVM(THSystem):
         """
         num = (t_b-t_env)
         denom = (1.0/(h.magnitude*A.magnitude))
+        return num/denom
+
+    def custom(self, t_b, t_env, res):
+        num = (t_b-t_env)
+        denom = res.to(units.kelvin/units.watt)
         return num/denom

@@ -1,3 +1,7 @@
+# this file has been modified for the new th_system
+# changed the way to define conduction
+# parameters are not real material properties, but rather placeholders to
+# check the code
 from utilities.ur import units
 import th_component as th
 import math
@@ -181,18 +185,20 @@ graph_peb = th.THComponent(name="graph_peb",
 
 components = [fuel, cool, refl, mod, graph_peb, core]
 
+#placeholder number for conduction length scale
+length = 2*units.meter
 # The fuel conducts to the moderator graphite
-fuel.add_conduction('mod', area=a_fuel)
+fuel.add_conduction('mod', mod.k, area=a_fuel, L=length)
 
 # The moderator graphite conducts to the core graphite
-mod.add_conduction('core', area=a_core)
+mod.add_conduction('core', core.k, area=a_core, L=length)
 # The moderator graphite conducts to the fuel
-mod.add_conduction('fuel', area=a_mod)
+mod.add_conduction('fuel', mod.k, area=a_mod, L=length)
 # The moderator graphite convects to the coolant
 mod.add_convection('cool', h=h_mod, area=a_mod)
 
 # The core graphite conducts to the moderator graphite
-core.add_conduction('mod', area=a_core)
+core.add_conduction('mod', mod.k, area=a_core, L=length)
 
 # The graphite pebbles convect to the coolant
 graph_peb.add_convection('cool', h=h_mod, area=a_graph_peb)
