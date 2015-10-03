@@ -36,13 +36,14 @@ alpha_mod = -0.7*units.pcm/units.kelvin
 alpha_shell = 0*units.pcm/units.kelvin
 alpha_cool = 0.23*units.pcm/units.kelvin
 
-#initial temperature
+# initial temperature
 t_mod = (800+273.15)*units.kelvin
 t_fuel = (800+273.15)*units.kelvin
 t_shell = (770+273.15)*units.kelvin
 t_cool = (650+273.15)*units.kelvin
 
 kappa = 0.0
+
 
 def area_sphere(r):
     assert(r >= 0*units.meter)
@@ -111,23 +112,28 @@ nsteps = 5000
 
 k_mod = 17*units.watt/(units.meter*units.kelvin)
 cp_mod = 1650.0*units.joule/(units.kg*units.kelvin)
-rho_mod =DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
+rho_mod = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
 Moderator = Material('mod', k_mod, cp_mod, rho_mod)
 
 k_fuel = 15*units.watt/(units.meter*units.kelvin)
 cp_fuel = 1818.0*units.joule/units.kg/units.kelvin
-rho_fuel=DensityModel(a=2220.0*units.kg/(units.meter**3), model="constant")
-Fuel=Material('fuel', k_fuel, cp_fuel, rho_fuel)
+rho_fuel = DensityModel(a=2220.0*units.kg/(units.meter**3), model="constant")
+Fuel = Material('fuel', k_fuel, cp_fuel, rho_fuel)
 
 k_shell = 17*units.watt/(units.meter*units.kelvin)
 cp_shell = 1650.0*units.joule/(units.kg*units.kelvin)
-rho_shell =DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
-Shell=Material('shell', k_shell, cp_shell, rho_shell)
+rho_shell = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
+Shell = Material('shell', k_shell, cp_shell, rho_shell)
 
 k_cool = 1*units.watt/(units.meter*units.kelvin)
 cp_cool = 2415.78*units.joule/(units.kg*units.kelvin)
-rho_cool = DensityModel(a=2415.6*units.kg/(units.meter**3), b=0.49072*units.kg/(units.meter**3)/units.kelvin, model="linear")
-cool=Material('cool', k_cool, cp_cool, rho_cool)
+rho_cool = DensityModel(a=2415.6 *
+                        units.kg /
+                        (units.meter**3), b=0.49072 *
+                        units.kg /
+                        (units.meter**3) /
+                        units.kelvin, model="linear")
+cool = Material('cool', k_cool, cp_cool, rho_cool)
 
 mod = th.THComponent(name="mod",
                      mat=Moderator,
@@ -136,7 +142,7 @@ mod = th.THComponent(name="mod",
                      alpha_temp=alpha_mod,
                      timer=ti,
                      sph=True,
-                     ri=0.0,
+                     ri=0.0*units.meter,
                      ro=r_mod)
 
 fuel = th.THComponent(name="fuel",
@@ -180,10 +186,20 @@ cool = th.THComponent(name="cool",
 cool.add_convection('pebble', h=h_cool, area=a_pb)
 cool.add_advection('cool', m_flow/n_pebbles, t_inlet, cp=cool.cp)
 
-components=[]
+components = []
 for i in range(0, len(pebble.sub_comp)):
     components.append(pebble.sub_comp[i])
 components.extend([pebble, cool])
 
-uncert=[alpha_cool, alpha_fuel, k_mod, k_fuel, k_shell, cp_mod, cp_fuel, cp_shell, cp_cool, h_cool]
-uncertainty_param=np.array([o.magnitude for o in uncert])
+uncert = [
+    alpha_cool,
+    alpha_fuel,
+    k_mod,
+    k_fuel,
+    k_shell,
+    cp_mod,
+    cp_fuel,
+    cp_shell,
+    cp_cool,
+    h_cool]
+uncertainty_param = np.array([o.magnitude for o in uncert])

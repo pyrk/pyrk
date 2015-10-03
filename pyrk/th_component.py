@@ -53,7 +53,7 @@ class THComponent(object):
         :type ro: float
         """
         self.name = name
-        self.vol = vol.to('meter**3').magnitude
+        self.vol = vol.to('meter**3')
         self.mat = mat
         self.k = mat.k
         self.cp = mat.cp
@@ -74,8 +74,8 @@ class THComponent(object):
         self.prev_t_idx = 0
         self.convBC = {}
         self.sph = sph
-        self.ri = ri.to('meter').magnitude
-        self.ro = ro.to('meter').magnitude
+        self.ri = ri.to('meter')
+        self.ro = ro.to('meter')
 
     def mesh(self, size):
         '''cut a THComponent into a list of smaller components
@@ -85,7 +85,6 @@ class THComponent(object):
         :type size: float with length unit
         :return: list of smaller components
         '''
-        size = size.magnitude
         if not self.sph:
             msg = 'mesh function only implemented for spherical component'
             raise TypeError(msg)
@@ -102,14 +101,14 @@ class THComponent(object):
             alpha_temp = self.alpha_temp/self.vol*vol
             to_ret.append(THComponent(name=self.name+'%d' % i,
                                       mat=self.mat,
-                                      vol=vol*units.meter**3,
+                                      vol=vol,
                                       T0=self.T0,
                                       alpha_temp=alpha_temp,
                                       timer=self.timer,
                                       heatgen=self.heatgen,
                                       power_tot=power_tot,
                                       sph=self.sph,
-                                      ri=ri*units.meter, ro=ro*units.meter))
+                                      ri=ri, ro=ro))
         return to_ret
 
     def temp(self, timestep):
@@ -140,16 +139,8 @@ class THComponent(object):
 
         :param timestep: the timestep at which to query the temperature
         :type timestep: int
-<<<<<<< HEAD
-        :param temp: the new tempterature
-        :type float: float, dimensionless
-||||||| merged common ancestors
-        :param temp: the new tempterature
-        :type float: float, units of kelvin
-=======
         :param temp: the new temperature
         :type float: float, units of kelvin
->>>>>>> testing_merge
         """
         self.T[timestep] = temp
         self.prev_t_idx = timestep
@@ -297,8 +288,8 @@ class THSuperComponent(THComponent):
                              heatgen=False,
                              power_tot=0*units.watt,
                              sph=False,
-                             ri=0,
-                             ro=0)
+                             ri=0*units.meter,
+                             ro=0*units.meter)
         self.sub_comp = sub_comp
         self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
                                          dtype=float), 'kelvin')
