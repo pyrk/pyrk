@@ -35,3 +35,6 @@ matplotlibrc
 *.serr
 *.err
 *.sub
+
+# Ignore mergetool temp file
+*.orig
