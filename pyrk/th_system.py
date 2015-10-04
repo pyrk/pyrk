@@ -16,7 +16,6 @@ class THSystem(object):
     def __init__(self, kappa, components):
         self.kappa = kappa
         self.components = components
-        #THSystem.__init__(self, kappa, components)
 
     def comp_from_name(self, name):
         """Returns the component with the matching name
