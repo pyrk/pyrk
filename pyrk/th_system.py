@@ -1,4 +1,3 @@
-import math
 from th_component import THSuperComponent
 from utilities.ur import units
 
@@ -61,7 +60,7 @@ class THSystem(object):
                                             R=d["R"])
                 to_ret -= QconvBC/cap
             if component.heatgen:
-                to_ret += self.heatgenFVM(component, power, omegas)/cap
+                to_ret += self.heatgen(component, power, omegas)/cap
             for interface, d in component.cond.iteritems():
                 env = self.comp_from_name(interface)
                 if component.sph:
@@ -130,6 +129,8 @@ class THSystem(object):
 
     def convBoundary(self, component, t_b, t_env, h, R):
         '''calculate heat transfer through convective boundray condition
+        for the mesh element at the surface of the spherical Supercomponent
+        (watts)
 
         :param component: name of the outer most solid component
         :type component: str
@@ -151,9 +152,9 @@ class THSystem(object):
         to_ret = 1/r_b*k*(r_b*t_b-R.magnitude*T_R)/dr**2
         return to_ret
 
-    def heatgenFVM(self, component, power, omegas):
+    def heatgen(self, component, power, omegas):
         """
-        heat transfer by conduction(watts/m3)
+        calculate heat transfer by conduction(watts/m3)
 
         :param component: name of the component
         :type component: str
@@ -167,7 +168,7 @@ class THSystem(object):
     def conductionFVM(self, component, env, t_idx, L=0.0*units.meter,
                       k=0.0*units.meter, A=0.0*units.meter**2):
         """
-        heat transfer by conduction(watts/m3)
+        compute volumetric conductive heat transfer by conduction(watts/m3)
 
         :param component: name of the component
         :type component: str
@@ -195,7 +196,7 @@ class THSystem(object):
                         k=0.0*units.watt/units.meter/units.kelvin,
                         A=0.0*units.meter**2):
         """
-        heat transfer by conduction(watts/m3)
+        compute volumetric heat transfer by conduction(watts/m3)
 
         :param component: name of the component
         :type component: str
@@ -247,6 +248,7 @@ class THSystem(object):
     def convection(self, t_b, t_env, h, A):
         """
         heat transfer by convection(watts)
+
         :param t_b: The temperature of the body
         :type t_b: float.
         :param t_env: The temperature of the environment
