@@ -5,7 +5,7 @@ from utilities.ur import units
 
 class THSystem(object):
 
-    """This class models
+    """This class models:
     - lumped capacitance model for slab geometry
     - 1-D heat diffusion in spherical geometry, for heat
     generation at any radius in the sphere,
@@ -35,8 +35,8 @@ class THSystem(object):
         :type component: str
         :param power: nuclear power density
         :type power: float
-        :param omegas: decay heat nuclear data?
-        :type omegas: list?
+        :param omegas: decay heat nuclear data
+        :type omegas: list
         :param t_idx: the timestep that dtempdt is calculated for
         :type t_idx: int
         :return: value of dtemp/dt
@@ -83,7 +83,7 @@ class THSystem(object):
                                             A=d['area'])
                     assert (Qconv*(component.T[t_idx].magnitude-Tr)) >= 0, '''
                     convection from %s to %s, from low temperature %f to
-                    high temperature %f is wrong: %f''' % (
+                    high temperature %f is not physical: %f''' % (
                         component.name, env.name, component.T[t_idx].magnitude,
                         Tr, Qconv.magnitude)
                 else:
@@ -93,7 +93,7 @@ class THSystem(object):
                                             A=d['area'])
                     assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, \
                         '''convection from %s to %s, from low temperature %f to
-                    high temperature %f is wrong: %f''' % (
+                    high temperature %f is not physical: %f''' % (
                         component.name, env.name, component.T[t_idx].magnitude,
                         env.T[t_idx].magnitude, Qconv.magnitude)
                 to_ret -= Qconv/cap/component.vol.magnitude
@@ -104,18 +104,18 @@ class THSystem(object):
                                       m_flow=d['m_flow'],
                                       cp=d['cp'])
                 to_ret -= Qadv/cap/component.vol.magnitude
-                assert Qadv >= 0, '''at step %d, %s is heating the system
-                by %f watts??? Tin is %f, tout is %f, tcomp is %f''' % (
+                assert Qadv >= 0, '''at step %d, Qadv>=0, means %s is heating
+                the system by %f watts. Qadv needs to be <0.
+                Tin is %f, tout is %f, tcomp is %f''' % (
                     t_idx, component.name, Qadv, d['t_in'].magnitude,
                     (component.T[t_idx]*2 - d['t_in']).magnitude,
                     component.T[t_idx].magnitude)
             return to_ret*units.kelvin/units.seconds
 
-
-
     def BC_center(self, component, t_idx):
         '''Qconduction from the center of a sphere to the first boundary
         (conduction without interface) in watts/meter**3
+
         :param component: name of the inner most component(mesh element)
         :type component: str
         :param t_idx: timestep at which Qconduction is calculated
@@ -130,6 +130,7 @@ class THSystem(object):
 
     def convBoundary(self, component, t_b, t_env, h, R):
         '''calculate heat transfer through convective boundray condition
+
         :param component: name of the outer most solid component
         :type component: str
         :param t_b: temperature of the body
@@ -151,6 +152,15 @@ class THSystem(object):
         return to_ret
 
     def heatgenFVM(self, component, power, omegas):
+        """
+        heat transfer by conduction(watts/m3)
+
+        :param component: name of the component
+        :type component: str
+        :param power: normalized nuclear power generated in the component
+        i.e.: power*power_tot = power (in watts)
+        :type power: float
+        """
         return (power*component.power_tot.magnitude *
                 (1-self.kappa) + sum(omegas))/component.vol.magnitude
 
@@ -158,6 +168,7 @@ class THSystem(object):
                       k=0.0*units.meter, A=0.0*units.meter**2):
         """
         heat transfer by conduction(watts/m3)
+
         :param component: name of the component
         :type component: str
         :param env: name of the environment
@@ -173,12 +184,11 @@ class THSystem(object):
         """
         T_b = component.T[t_idx].magnitude
         T_env = env.T[t_idx].magnitude
-        if component.sph:
-            r_b = component.ro.magnitude
-            r_env = env.ro.magnitude
-            dr = (component.ro-component.ri).magnitude
-            k = component.k.magnitude
-            return k/r_b * (r_b * T_b - r_env * T_env)/(dr**2)
+        r_b = component.ro.magnitude
+        r_env = env.ro.magnitude
+        dr = (component.ro-component.ri).magnitude
+        k = component.k.magnitude
+        return k/r_b * (r_b * T_b - r_env * T_env)/(dr**2)
 
     def conduction_slab(self, component, env, t_idx,
                         L=0.0*units.meter,
@@ -254,93 +264,5 @@ class THSystem(object):
         num = (t_b-t_env)
         denom = res.to(units.kelvin/units.watt)
         return num/denom
-
-
-class THSystemSphPS(THSystem):
-
-    """This class models heat transfer in a sphere with point heat source at the
-    center and convective heat transfer between the sphere and liquid flow
-
-    !!NOT MAITEINED
-    """
-
-    def __init__(self, kappa, components):
-        THSystem.__init__(self, kappa, components)
-
-    def dtempdt(self, component, power, omegas, t_idx):
-        to_ret = 0*units.kelvin/units.second
-        cap = (component.rho(t_idx)*component.cp*component.vol)
-        if component.heatgen:
-            to_ret += self.heatgen(component, power, omegas)/cap
-        for name, d in component.adv.iteritems():
-            Qadv = self.advection(t_out=component.T[t_idx]*2.0 - d['t_in'],
-                                  t_in=d['t_in'],
-                                  m_flow=d['m_flow'],
-                                  cp=d['cp'])
-            to_ret -= Qadv/cap
-            assert Qadv.magnitude >= 0, '''
-            at step %d, %s is heating the system by %f watts???
-            Tin is %f, Tout is %f, Tcomp is %f''' % (
-                t_idx, component.name, Qadv.magnitude, d['t_in'].magnitude,
-                (component.T[t_idx]*2 - d['t_in']).magnitude,
-                component.T[t_idx].magnitude)
-        for interface, d in component.cond.iteritems():
-            env = self.comp_from_name(interface)
-            Qcond = self.conduction(t_b=component.T[t_idx],
-                                    t_env=env.T[t_idx],
-                                    r_b=d['r_b'],
-                                    r_env=d['r_env'],
-                                    k=d['k'])
-            to_ret -= Qcond/cap
-            assert (Qcond*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, \
-                'conduction from %s to %s, from temp %f to %f is wrong %f' % (
-                    component.name, env.name, component.T[t_idx].magnitude,
-                    env.T[t_idx].magnitude, Qcond.magnitude)
-        for interface, d in component.conv.iteritems():
-            env = self.comp_from_name(interface)
-            Qconv = self.convection(t_b=component.T[t_idx],
-                                    t_env=env.T[t_idx],
-                                    h=d['h'],
-                                    A=d['area'])
-            to_ret -= Qconv/cap
-            assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0,\
-                'convection from %s to %s, from temp %f to %f is wrong %f' % (
-                    component.name, env.name, component.T[t_idx].magnitude,
-                    env.T[t_idx].magnitude, Qconv.magnitude)
-        return to_ret
-
-    def conduction(self, t_b, t_env, r_b, r_env, k):
-        """
-        heat transfer by conduction(watts)
-        :param t_b: The temperature of the body
-        :type t_b: float.
-        :param t_env: The temperature of the environment
-        :type t_env: float.
-        :param r_b: The radius of body
-        :type r_b: float.
-        :param r_env: The radius of environment
-        :type r_env: float.
-        :param k: the thermal conductivity
-        :type k: float.
-        """
-        num = 4*math.pi*k*(t_b-t_env)
-        denom = (1/r_b - 1/r_env)
-        return num/denom
-
-    def advection(self, t_out, t_in, m_flow, cp):
-        ''' calculate heat transfer by advection in watts
-        :param t_out: outlet temperature
-        :type t_out: float
-        :param t_in: inlet temperature
-        :type t_in: float
-        :param m_flow: mass flow rate though the control volume
-        :type m_flow: float
-        :param cp: specific heat capacity of the fluid
-        :type cp: float
-        '''
-        if t_out > t_in:
-            return m_flow*cp*(t_out-t_in)
-        else:
-            return 0*units.watts
 
 
