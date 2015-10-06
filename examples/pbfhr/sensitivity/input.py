@@ -69,6 +69,10 @@ h_cool = random.gauss(4700.0, 4700.0*0.05)*units.watt/units.kelvin/units.meter**
 m_flow = 976.0*units.kg/units.second
 t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 
+n_ref = 0
+Lambda_ref =0
+ref_lambda = []
+ref_rho = []
 #############################################
 #
 # Required Input
@@ -136,7 +140,7 @@ mod = th.THComponent(name="mod",
                      alpha_temp=alpha_mod,
                      timer=ti,
                      sph=True,
-                     ri=0.0,
+                     ri=0.0*units.meter,
                      ro=r_mod)
 
 fuel = th.THComponent(name="fuel",

@@ -95,6 +95,12 @@ fission_iso = "fhr"
 # Spectrum
 spectrum = "thermal"
 
+#two-point model
+n_ref = 2
+Lambda_ref = 0.000226807
+ref_lambda = [786.3172199, 1209.079474]
+ref_rho = [0.084349, 0.168983]
+
 # Feedbacks, False to turn reactivity feedback off. True otherwise.
 feedback = True
 
@@ -190,16 +196,3 @@ components = []
 for i in range(0, len(pebble.sub_comp)):
     components.append(pebble.sub_comp[i])
 components.extend([pebble, cool])
-
-uncert = [
-    alpha_cool,
-    alpha_fuel,
-    k_mod,
-    k_fuel,
-    k_shell,
-    cp_mod,
-    cp_fuel,
-    cp_shell,
-    cp_cool,
-    h_cool]
-uncertainty_param = np.array([o.magnitude for o in uncert])

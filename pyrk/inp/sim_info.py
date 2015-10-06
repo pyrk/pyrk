@@ -17,6 +17,10 @@ class SimInfo(object):
                  e="thermal",
                  n_precursors=6,
                  n_decay=11,
+                 n_reflector=0,
+                 Lambda_ref=0,
+                 ref_rho=[],
+                 ref_lambda=[],
                  kappa=0.0,
                  rho_ext=None,
                  feedback=False,
@@ -35,6 +39,19 @@ class SimInfo(object):
         :type n_precursors: int
         :param n_decay: number of decay groups
         :type n_decay: int
+        :param n_reflector: number of reflector neutron groups for 'two-point'
+        point kinetics, every reflector is considered separatly
+        :type n_reflector: int
+        :param Lambda_ref: mean prompt neutron lifetime in the core without
+        reflector(parameter needed for two-point kinetic model for reflectors)
+        :type Lambda_ref: float
+        :param ref_rho: reactivity gain introduced by reflectors(data for
+        implementing two-point kinetic model for reflectors)
+        :type ref_rho: list of float
+        :param ref_lambda: sum of mean neutron lifetime in the reflector and
+        neutron lifetime after it comes back from the reflector(data for
+        implementing two-point kinetic model for reflectors)
+        :type ref_lambda: list of float
         :param kappa: the value for kappa, a decay heat parameter
         :type kappa: float
         :param rho_ext: external reactivity
@@ -50,6 +67,10 @@ class SimInfo(object):
         self.e = e
         self.n_pg = n_precursors
         self.n_dg = n_decay
+        self.n_ref = n_reflector
+        self.Lambda_ref = Lambda_ref
+        self.ref_lambda = ref_lambda
+        self.ref_rho = ref_rho
         self.rho_ext = self.init_rho_ext(rho_ext)
         self.feedback = feedback
         self.ne = self.init_ne()
@@ -74,6 +95,10 @@ class SimInfo(object):
         ne = neutronics.Neutronics(iso=self.iso, e=self.e,
                                    n_precursors=self.n_pg,
                                    n_decay=self.n_dg,
+                                   n_reflector=self.n_ref,
+                                   Lambda_ref=self.Lambda_ref,
+                                   ref_rho=self.ref_rho,
+                                   ref_lambda=self.ref_lambda,
                                    timer=self.timer,
                                    rho_ext=self.rho_ext,
                                    feedback=self.feedback)
@@ -88,7 +113,7 @@ class SimInfo(object):
     def n_entries(self):
         """The number of entries in the pde to be solved
         """
-        to_ret = 1 + self.n_pg + self.n_dg + len(self.components)
+        to_ret = 1 + self.n_pg + self.n_dg + self.n_ref + len(self.components)
         return int(to_ret)
 
     def add_th_component(self, th_component):

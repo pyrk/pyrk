@@ -15,7 +15,9 @@ class Neutronics(object):
     """
 
     def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 n_ref=0, timer=Timer(), rho_ext=None, feedback=False):
+                 n_reflector=0, Lambda_ref=0, ref_rho=[], ref_lambda=[],
+                 timer=Timer(),
+                 rho_ext=None, feedback=False):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
@@ -28,9 +30,19 @@ class Neutronics(object):
         :type n_precursors: int.
         :param n_decay: The number of decay heat groups. 11 is supported.
         :type n_decay: int.
-        :param n_ref: number of reflector neutron groups for 'two-point' point
-        kinetics
-        :type n_ref: int
+        :param n_reflector: number of reflector neutron groups for 'two-point'
+        point kinetics, every reflector is considered separatly
+        :type n_reflector: int
+        :param Lambda_ref: mean prompt neutron lifetime in the core without
+        reflector(parameter needed for two-point kinetic model for reflectors)
+        :type Lambda_ref: float
+        :param ref_rho: reactivity gain introduced by reflectors(data for
+        implementing two-point kinetic model for reflectors)
+        :type ref_rho: list of float
+        :param ref_lambda: sum of mean neutron lifetime in the reflector and
+        neutron lifetime after it comes back from the reflector(data for
+        implementing two-point kinetic model for reflectors)
+        :type ref_lambda: list of float
         :param rho_ext: External reactivity, a function of time
         :type rho_ext: function
         :returns: A Neutronics object that holds neutronics simulation info
@@ -50,8 +62,17 @@ class Neutronics(object):
         self._ndg = v.validate_supported("n_decay", n_decay, [11, 0])
         """_ndg (int): Number of decay heat groups. 11 is supported."""
 
+        self._nref = n_reflector
+
         self._pd = pr.PrecursorData(iso, e, n_precursors)
         """_pd (PrecursorData): A data.precursors.PrecursorData object"""
+
+        if n_reflector is not 0:
+            self._Lambda = Lambda_ref
+            self._ref_rho = ref_rho
+            self._ref_lambda = ref_lambda
+        else:
+            self._Lambda = self._pd.Lambda
 
         self._dd = dh.DecayData(iso, e, n_decay)
         """_dd (DecayData): A data.decay_heat.DecayData object"""
@@ -74,7 +95,7 @@ class Neutronics(object):
             rho_ext = ReactivityInsertion(self._timer)
         return rho_ext
 
-    def dpdt(self, t_idx, components, power, zetas):
+    def dpdt(self, t_idx, components, power, zetas, zeta_refs=[]):
         """Calculates the power term. The first in the neutronics block.
 
         :param t: the time
@@ -87,15 +108,25 @@ class Neutronics(object):
         :type power: float.
         :param zetas: the current delayed neutron precursor populations, zeta_i
         :type zetas: np.ndarray.
+        :param rho_r: sum of the reactivity gain by all the reflectors
+        :type rho_r: float
         """
         rho = self.reactivity(t_idx, components)
         beta = self._pd.beta()
         lams = self._pd.lambdas()
-        Lambda = self._pd.Lambda()
+        Lambda = self._Lambda
+        rho_r = sum(self._ref_rho)
+        ref_lambda = self._ref_lambda
         precursors = 0
+        ref_precursors = 0
         for j in range(0, len(lams)):
+            assert len(lams) == len(zetas)
             precursors += lams[j]*zetas[j]
-        dp = power*(rho - beta)/Lambda + precursors
+        for k in range(0, len(ref_lambda)):
+            assert len(ref_lambda) == len(zeta_refs), '%d, %d' % (
+                len(ref_lambda), len(zeta_refs))
+            ref_precursors += ref_lambda[k]*zeta_refs[k]
+        dp = power*(rho - beta - rho_r)/Lambda + precursors + ref_precursors
         return dp
 
     def dzetadt(self, t, power, zeta, j):
@@ -107,14 +138,33 @@ class Neutronics(object):
         :param power: the reactor power at this timestep
         :type power: float, in units of watts
         :param zeta: $\zeta_j$, the concentration for precursor group j
-        :type zeta: float #TODO units?
+        :type zeta: float
         :param j: the precursor group index
         :type j: int
         """
-        Lambda = self._pd.Lambda()
+        Lambda = self._Lambda
         lambda_j = self._pd.lambdas()[j]
         beta_j = self._pd.betas()[j]
         return beta_j*power/Lambda - lambda_j*zeta
+
+    def dzeta_refdt(self, t, power, zeta, j):
+        """
+        Calculates the change in zeta over time at t for j
+
+        :param t: time
+        :type t: float, units of seconds
+        :param power: the reactor power at this timestep
+        :type power: float, in units of watts
+        :param Lambda_c: ...
+        :param zeta: $\zeta_j$, the concentration for reflector group j
+        :type zeta: float
+        :param j: the precursor group index
+        :type j: int
+        """
+        Lambda = self._Lambda
+        rho_j = self._ref_rho[j]
+        lambda_j = self._ref_lambda[j]
+        return rho_j*power/Lambda - lambda_j*zeta
 
     def dwdt(self, power, omega, k):
         """Returns the change in decay heat for $\omega_k$ at a certain power

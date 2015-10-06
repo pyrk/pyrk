@@ -56,18 +56,28 @@ def f_n(t, y, si):
     :param y: solution vector
     :type y: np.ndarray
     """
-    n_n = 1 + si.n_pg + si.n_dg
+    n_n = 1 + si.n_pg + si.n_ref + si.n_dg
+    if len(y) < n_n:
+        msg = 'equation numbers %d ' % len(y)
+        msg += 'should be at least the number of neutronics equations %d' % n_n
+        raise ValueError(msg)
     end_pg = 1 + si.n_pg
+    end_ref = 1 + si.n_pg + si.n_ref
     f = np.zeros(shape=(n_n,), dtype=float)
     i = 0
     f[i] = si.ne.dpdt(si.timer.ts,
                       si.components,
                       y[0],
-                      y[1:end_pg])
+                      y[1:end_pg],
+                      y[end_pg:end_ref])
     for j in range(0, si.n_pg):
         i += 1
         f[i] = si.ne.dzetadt(t, y[0], y[i], j)
     assert(i == end_pg-1)
+    for l in range(0, si.n_ref):
+        i += 1
+        f[i] = si.ne.dzeta_refdt(t, y[0], y[i], l)
+    assert(i == end_ref-1)
     for k in range(0, si.n_dg):
         i += 1
         f[i] = si.ne.dwdt(y[0], y[i], k)
@@ -88,8 +98,8 @@ def f_th(t, y_th, si):
     f = units.Quantity(np.zeros(shape=(si.n_components(),), dtype=float),
                        'kelvin / second')
     power = si.y[t_idx][0]
-    o_i = 1+si.n_pg
-    o_f = 1+si.n_pg+si.n_dg
+    o_i = 1+si.n_pg + si.n_ref
+    o_f = 1+si.n_pg + si.n_ref + si.n_dg
     omegas = si.y[t_idx][o_i:o_f]
     for idx, comp in enumerate(si.components):
         f[idx] = si.th.dtempdt(component=comp,
@@ -106,15 +116,25 @@ def y0(si):
     :type si: SimInfo
     """
     i = 0
+    end_pg = 1 + si.n_pg
+    end_ref = 1 + si.n_pg + si.n_ref
+    end_dg = 1 + si.n_pg + si.n_ref + si.n_dg
     f = np.zeros(shape=(si.n_entries(),), dtype=float)
     f[i] = 1.0  # power is normalized is 1
     for j in range(0, si.n_pg):
         i += 1
         f[i] = f[0] * \
-            si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
+            si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._Lambda)
+    assert(i == end_pg-1)
+    for l in range(0, si.n_ref):
+        i += 1
+        f[i] = f[0] * \
+            si.ne._ref_rho[l]/(si.ne._ref_lambda[l]*si.ne._Lambda)
+    assert(i == end_ref-1)
     for k in range(0, si.n_dg):
         i += 1
         f[i] = 0
+    assert(i == end_dg - 1)
     for idx, comp in enumerate(si.components):
         f[i+idx+1] = comp.T0.magnitude
     assert len(f) == si.n_entries()
@@ -128,7 +148,7 @@ def y0_n(si):
     :param si: the simulation info object
     :type si: SimInfo
     """
-    idx = si.n_pg+si.n_dg + 1
+    idx = si.n_pg + si.n_dg + si.n_ref + 1
     y = y0(si)[:idx]
     return y
 
@@ -139,7 +159,7 @@ def y0_th(si):
     :param si: the simulation info object
     :type si: SimInfo
     """
-    thidx = si.n_pg+si.n_dg + 1
+    thidx = si.n_pg + si.n_ref + si.n_dg + 1
     y = y0(si)[thidx:]
     return y
 
@@ -219,6 +239,10 @@ def main(args, curr_dir):
                           e=infile.spectrum,
                           n_precursors=infile.n_pg,
                           n_decay=infile.n_dg,
+                          n_reflector=infile.n_ref,
+                          Lambda_ref=infile.Lambda_ref,
+                          ref_lambda=infile.ref_lambda,
+                          ref_rho=infile.ref_rho,
                           kappa=infile.kappa,
                           feedback=infile.feedback,
                           rho_ext=infile.rho_ext,

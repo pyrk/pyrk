@@ -68,7 +68,7 @@ def plot_power_w_reactivity(x, si, y):
 
 def plot_temps_together(x, y, si):
     for num, comp in enumerate(si.components):
-        idx = 1 + si.ne._npg + si.ne._ndg + num
+        idx = 1 + si.ne._npg + si.ne._nref + si.ne._ndg + num
         plt.plot(x, y[:, idx], label=comp.name,
                  color=my_colors(num, len(si.components)), marker='.')
     plt.legend()
@@ -80,7 +80,7 @@ def plot_temps_together(x, y, si):
 
 def plot_temps_separately(x, y, si):
     for num, comp in enumerate(si.components):
-        idx = 1 + si.ne._npg + si.ne._ndg + num
+        idx = 1 + si.ne._npg + si.ne._nref + si.ne._ndg + num
         plt.plot(x, y[:, idx], label=comp.name,
                  color=my_colors(num, len(si.components)), marker='.')
         plt.xlabel("Time [s]")
@@ -104,7 +104,7 @@ def plot_zetas(x, y, si):
 
 def plot_omegas(x, y, si):
     for num in range(0, si.ne._ndg):
-        idx = 1 + si.ne._npg + num
+        idx = 1 + si.ne._npg + si.ne._nref + num
         plt.plot(x, y[:, idx], color=my_colors(num, si.ne._ndg), marker='.',
                  label="i = "+str(idx))
     plt.legend()
