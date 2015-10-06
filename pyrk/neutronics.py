@@ -15,7 +15,7 @@ class Neutronics(object):
     """
 
     def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 n_ref=0, timer=Timer(), rho_ext=None, feedback=False):
+                 timer=Timer(), rho_ext=None, feedback=False):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
@@ -28,9 +28,6 @@ class Neutronics(object):
         :type n_precursors: int.
         :param n_decay: The number of decay heat groups. 11 is supported.
         :type n_decay: int.
-        :param n_ref: number of reflector neutron groups for 'two-point' point
-        kinetics
-        :type n_ref: int
         :param rho_ext: External reactivity, a function of time
         :type rho_ext: function
         :returns: A Neutronics object that holds neutronics simulation info
