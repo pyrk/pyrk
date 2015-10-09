@@ -17,4 +17,4 @@ def pytables_type(prim_type):
         msg = "The type "
         msg += str(prim_type)
         msg += " is not yet supported in the dbtypes class."
-        raise KeyError(msg)
+        raise TypeError(msg)
