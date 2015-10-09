@@ -112,7 +112,8 @@ class THSystem(object):
             return to_ret*units.kelvin/units.seconds
 
     def BC_center(self, component, t_idx):
-        '''Qconduction from the center of a sphere to the first boundary
+        '''Volumetric conductive heat flux Qconduction from the center of a
+        sphere to the first boundary
         (conduction without interface) in watts/meter**3
 
         :param component: name of the inner most component(mesh element)
