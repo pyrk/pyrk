@@ -44,12 +44,14 @@ class THComponent(object):
         :type heatgen: bool
         :param power_tot: power generated in this component
         :type power_tot: float
-        :param sph: is this component a spherical component, spherical equations
-        for heatgen, conduction are different, post-processing is different too
+        :param sph: is this component a spherical component, spherical
+        equations for heatgen, conduction are different,
+        post-processing is different too
         :type sph: bool
         :param ri: inner radius of the sph/annular component, ri=0 for sphere
         :type ri: float
-        :param ro: outer radius of the sph/annular component, ro=radius for sphere
+        :param ro: outer radius of the sph/annular component,
+        ro=radius for sphere
         :type ro: float
         """
         self.name = name
@@ -69,7 +71,7 @@ class THComponent(object):
         self.cond = {}
         self.conv = {}
         self.adv = {}
-        self.mass = {}
+        #self.mass = {}
         self.cust = {}
         self.prev_t_idx = 0
         self.convBC = {}
