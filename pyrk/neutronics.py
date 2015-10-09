@@ -72,7 +72,10 @@ class Neutronics(object):
             self._ref_rho = ref_rho
             self._ref_lambda = ref_lambda
         else:
-            self._Lambda = self._pd.Lambda
+            self._Lambda = self._pd.Lambda()
+            self._ref_rho = []
+            self._ref_lambda = []
+
 
         self._dd = dh.DecayData(iso, e, n_decay)
         """_dd (DecayData): A data.decay_heat.DecayData object"""
@@ -116,16 +119,16 @@ class Neutronics(object):
         lams = self._pd.lambdas()
         Lambda = self._Lambda
         rho_r = sum(self._ref_rho)
-        ref_lambda = self._ref_lambda
         precursors = 0
         ref_precursors = 0
         for j in range(0, len(lams)):
             assert len(lams) == len(zetas)
             precursors += lams[j]*zetas[j]
-        for k in range(0, len(ref_lambda)):
-            assert len(ref_lambda) == len(zeta_refs), '%d, %d' % (
-                len(ref_lambda), len(zeta_refs))
-            ref_precursors += ref_lambda[k]*zeta_refs[k]
+        if self._nref is not 0:
+            for k in range(0, self._nref):
+                assert self._nref == len(zeta_refs), '%d, %d' % (
+                    self._nref, len(zeta_refs))
+                ref_precursors += self._ref_lambda[k]*zeta_refs[k]
         dp = power*(rho - beta - rho_r)/Lambda + precursors + ref_precursors
         return dp
 
