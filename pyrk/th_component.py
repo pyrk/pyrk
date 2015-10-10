@@ -215,8 +215,7 @@ class THComponent(object):
             "R": R
         }
 
-    def add_conduction(self, env, k,
-                       area=0.0*units.meter**2, L=0.0*units.meter,
+    def add_conduction(self, env, area=0.0*units.meter**2, L=0.0*units.meter,
                        r_b=0.0*units.meter, r_env=0.0*units.meter):
         '''Add parameters for conduction heat transfer calculation
         area and L are used for slab geometry
@@ -224,9 +223,6 @@ class THComponent(object):
 
         :param env: name of the component that this component conduct heat to
         :type env: str
-        :param k: thermal conductivity of the material that heat is conducted
-        in(may not be the 'self' component)
-        :type k:float
         :param area: conduction surface for the slab
         :type area: float
         :param L: thickness of the slab
@@ -237,7 +233,6 @@ class THComponent(object):
         :type r_env: float
         '''
         self.cond[env] = {
-            "k": k.to('watts/meter/kelvin'),
             "area": area.to('meter**2'),
             "L": L.to('meter'),
             "r_b": r_b.to('meter'),

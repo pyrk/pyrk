@@ -68,7 +68,6 @@ class THSystem(object):
                 else:
                     Qcond = self.conduction_slab(component, env, t_idx,
                                                  L=d["L"],
-                                                 k=d["k"],
                                                  A=d["area"])
                 to_ret -= Qcond/cap
             for interface, d in component.conv.iteritems():
@@ -192,9 +191,7 @@ class THSystem(object):
         k = component.k.magnitude
         return k/r_b * (r_b * T_b - r_env * T_env)/(dr**2)
 
-    def conduction_slab(self, component, env, t_idx,
-                        L=0.0*units.meter,
-                        k=0.0*units.watt/units.meter/units.kelvin,
+    def conduction_slab(self, component, env, t_idx, L,
                         A=0.0*units.meter**2):
         """
         compute volumetric heat transfer by conduction(watts/m3)
@@ -205,14 +202,13 @@ class THSystem(object):
         :type env: str
         :param t_idx: time step that conduction heat is computed
         :type t_idx: int
-        :pram k: conductivity
-        :type k: float, units w/mk
         :return: Qond, dimemsionless quantity
         :rtype: float
         """
         T_b = component.T[t_idx].magnitude
         T_env = env.T[t_idx].magnitude
         num = (T_b-T_env)
+        k = component.k
         denom = (L/(k*A)).magnitude
         return num/denom
 
