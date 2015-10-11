@@ -25,9 +25,9 @@ class DatabaseTest(unittest.TestCase):
         self.a.add_group(groupname="test_group",
                          grouptitle="Test Group",
                          path_to_group="/")
-        assert_equal(self.a.h5file.test_group.title, 'Test Group')
+        assert_true('Test Group' in self.a.h5file.root.test_group.__str__())
 
-    def test_custom_constructor():
+    def test_custom_constructor(self):
         a = d.Database(filepath='testfile.h5')
         assert_equal(a.filepath, 'testfile.h5')
         # cleanup
