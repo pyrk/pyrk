@@ -24,9 +24,9 @@ class ThComponentRow(tb.IsDescription):
 
 def make_th_group(db):
     # Create a group for the table
-    th_group = db.create_group(groupname='th',
-                               grouptitle='TH',
-                               path_to_group='/')
+    th_group = db.add_group(groupname='th',
+                            grouptitle='TH',
+                            path_to_group='/')
     return th_group
 
 
