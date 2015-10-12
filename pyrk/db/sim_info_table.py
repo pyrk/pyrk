@@ -22,12 +22,12 @@ class SimInfoParamsRow(tb.IsDescription):
     plotdir = tb.StringCol(16)
 
 
-def make_th_group(db):
-    # Create a group for the table
-    th_group = db.add_group(groupname='th',
-                            grouptitle='TH',
-                            path_to_group='/')
-    return th_group
+def make_sim_info_group(db):
+    # Create a group for the tables related to simulation information
+    sim_info_group = db.add_group(groupname='sim_info',
+                                  grouptitle='Simulation Info',
+                                  path_to_group='/')
+    return sim_info_group
 
 
 def make_sim_info_params_table(db, sim_info):
@@ -46,39 +46,12 @@ def make_sim_info_params_table(db, sim_info):
     return sim_info_params_table
 
 
-def add_entry(table,
-              t0=0.0,
-              tf=10.0,
-              dt=0.1,
-              t_feedback=10,
-              iso='u235',
-              e='thermal',
-              n_pg=1,
-              n_dg=1,
-              kappa=0.0,
-              plotdir='images'):
-    table.row['t0'] = t0
-    table.row['tf'] = tf
-    table.row['dt'] = dt
-    table.row['t_feedback'] = t_feedback
-    table.row['iso'] = iso
-    table.row['e'] = e
-    table.row['n_pg'] = n_pg
-    table.row['n_dg'] = n_dg
-    table.row['kappa'] = kappa
-    table.row['plotdir'] = plotdir
+def add_entry(table, rec):
+    for k, v in rec:
+        table.row[k] = v
     table.row.append()
+    table.flush()
 
 
 def add_entry_from_sim_info(table, si):
-    add_entry(table,
-              t0=si.timer.t0,
-              tf=si.timer.tf,
-              dt=si.timer.dt,
-              t_feedback=si.t_feedback,
-              iso=si.iso,
-              e=si.e,
-              n_pg=si.n_pg,
-              n_dg=si.n_dg,
-              kappa=si.kappa,
-              plotdir=si.plotdir)
+    add_entry(table, si.record())
