@@ -22,6 +22,16 @@ class SimInfoParamsRow(tb.IsDescription):
     plotdir = tb.StringCol(16)
 
 
+class SimulationRow(tb.IsDescription):
+    """This describes a simulation record structure"""
+    simhash = tb.Int64Col()            # 64 bit float
+    # pytables can't handle VL strings
+    # a long input file might be 10000 bytes
+    # for now, anything longer will be cut off...
+    inputblob = tb.StringCol(10000)
+    revision = tb.StringCol(16)
+
+
 def make_sim_info_group(db):
     # Create a group for the tables related to simulation information
     sim_info_group = db.add_group(groupname='sim_info',
@@ -53,3 +63,20 @@ def add_entry(table, rec):
 
 def add_entry_from_sim_info(table, si):
     add_entry(table, si.record())
+
+
+def get_sim_hash():
+    return 'nonsense, fixme'
+
+
+def get_input_blob():
+    return 'nonsense, fixme'
+
+
+def add_simulation(table):
+    rec = {}
+    rec['simhash'] = get_sim_hash()
+    rec['inputblob'] = get_input_blob()
+    import pyrk
+    rec['revision'] = pyrk.__version__
+    add_entry(table, rec)
