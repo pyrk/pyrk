@@ -30,24 +30,22 @@ def make_sim_info_group(db):
     return sim_info_group
 
 
-def make_sim_info_params_table(db, sim_info):
+def make_sim_info_params_table(db):
     """Adds a sim_info_params table to hold information about each simulation
     in the database
 
     :param db: The pyrk backend database object
     :type db: Database object.
-    :param sim_info: List of the sim_info to record
-    :type sim_info: list(SimInfo)
     """
-    sim_info_params_table = db.add_table(groupname='th',
-                                         tablename='th_params',
+    sim_info_params_table = db.add_table(groupname='sim_info',
+                                         tablename='sim_info_params',
                                          description=SimInfoParamsRow,
                                          tabletitle="Simulation Parameters")
     return sim_info_params_table
 
 
 def add_entry(table, rec):
-    for k, v in rec:
+    for k, v in rec.iteritems():
         table.row[k] = v
     table.row.append()
     table.flush()

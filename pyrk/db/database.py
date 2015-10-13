@@ -39,13 +39,18 @@ class Database(object):
         :type path_to_group: str
         """
         self.open_db()
-        group = self.h5file.create_group(path_to_group, groupname, grouptitle)
+        group = self.group_exists(path_to_group, groupname)
+        if group is False:
+            group = self.h5file.create_group(path_to_group,
+                                             groupname,
+                                             grouptitle)
         return group
 
     def add_table(self, groupname, tablename, description, tabletitle):
-        """Creates a new table"""
+        """Creates a new table
+        All groupnames must be directly under root"""
         self.open_db()
-        table = self.h5file.create_table(groupname,
+        table = self.h5file.create_table('/'+groupname,
                                          tablename,
                                          description,
                                          tabletitle)
@@ -55,6 +60,14 @@ class Database(object):
         for k, v in row_dict.iteritems():
             table.row[k] = v
         table.row.append()
+
+    def group_exists(self, path_to_group, groupname):
+        try:
+            group = self.h5file.get_node(path_to_group,
+                                         name=groupname)
+        except tb.NoSuchNodeError:
+            group = False
+        return group
 
     def open_db(self):
         """Returns a handle to the open db"""
