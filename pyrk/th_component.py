@@ -337,17 +337,13 @@ class THSuperComponent(THComponent):
         N = len(self.sub_comp)
         # element i=0:
         self.sub_comp[0].add_conduction(
-            self.sub_comp[1].name,
-            self.sub_comp[0].k)
+            self.sub_comp[1].name)
         # element i=1:elementNb-3
         for i in range(1, N-2):
             self.sub_comp[i].add_conduction(
-                self.sub_comp[i - 1].name,
-                self.sub_comp[i].k)
+                self.sub_comp[i - 1].name)
             self.sub_comp[i].add_conduction(
-                self.sub_comp[i + 1].name,
-                self.sub_comp[i].k)
+                self.sub_comp[i + 1].name)
         # element i=elementNb-2
         self.sub_comp[N - 2].add_conduction(
-            self.sub_comp[N - 3].name,
-            self.sub_comp[N - 2].k)
+            self.sub_comp[N - 3].name)
