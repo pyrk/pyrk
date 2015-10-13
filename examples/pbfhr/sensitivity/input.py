@@ -136,7 +136,7 @@ mod = th.THComponent(name="mod",
                      alpha_temp=alpha_mod,
                      timer=ti,
                      sph=True,
-                     ri=0.0,
+                     ri=0.0*units.meter,
                      ro=r_mod)
 
 fuel = th.THComponent(name="fuel",
