@@ -108,3 +108,16 @@ class SimInfo(object):
         else:
             self.components[th_component.name] = th_component
             return th_component
+
+    def record(self):
+        rec = {'t0': self.timer.t0,
+               'tf': self.timer.tf,
+               'dt': self.timer.dt,
+               't_feedback': self.timer.t_feedback,
+               'iso': self.iso,
+               'e': self.e,
+               'n_pg': self.n_pg,
+               'n_dg': self.n_dg,
+               'kappa': self.kappa,
+               'plotdir': self.plotdir}
+        return rec
