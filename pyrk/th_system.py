@@ -228,6 +228,17 @@ class THSystem(object):
         '''
         return m_flow.magnitude*cp.magnitude*(t_out-t_in)
 
+    def mass_trans(self, t_b, t_inlet, H, u):
+        """
+        :param t_b: The temperature of the body
+        :type t_b: float.
+        :param t_inlet: The temperature of the flow inlet
+        :type t_inlet:
+        """
+        num = 2.0*u*(t_b - t_inlet)
+        denom = H
+        return num/denom
+
     def convection(self, t_b, t_env, h, A):
         """
         heat transfer by convection(watts)
