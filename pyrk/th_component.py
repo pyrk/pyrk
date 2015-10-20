@@ -71,6 +71,7 @@ class THComponent(object):
         self.cond = {}
         self.conv = {}
         self.adv = {}
+        #self.mass = {}
         self.cust = {}
         self.prev_t_idx = 0
         self.convBC = {}
@@ -186,6 +187,10 @@ class THComponent(object):
             "h": h.to('joule/second/kelvin/meter**2'),
             "area": area
         }
+
+    def add_mass_trans(self, env, H, u):
+        self.mass[env] = {"H": H,
+                          "u": u}
 
     def add_custom(self, env, res):
         self.cust[env] = {"res": res.to(units.kelvin/units.watt)}
