@@ -8,9 +8,21 @@ from __future__ import print_function
 import tables as tb
 
 
-class ThComponentRow(tb.IsDescription):
-    """This describes a Component record structure"""
+class ThComponentTimestepRow(tb.IsDescription):
+    t_idx = tb.Int32Col()
+    t = tb.Float64Col()
+    component = tb.StringCol(16)  # 16 character string
+    temp = tb.Float64Col()            # 32 bit float
+    matname = tb.StringCol(16)
+    k = tb.Float64Col()     # 32 bit integer column
+    cp = tb.Float64Col()
+    T0 = tb.Float64Col()
+    alpha_temp = tb.Float64Col()
+    heatgen = tb.Float64Col()
+    power_tot = tb.Float64Col()
 
+class ThComponentParamsRow(tb.IsDescription):
+    """This describes a THComponentParams record structure"""
     name = tb.StringCol(16)  # 16 character string
     vol = tb.Float64Col()            # 32 bit float
     matname = tb.StringCol(16)
