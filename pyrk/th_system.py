@@ -231,17 +231,6 @@ class THSystem(object):
         else:
             return 0.0
 
-    def mass_trans(self, t_b, t_inlet, H, u):
-        """
-        :param t_b: The temperature of the body
-        :type t_b: float.
-        :param t_inlet: The temperature of the flow inlet
-        :type t_inlet:
-        """
-        num = 2.0*u*(t_b - t_inlet)
-        denom = H
-        return num/denom
-
     def convection(self, t_b, t_env, h, A):
         """
         heat transfer by convection(watts)
