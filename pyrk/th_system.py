@@ -226,10 +226,7 @@ class THSystem(object):
         :return: dimemsionless quantity of Qadvective
         :rtype: float
         '''
-        if t_out > t_in:
-            return m_flow.magnitude*cp.magnitude*(t_out-t_in)
-        else:
-            return 0.0
+        return m_flow.magnitude*cp.magnitude*(t_out-t_in)
 
     def convection(self, t_b, t_env, h, A):
         """
