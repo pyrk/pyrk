@@ -28,6 +28,8 @@ class Database(object):
         self.filepath = filepath
         self.groups = self.set_up_groups()
         self.tables = self.set_up_tables()
+        self.make_groups()
+        self.make_tables()
         self.close_db()
 
     def add_group(self, groupname, grouptitle, path_to_group='/'):
@@ -89,17 +91,17 @@ class Database(object):
         os.remove(self.filepath)
 
     def make_groups(self):
-        for g in groups:
-            db.add_group(groupname=g['groupname'],
+        for g in self.groups:
+            self.add_group(groupname=g['groupname'],
                          grouptitle=g['grouptitle'],
                          path_to_group=g['path'])
 
     def make_tables(self):
-        for t in tables:
-            db.add_table(groupname=t['groupname'],
+        for t in self.tables:
+            self.add_table(groupname=t['groupname'],
                          tablename=t['tablename'],
                          description=t['description'],
-                         tabletitle=t['title'])
+                         tabletitle=t['tabletitle'])
 
     def set_up_groups(self):
         groups = []
