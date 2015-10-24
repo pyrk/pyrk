@@ -1,6 +1,6 @@
 # Licensed under a 3-clause BSD style license - see LICENSE
 import tables as tb
-
+import descriptions as desc
 
 class Database(object):
     """The Database class handles operations on the pyrk simulation backend and
@@ -26,6 +26,8 @@ class Database(object):
                                    mode=self.mode,
                                    title=self.title)
         self.filepath = filepath
+        self.groups = self.set_up_groups()
+        self.tables = self.set_up_tables()
         self.close_db()
 
     def add_group(self, groupname, grouptitle, path_to_group='/'):
@@ -77,7 +79,77 @@ class Database(object):
     def close_db(self):
         self.h5file = self.h5file.close()
 
+    def record_all(self):
+        for r in self.recorders:
+            r()
+
     def delete_db(self):
         """If the database exists, delete it"""
         import os.path
         os.remove(self.filepath)
+
+    def make_groups(self):
+        for g in groups:
+            db.add_group(groupname=g['groupname'],
+                         grouptitle=g['grouptitle'],
+                         path_to_group=g['path'])
+
+    def make_tables(self):
+        for t in tables:
+            db.add_table(groupname=t['groupname'],
+                         tablename=t['tablename'],
+                         description=t['description'],
+                         tabletitle=t['title'])
+
+    def set_up_groups(self):
+        groups = []
+        groups.append({'groupname':'th',
+                       'grouptitle':'TH',
+                       'path':'/'})
+        groups.append({'groupname':'neutronics',
+                       'grouptitle':'Neutronics',
+                       'path':'/'})
+        groups.append({'groupname':'metadata',
+                       'grouptitle':'Simulation Metadata',
+                       'path':'/'})
+        return groups
+
+    def set_up_tables(self):
+        tables = []
+        tables.append({'groupname': 'th',
+                       'tablename': 'th_params',
+                       'description': desc.ThMetadataRow,
+                       'tabletitle': 'TH Component Parameters'})
+        tables.append({'groupname': 'th',
+                       'tablename': 'th_timeseries',
+                       'description': desc.ThTimeseriesRow,
+                       'tabletitle': 'TH Timeseries'})
+        tables.append({'groupname': 'metadata',
+                       'tablename': 'sim_info',
+                       'description': desc.SimInfoRow,
+                       'tabletitle': 'Simulation Information'})
+        tables.append({'groupname': 'metadata',
+                       'tablename': 'simulations',
+                       'description': desc.SimulationRow,
+                       'tabletitle': 'Each Simulation'})
+        tables.append({'groupname': 'neutronics',
+                       'tablename': 'neutronics_timeseries',
+                       'description': desc.NeutronicsTimeseriesRow,
+                       'tabletitle': 'Neutronics Timeseries'})
+        tables.append({'groupname': 'neutronics',
+                       'tablename': 'neutronics_params',
+                       'description': desc.NeutronicsParamsRow,
+                       'tabletitle': 'Neutronics Metadata'})
+        tables.append({'groupname': 'neutronics',
+                       'tablename': 'zetas',
+                       'description': desc.ZetasTimestepRow,
+                       'tabletitle': 'Neutron Precursor Concentrations'})
+        tables.append({'groupname': 'neutronics',
+                       'tablename': 'omegas',
+                       'description': desc.OmegasTimestepRow,
+                       'tabletitle': 'Decay Heat Fractions'})
+        return tables
+
+    def register_recorder(self, recorder):
+        self.recorders.append(recorder)
+

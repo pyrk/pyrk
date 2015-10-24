@@ -8,7 +8,7 @@ from __future__ import print_function
 import tables as tb
 
 
-class NeutronicsTimestepRow(tb.IsDescription):
+class NeutronicsParamRow(tb.IsDescription):
     """<++>
 
     :param <++>: <++>
@@ -21,7 +21,7 @@ class NeutronicsTimestepRow(tb.IsDescription):
     rho_ext = tb.Float64Col()
 
 
-class NeutronicsComponentTimestepRow(tb.IsDescription):
+class NeutronicsTimeseriesRow(tb.IsDescription):
     """<++>
 
     :param <++>: <++>

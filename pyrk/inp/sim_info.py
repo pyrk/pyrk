@@ -5,7 +5,7 @@ from timer import Timer
 import neutronics
 import reactivity_insertion as ri
 import th_system
-
+from db import database
 
 class SimInfo(object):
     """This class holds information about a reactor kinetics simulation"""
@@ -20,7 +20,8 @@ class SimInfo(object):
                  kappa=0.0,
                  rho_ext=None,
                  feedback=False,
-                 plotdir='images'):
+                 plotdir='images',
+                 infile='input.py'):
         """This class holds information about a reactor kinetics simulation
 
         :param timer: the Timer object for the simulation
@@ -57,6 +58,8 @@ class SimInfo(object):
         self.y = np.zeros(shape=(timer.timesteps(), self.n_entries()),
                           dtype=float)
         self.plotdir = plotdir
+        self.infile = infile
+        self.db = database.Database()
 
     def init_rho_ext(self, rho_ext):
         """Initializes reactivity insertion object for the none case.
@@ -109,6 +112,41 @@ class SimInfo(object):
             self.components[th_component.name] = th_component
             return th_component
 
+    def add_entry_from_sim_info(table, si):
+        add_entry(table, si.record())
+
+    def get_git_revision_hash():
+        import subprocess
+        return subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+
+    def get_git_revision_short_hash():
+        import subprocess
+        return subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'])
+
+    def get_timestamp():
+        # time since epoch, a float
+        import time
+        ts = time.time()
+        # human readable time, a string
+        import datetime
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        return ts, st
+
+    def get_input_blob(filename):
+        f = open(filename, 'r')
+        instring = f.read()
+        return instring
+
+    def add_entry(table, rec):
+        for k, v in rec.iteritems():
+            table.row[k] = v
+            table.row.append()
+            table.flush()
+
+    def get_sim_hash():
+        # TODO fix. Currently nonsense
+        return 010101010101010101
+
     def record(self):
         rec = {'t0': self.timer.t0,
                'tf': self.timer.tf,
@@ -121,3 +159,14 @@ class SimInfo(object):
                'kappa': self.kappa,
                'plotdir': self.plotdir}
         return rec
+
+    def metadata(self):
+        ts, st = self.get_timestamp()
+        rec = {'simhash': self.get_sim_hash(),
+               'timestamp': ts,
+               'humantime': st,
+               'revision': self.get_git_revision_short_hash(),
+               'inputblob': self.get_input_blob(self.infile)
+               }
+        return rec
+

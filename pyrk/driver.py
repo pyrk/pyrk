@@ -222,7 +222,8 @@ def main(args, curr_dir):
                           kappa=infile.kappa,
                           feedback=infile.feedback,
                           rho_ext=infile.rho_ext,
-                          plotdir=args.plotdir)
+                          plotdir=args.plotdir,
+                          infile=args.infile)
     print_logo(curr_dir)
     sol = solve(si=si, y=si.y, infile=infile)
     log_results(si)

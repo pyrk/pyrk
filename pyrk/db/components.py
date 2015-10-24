@@ -8,7 +8,7 @@ from __future__ import print_function
 import tables as tb
 
 
-class ThComponentTimestepRow(tb.IsDescription):
+class ThTimeseriesRow(tb.IsDescription):
     t_idx = tb.Int32Col()
     t = tb.Float64Col()
     component = tb.StringCol(16)  # 16 character string
@@ -21,7 +21,7 @@ class ThComponentTimestepRow(tb.IsDescription):
     heatgen = tb.Float64Col()
     power_tot = tb.Float64Col()
 
-class ThComponentParamsRow(tb.IsDescription):
+class ThMetadataRow(tb.IsDescription):
     """This describes a THComponentParams record structure"""
     name = tb.StringCol(16)  # 16 character string
     vol = tb.Float64Col()            # 32 bit float
@@ -53,7 +53,7 @@ def make_th_params_table(db, components):
     """
     th_params_table = db.add_table(groupname='th',
                                    tablename='th_params',
-                                   description=ThComponentRow,
+                                   description=ThMetadataRow,
                                    tabletitle="TH Component Parameters")
     return th_params_table
 
