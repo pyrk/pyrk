@@ -11,6 +11,7 @@ import numpy as np
 from scipy.integrate import ode
 import importlib
 import argparse
+from db import database
 from utilities import logger
 from utilities.logger import pyrklog
 from inp import sim_info
@@ -213,6 +214,7 @@ def main(args, curr_dir):
     np.set_printoptions(precision=5, threshold=np.inf)
     logger.set_up_pyrklog(args.logfile)
     infile = load_infile(args.infile)
+    out_db = database.Database(filepath=args.outfile)
     si = sim_info.SimInfo(timer=infile.ti,
                           components=infile.components,
                           iso=infile.fission_iso,
@@ -223,7 +225,8 @@ def main(args, curr_dir):
                           feedback=infile.feedback,
                           rho_ext=infile.rho_ext,
                           plotdir=args.plotdir,
-                          infile=args.infile)
+                          infile=args.infile,
+                          db=out_db)
     print_logo(curr_dir)
     sol = solve(si=si, y=si.y, infile=infile)
     log_results(si)

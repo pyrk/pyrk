@@ -21,7 +21,8 @@ class SimInfo(object):
                  rho_ext=None,
                  feedback=False,
                  plotdir='images',
-                 infile='input.py'):
+                 infile='input.py',
+                 db=database.Database()):
         """This class holds information about a reactor kinetics simulation
 
         :param timer: the Timer object for the simulation
@@ -59,7 +60,7 @@ class SimInfo(object):
                           dtype=float)
         self.plotdir = plotdir
         self.infile = infile
-        self.db = database.Database()
+        self.db = db
 
     def init_rho_ext(self, rho_ext):
         """Initializes reactivity insertion object for the none case.
