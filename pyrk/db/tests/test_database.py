@@ -13,7 +13,7 @@ def testfunc():
 class DatabaseTest(unittest.TestCase):
     def setUp(self):
         "set up test fixtures"
-        self.a = d.Database(mode='w')
+        self.a = d.Database(mode='a')
 
     def tearDown(self):
         "tear down test fixtures"
@@ -53,7 +53,7 @@ class DatabaseTest(unittest.TestCase):
 
     def test_sim_info_group(self):
         grp_str = self.a.h5file.root.metadata.__str__()
-        assert_true('Simulation Information' in grp_str)
+        assert_true('Simulation Metadata' in grp_str)
 
     def test_add_entry(self):
         rec = {'t0': 0.0,
@@ -66,10 +66,11 @@ class DatabaseTest(unittest.TestCase):
                'n_dg': 1,
                'kappa': 0.0,
                'plotdir': 'images'}
-        d.add_row(self.a.h5file.root.metadata.sim_info, rec)
-        t0_obs = self.tab.col('t0')
+        tab = self.a.h5file.root.metadata.sim_info
+        self.a.add_row(tab, rec)
+        t0_obs = tab.col('t0')
         t0_exp = 0.0
         assert_equal(t0_obs, t0_exp)
-        tf_obs = self.tab.col('tf')
+        tf_obs = tab.col('tf')
         tf_exp = 10.0
         assert_equal(tf_obs, tf_exp)
