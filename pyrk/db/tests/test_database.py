@@ -6,6 +6,10 @@ from db import database as d
 import unittest
 
 
+
+def testfunc():
+    return {'t0':2}
+
 class DatabaseTest(unittest.TestCase):
     def setUp(self):
         "set up test fixtures"
@@ -31,14 +35,15 @@ class DatabaseTest(unittest.TestCase):
     def test_group_exists(self):
         assert_true(self.a.group_exists('/', 'metadata'))
 
-    def test_open_db(self):
+    def test_open_and_close_db(self):
         self.a.open_db()
         assert_true(self.a.h5file.isopen)
         self.a.close_db()
         assert_false(self.a.h5file.isopen)
 
-    def test_group_exists(self):
-        assert_true(d.group_exists('/', 'metadata'))
+    def test_register_recorder(self):
+        self.a.register_recorder('metadata', 'sim_info', testfunc)
+        assert_true(testfunc in self.a.recorders.values())
 
     def test_custom_constructor(self):
         a = d.Database(filepath='testfile.h5')
