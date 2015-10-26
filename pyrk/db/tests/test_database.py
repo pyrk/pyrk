@@ -50,3 +50,26 @@ class DatabaseTest(unittest.TestCase):
         assert_equal(a.filepath, 'testfile.h5')
         # cleanup
         a.delete_db()
+
+    def test_sim_info_group(self):
+        grp_str = self.a.h5file.root.metadata.__str__()
+        assert_true('Simulation Information' in grp_str)
+
+    def test_add_entry(self):
+        rec = {'t0': 0.0,
+               'tf': 10.0,
+               'dt': 0.1,
+               't_feedback': 1.0,
+               'iso': 'u235',
+               'e': 'thermal',
+               'n_pg': 1,
+               'n_dg': 1,
+               'kappa': 0.0,
+               'plotdir': 'images'}
+        d.add_row(self.a.h5file.root.metadata.sim_info, rec)
+        t0_obs = self.tab.col('t0')
+        t0_exp = 0.0
+        assert_equal(t0_obs, t0_exp)
+        tf_obs = self.tab.col('tf')
+        tf_exp = 10.0
+        assert_equal(tf_obs, tf_exp)
