@@ -6,9 +6,9 @@ from db import database as d
 import unittest
 
 
-
 def testfunc():
-    return {'t0':2}
+    return {'t0': 2}
+
 
 class DatabaseTest(unittest.TestCase):
     def setUp(self):
@@ -74,3 +74,7 @@ class DatabaseTest(unittest.TestCase):
         tf_obs = tab.col('tf')
         tf_exp = 10.0
         assert_equal(tf_obs, tf_exp)
+
+    def test_get_table(self):
+        tab = self.a.h5file.root.metadata.sim_info
+        assert_equal(tab, self.a.get_table('metadata', 'sim_info'))
