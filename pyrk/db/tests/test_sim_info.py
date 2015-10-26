@@ -11,22 +11,14 @@ class SimInfoTest(unittest.TestCase):
     def setUp(self):
         "set up test fixtures"
         self.a = d.Database()
-        self.grp = c.make_sim_info_group(self.a)
-        self.tab = c.make_sim_info_params_table(self.a)
 
     def tearDown(self):
         "tear down test fixtures"
         self.a.delete_db()
 
-    def test_th_group(self):
-        grp_str = self.a.h5file.root.sim_info.__str__()
-        assert_true('Simulation Info' in grp_str)
-        grp_str = self.grp.__str__()
-        assert_true('Simulation Info' in grp_str)
-
-    def test_make_sim_info_params_table(self):
-        table_str = self.a.h5file.root.sim_info.sim_info_params.title
-        assert_true('Simulation Parameters' in table_str)
+    def test_sim_info_group(self):
+        grp_str = self.a.h5file.root.metadata.__str__()
+        assert_true('Simulation Information' in grp_str)
 
     def test_add_entry(self):
         rec = {'t0': 0.0,
@@ -39,7 +31,7 @@ class SimInfoTest(unittest.TestCase):
                'n_dg': 1,
                'kappa': 0.0,
                'plotdir': 'images'}
-        c.add_entry(self.a.h5file.root.sim_info.sim_info_params, rec)
+        d.add_row(self.a.h5file.root.metadata.sim_info, rec)
         t0_obs = self.tab.col('t0')
         t0_exp = 0.0
         assert_equal(t0_obs, t0_exp)

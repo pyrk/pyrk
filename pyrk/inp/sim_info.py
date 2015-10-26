@@ -7,6 +7,7 @@ import reactivity_insertion as ri
 import th_system
 from db import database
 
+
 class SimInfo(object):
     """This class holds information about a reactor kinetics simulation"""
 
@@ -55,12 +56,14 @@ class SimInfo(object):
         self.rho_ext = self.init_rho_ext(rho_ext)
         self.feedback = feedback
         self.ne = self.init_ne()
+        self.kappa = kappa
         self.th = th_system.THSystem(kappa=kappa, components=components)
         self.y = np.zeros(shape=(timer.timesteps(), self.n_entries()),
                           dtype=float)
         self.plotdir = plotdir
         self.infile = infile
         self.db = db
+        self.db.register_recorder('metadata', 'sim_info', self.record)
 
     def init_rho_ext(self, rho_ext):
         """Initializes reactivity insertion object for the none case.
@@ -113,9 +116,6 @@ class SimInfo(object):
             self.components[th_component.name] = th_component
             return th_component
 
-    def add_entry_from_sim_info(table, si):
-        add_entry(table, si.record())
-
     def get_git_revision_hash():
         import subprocess
         return subprocess.check_output(['git', 'rev-parse', 'HEAD'])
@@ -149,10 +149,10 @@ class SimInfo(object):
         return 010101010101010101
 
     def record(self):
-        rec = {'t0': self.timer.t0,
-               'tf': self.timer.tf,
-               'dt': self.timer.dt,
-               't_feedback': self.timer.t_feedback,
+        rec = {'t0': self.timer.t0.magnitude,
+               'tf': self.timer.tf.magnitude,
+               'dt': self.timer.dt.magnitude,
+               't_feedback': self.timer.t_feedback.magnitude,
                'iso': self.iso,
                'e': self.e,
                'n_pg': self.n_pg,
@@ -170,4 +170,3 @@ class SimInfo(object):
                'inputblob': self.get_input_blob(self.infile)
                }
         return rec
-

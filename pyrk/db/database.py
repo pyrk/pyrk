@@ -2,13 +2,14 @@
 import tables as tb
 import descriptions as desc
 
+
 class Database(object):
     """The Database class handles operations on the pyrk simulation backend and
     provides utilities for interacting with it.
     """
 
     def __init__(self, filepath='pyrk.h5',
-                 mode='a',
+                 mode='w',
                  title='PyRKDatabase'
                  ):
         """Creates an hdf5 database for simulation information
@@ -30,7 +31,7 @@ class Database(object):
         self.tables = self.set_up_tables()
         self.make_groups()
         self.make_tables()
-        self.close_db()
+        self.recorders = {}
 
     def add_group(self, groupname, grouptitle, path_to_group='/'):
         """Creates a new group in the file
@@ -42,12 +43,12 @@ class Database(object):
         :param path_to_group: the database path, starts with '/'
         :type path_to_group: str
         """
-        self.open_db()
+
         group = self.group_exists(path_to_group, groupname)
         if group is False:
-            group = self.h5file.create_group(path_to_group,
-                                             groupname,
+            group = self.h5file.create_group(path_to_group, groupname,
                                              grouptitle)
+            #self.close_db()
         return group
 
     def add_table(self, groupname, tablename, description, tabletitle):
@@ -64,6 +65,7 @@ class Database(object):
         for k, v in row_dict.iteritems():
             table.row[k] = v
         table.row.append()
+        table.flush()
 
     def group_exists(self, path_to_group, groupname):
         try:
@@ -77,13 +79,14 @@ class Database(object):
         """Returns a handle to the open db"""
         #  make sure that it's open.
         self.h5file = tb.open_file(self.filepath, mode='a')
+        return self.h5file
 
     def close_db(self):
-        self.h5file = self.h5file.close()
+        tb.file._open_files.close_all()
 
     def record_all(self):
-        for r in self.recorders:
-            r()
+        for t, r in self.recorders.iteritems():
+            self.add_row(t, r())
 
     def delete_db(self):
         """If the database exists, delete it"""
@@ -93,27 +96,27 @@ class Database(object):
     def make_groups(self):
         for g in self.groups:
             self.add_group(groupname=g['groupname'],
-                         grouptitle=g['grouptitle'],
-                         path_to_group=g['path'])
+                           grouptitle=g['grouptitle'],
+                           path_to_group=g['path'])
 
     def make_tables(self):
         for t in self.tables:
             self.add_table(groupname=t['groupname'],
-                         tablename=t['tablename'],
-                         description=t['description'],
-                         tabletitle=t['tabletitle'])
+                           tablename=t['tablename'],
+                           description=t['description'],
+                           tabletitle=t['tabletitle'])
 
     def set_up_groups(self):
         groups = []
-        groups.append({'groupname':'th',
-                       'grouptitle':'TH',
-                       'path':'/'})
-        groups.append({'groupname':'neutronics',
-                       'grouptitle':'Neutronics',
-                       'path':'/'})
-        groups.append({'groupname':'metadata',
-                       'grouptitle':'Simulation Metadata',
-                       'path':'/'})
+        groups.append({'groupname': 'th',
+                       'grouptitle': 'TH',
+                       'path': '/'})
+        groups.append({'groupname': 'neutronics',
+                       'grouptitle': 'Neutronics',
+                       'path': '/'})
+        groups.append({'groupname': 'metadata',
+                       'grouptitle': 'Simulation Metadata',
+                       'path': '/'})
         return groups
 
     def set_up_tables(self):
@@ -130,10 +133,6 @@ class Database(object):
                        'tablename': 'sim_info',
                        'description': desc.SimInfoRow,
                        'tabletitle': 'Simulation Information'})
-        tables.append({'groupname': 'metadata',
-                       'tablename': 'simulations',
-                       'description': desc.SimulationRow,
-                       'tabletitle': 'Each Simulation'})
         tables.append({'groupname': 'neutronics',
                        'tablename': 'neutronics_timeseries',
                        'description': desc.NeutronicsTimeseriesRow,
@@ -152,6 +151,9 @@ class Database(object):
                        'tabletitle': 'Decay Heat Fractions'})
         return tables
 
-    def register_recorder(self, recorder):
-        self.recorders.append(recorder)
+    def register_recorder(self, groupname, tablename, recorder):
+        tab = self.get_table(groupname, tablename)
+        self.recorders[tab] = recorder
 
+    def get_table(self, groupname, tablename):
+        return self.h5file.root._f_get_child(groupname)._f_get_child(tablename)

@@ -166,6 +166,7 @@ def solve(si, y, infile):
            and n.t < si.timer.tf.magnitude
            and th.t < si.timer.tf.magnitude):
         si.timer.advance_one_timestep()
+        si.db.record_all()
         n.integrate(si.timer.current_time().magnitude)
         update_n(n.t, n.y, si)
         th.integrate(si.timer.current_time().magnitude)
