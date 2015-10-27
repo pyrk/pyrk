@@ -13,7 +13,7 @@ def dictfunc():
 class DatabaseTest(unittest.TestCase):
     def setUp(self):
         "set up test fixtures"
-        self.a = d.Database(mode='w')
+        self.a = d.Database()
 
     def tearDown(self):
         "tear down test fixtures"
@@ -21,7 +21,7 @@ class DatabaseTest(unittest.TestCase):
         self.a.delete_db()
 
     def test_default_constructor(self):
-        assert_equal(self.a.mode, 'w')
+        assert_equal(self.a.mode, 'a')
         assert_equal(self.a.title, 'PyRKDatabase')
         import os.path
         assert_true(os.path.isfile(self.a.filepath))
@@ -66,16 +66,17 @@ class DatabaseTest(unittest.TestCase):
                'n_dg': 1,
                'kappa': 0.0,
                'plotdir': 'images'}
-        tab = self.a.h5file.root.metadata.sim_info
+        tab = self.a.get_table('metadata', 'sim_info')
         self.a.add_row(tab, rec)
-        t0_obs = tab.col('t0')
-        t0_exp = 0.0
+        t0_obs = tab.col('t0')[0]
+        t0_exp = rec['t0']
         assert_equal(t0_obs, t0_exp)
-        tf_obs = tab.col('tf')
-        tf_exp = 10.0
+        tf_obs = tab.col('tf')[0]
+        tf_exp = rec['tf']
         assert_equal(tf_obs, tf_exp)
 
     def test_get_table(self):
+        self.a.open_db()
         tab = self.a.h5file.root.metadata.sim_info
         assert_equal(tab, self.a.get_table('metadata', 'sim_info'))
 

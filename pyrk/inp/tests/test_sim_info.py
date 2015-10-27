@@ -2,6 +2,7 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 
 from pyrk.inp import sim_info as si
+from pyrk.db import database
 
 from utilities.ur import units
 import th_system
@@ -21,7 +22,8 @@ def test_init_reasonable_sim():
     tester = th_component.THComponent()
     kappa = 0.0
     info = si.SimInfo(timer=ti, components={}, iso=iso, e=spectrum,
-                      n_precursors=npg, n_decay=ndg, kappa=kappa)
+                      n_precursors=npg, n_decay=ndg, kappa=kappa,
+                      db=database.Database(mode='w'))
     assert_equal(t0, info.timer.t0)
     assert_equal(tf, info.timer.tf)
     assert_equal(dt, info.timer.dt)

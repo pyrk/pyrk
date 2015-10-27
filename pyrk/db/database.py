@@ -6,18 +6,30 @@ import descriptions as desc
 import contextlib
 import sys
 
+
 @contextlib.contextmanager
 def nostderr():
     savestderr = sys.stderr
+
     class Devnull(object):
         def write(self, _): pass
+
         def flush(self): pass
+
     sys.stderr = Devnull()
     try:
         yield
     finally:
         sys.stderr = savestderr
 
+
+@contextlib.contextmanager
+def open_h5(db):
+    db.open_db()
+    try:
+        yield db
+    finally:
+        db.close_db()
 
 
 class Database(object):
@@ -26,7 +38,7 @@ class Database(object):
     """
 
     def __init__(self, filepath='pyrk.h5',
-                 mode='w',
+                 mode='a',
                  title='PyRKDatabase'
                  ):
         """Creates an hdf5 database for simulation information
@@ -60,12 +72,11 @@ class Database(object):
         :param path_to_group: the database path, starts with '/'
         :type path_to_group: str
         """
-
+        self.open_db()
         group = self.group_exists(path_to_group, groupname)
         if group is False:
             group = self.h5file.create_group(path_to_group, groupname,
                                              grouptitle)
-            #self.close_db()
         return group
 
     def add_table(self, groupname, tablename, description, tabletitle):
@@ -79,12 +90,14 @@ class Database(object):
         return table
 
     def add_row(self, table, row_dict):
+        self.open_db()
         for k, v in row_dict.iteritems():
             table.row[k] = v
         table.row.append()
         table.flush()
 
     def group_exists(self, path_to_group, groupname):
+        self.open_db()
         try:
             group = self.h5file.get_node(path_to_group,
                                          name=groupname)
@@ -94,8 +107,9 @@ class Database(object):
 
     def open_db(self):
         """Returns a handle to the open db"""
-        #  make sure that it's open.
-        self.h5file = tb.open_file(self.filepath, mode='a')
+        # if it is not open, open it.
+        if self.h5file.isopen is False:
+            self.h5file = tb.open_file(self.filepath, mode='a')
         return self.h5file
 
     def close_db(self):
@@ -103,8 +117,10 @@ class Database(object):
             tb.file._open_files.close_all()
 
     def record_all(self):
+        self.open_db()
         for t, r in self.recorders.iteritems():
             self.add_row(t, r())
+        self.close_db()
 
     def delete_db(self):
         """If the database exists, delete it"""
@@ -170,8 +186,10 @@ class Database(object):
         return tables
 
     def register_recorder(self, groupname, tablename, recorder):
+        self.open_db()
         tab = self.get_table(groupname, tablename)
         self.recorders[tab] = recorder
 
-    def get_table(self, groupname, tablename):
-        return self.h5file.root._f_get_child(groupname)._f_get_child(tablename)
+    def get_table(self, grp, tbl):
+        self.open_db()
+        return self.h5file.root._f_get_child(grp)._f_get_child(tbl)

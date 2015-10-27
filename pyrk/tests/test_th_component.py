@@ -3,6 +3,7 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
 
 import th_component as th
 from inp import sim_info
+from db import database
 from utilities.ur import units
 from timer import Timer
 from materials.material import Material
@@ -26,7 +27,7 @@ tfeedback = 5*units.seconds
 dt = 0.1*units.seconds
 ti = Timer(t0=t0, tf=tf, dt=dt, t_feedback=tfeedback)
 tester = th.THComponent(name=name, mat=mat, vol=vol, T0=T0, timer=ti)
-si = sim_info.SimInfo(kappa=kappa, timer=ti)
+si = sim_info.SimInfo(kappa=kappa, timer=ti, db=database.Database(mode='w'))
 
 tester_sph = th.THComponent(name=name, mat=mat, vol=vol, T0=T0, timer=ti,
                             sph=True, ri=0*units.meter, ro=1*units.meter)
