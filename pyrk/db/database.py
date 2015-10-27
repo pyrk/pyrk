@@ -38,7 +38,7 @@ class Database(object):
     """
 
     def __init__(self, filepath='pyrk.h5',
-                 mode='a',
+                 mode='w',
                  title='PyRKDatabase'
                  ):
         """Creates an hdf5 database for simulation information
@@ -50,6 +50,8 @@ class Database(object):
         :param title: The title of the database
         :type title: str
         """
+        self.recorders = {}
+        self.tablehandles = {}
         self.mode = mode
         self.title = title
         self.filepath = filepath
@@ -60,7 +62,6 @@ class Database(object):
         self.tables = self.set_up_tables()
         self.make_groups()
         self.make_tables()
-        self.recorders = {}
 
     def add_group(self, groupname, grouptitle, path_to_group='/'):
         """Creates a new group in the file
@@ -83,11 +84,12 @@ class Database(object):
         """Creates a new table
         All groupnames must be directly under root"""
         self.open_db()
-        table = self.h5file.create_table('/'+groupname,
-                                         tablename,
-                                         description,
-                                         tabletitle)
-        return table
+        p = self.get_tablepath(groupname, tablename)
+        self.tablehandles[p] = self.h5file.create_table('/'+groupname,
+                                                        tablename,
+                                                        description,
+                                                        tabletitle)
+        return self.tablehandles[p]
 
     def add_row(self, table, row_dict):
         self.open_db()
@@ -121,10 +123,8 @@ class Database(object):
             tb.file._open_files.close_all()
 
     def record_all(self):
-        self.open_db()
         for t, r in self.recorders.iteritems():
             self.add_row(t, r())
-        self.close_db()
 
     def delete_db(self):
         """If the database exists, delete it"""
@@ -194,6 +194,14 @@ class Database(object):
         tab = self.get_table(groupname, tablename)
         self.recorders[tab] = recorder
 
+    def get_tablepath(self, grp, tbl):
+        return '/'+grp+'/'+tbl
+
     def get_table(self, grp, tbl):
         self.open_db()
-        return self.h5file.root._f_get_child(grp)._f_get_child(tbl)
+        p = self.get_tablepath(grp, tbl)
+        try:
+            return self.tablehandles[p]
+        except KeyError:
+            msg = "table path " + p + " not found among table handles."
+            raise KeyError(msg)
