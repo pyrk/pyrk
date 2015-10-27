@@ -78,3 +78,24 @@ class DatabaseTest(unittest.TestCase):
     def test_get_table(self):
         tab = self.a.h5file.root.metadata.sim_info
         assert_equal(tab, self.a.get_table('metadata', 'sim_info'))
+
+    def test_set_up_tables(self):
+        tables = self.a.set_up_tables()
+        for t in tables:
+            assert_true(t['groupname'] in ['th',
+                                           'metadata',
+                                           'neutronics'])
+            assert_true(t['tablename'] in ['th_params', 'th_timeseries',
+                                           'sim_info',
+                                           'neutronics_timeseries',
+                                           'neutronics_params',
+                                           'zetas',
+                                           'omegas'
+                                           ])
+
+    def test_set_up_groups(self):
+        groups = self.a.set_up_groups()
+        for g in groups:
+            assert_true(g['groupname'] in ['th',
+                                           'metadata',
+                                           'neutronics'])

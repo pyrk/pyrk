@@ -3,6 +3,23 @@ import tables as tb
 import descriptions as desc
 
 
+import contextlib
+import sys
+
+@contextlib.contextmanager
+def nostderr():
+    savestderr = sys.stderr
+    class Devnull(object):
+        def write(self, _): pass
+        def flush(self): pass
+    sys.stderr = Devnull()
+    try:
+        yield
+    finally:
+        sys.stderr = savestderr
+
+
+
 class Database(object):
     """The Database class handles operations on the pyrk simulation backend and
     provides utilities for interacting with it.
@@ -82,7 +99,8 @@ class Database(object):
         return self.h5file
 
     def close_db(self):
-        tb.file._open_files.close_all()
+        with nostderr():
+            tb.file._open_files.close_all()
 
     def record_all(self):
         for t, r in self.recorders.iteritems():
