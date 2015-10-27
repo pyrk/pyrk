@@ -29,6 +29,7 @@ tester = th.THComponent(name=name, mat=mat, vol=vol, T0=T0, timer=ti)
 tester_sph = th.THComponent(name=name, mat=mat, vol=vol, T0=T0, timer=ti,
                             sph=True, ri=0*units.meter, ro=1*units.meter)
 
+
 def test_constructor():
     assert_equal(tester.name, name)
     assert_equal(tester.vol, vol)
