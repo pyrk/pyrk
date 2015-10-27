@@ -52,10 +52,10 @@ class Database(object):
         """
         self.mode = mode
         self.title = title
-        self.h5file = tb.open_file(filepath,
-                                   mode=self.mode,
-                                   title=self.title)
         self.filepath = filepath
+        self.h5file = tb.File(filename=self.filepath,
+                              title=self.title,
+                              mode=self.mode)
         self.groups = self.set_up_groups()
         self.tables = self.set_up_tables()
         self.make_groups()
@@ -108,14 +108,17 @@ class Database(object):
     def open_db(self):
         """Returns a handle to the open db"""
         # if it is not open, open it.
-        if self.h5file.isopen is False:
+        if self.h5file.isopen is True:
+            return self.h5file
+        else:
             self.h5file = tb.open_file(filename=self.filepath, mode='a')
+            assert(self.h5file.isopen)
         return self.h5file
 
     def close_db(self):
         with nostderr():
-            self.h5file.close()
-            #tb.file._open_files.close_all()
+            #self.h5file.close()
+            tb.file._open_files.close_all()
 
     def record_all(self):
         self.open_db()

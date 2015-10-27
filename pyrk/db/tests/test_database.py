@@ -88,8 +88,9 @@ class DatabaseTest(unittest.TestCase):
 
     def test_get_table(self):
         self.a.open_db()
-        tab = self.a.h5file.root.metadata.sim_info
-        assert_equal(tab, self.a.get_table('metadata', 'sim_info'))
+        exp_cols = self.a.h5file.root.metadata.sim_info.coldescrs
+        obs_cols = self.a.get_table('metadata', 'sim_info').coldescrs
+        assert_equal(exp_cols, obs_cols)
 
     def test_set_up_tables(self):
         tables = self.a.set_up_tables()
