@@ -109,13 +109,13 @@ class Database(object):
         """Returns a handle to the open db"""
         # if it is not open, open it.
         if self.h5file.isopen is False:
-            self.h5file = tb.open_file(self.filepath, mode='a')
-        assert(self.h5file.isopen)
+            self.h5file = tb.open_file(filename=self.filepath, mode='a')
         return self.h5file
 
     def close_db(self):
         with nostderr():
-            tb.file._open_files.close_all()
+            self.h5file.close()
+            #tb.file._open_files.close_all()
 
     def record_all(self):
         self.open_db()
