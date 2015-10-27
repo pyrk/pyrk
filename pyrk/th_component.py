@@ -71,7 +71,7 @@ class THComponent(object):
         self.cond = {}
         self.conv = {}
         self.adv = {}
-        #self.mass = {}
+        self.mass = {}
         self.cust = {}
         self.prev_t_idx = 0
         self.convBC = {}

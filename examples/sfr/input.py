@@ -4,7 +4,7 @@ import math
 from materials.sfrmetal import SFRMetal
 from materials.sodium import Sodium
 from materials.ss316 import SS316
-from materials.timer import Timer
+from timer import Timer
 
 #############################################
 #
