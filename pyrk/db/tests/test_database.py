@@ -13,7 +13,7 @@ def dictfunc():
 class DatabaseTest(unittest.TestCase):
     def setUp(self):
         "set up test fixtures"
-        self.a = d.Database()
+        self.a = d.Database(mode='w')
 
     def tearDown(self):
         "tear down test fixtures"
@@ -21,7 +21,7 @@ class DatabaseTest(unittest.TestCase):
         self.a.delete_db()
 
     def test_default_constructor(self):
-        assert_equal(self.a.mode, 'a')
+        assert_equal(self.a.mode, 'w')
         assert_equal(self.a.title, 'PyRKDatabase')
         import os.path
         assert_true(os.path.isfile(self.a.filepath))

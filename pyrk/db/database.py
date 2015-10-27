@@ -110,6 +110,7 @@ class Database(object):
         # if it is not open, open it.
         if self.h5file.isopen is False:
             self.h5file = tb.open_file(self.filepath, mode='a')
+        assert(self.h5file.isopen)
         return self.h5file
 
     def close_db(self):
