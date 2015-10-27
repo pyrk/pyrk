@@ -6,14 +6,14 @@ from db import database as d
 import unittest
 
 
-def testfunc():
+def dictfunc():
     return {'t0': 2}
 
 
 class DatabaseTest(unittest.TestCase):
     def setUp(self):
         "set up test fixtures"
-        self.a = d.Database(mode='a')
+        self.a = d.Database(mode='w')
 
     def tearDown(self):
         "tear down test fixtures"
@@ -21,7 +21,7 @@ class DatabaseTest(unittest.TestCase):
         self.a.delete_db()
 
     def test_default_constructor(self):
-        assert_equal(self.a.mode, 'a')
+        assert_equal(self.a.mode, 'w')
         assert_equal(self.a.title, 'PyRKDatabase')
         import os.path
         assert_true(os.path.isfile(self.a.filepath))
@@ -42,8 +42,8 @@ class DatabaseTest(unittest.TestCase):
         assert_false(self.a.h5file.isopen)
 
     def test_register_recorder(self):
-        self.a.register_recorder('metadata', 'sim_info', testfunc)
-        assert_true(testfunc in self.a.recorders.values())
+        self.a.register_recorder('metadata', 'sim_info', dictfunc)
+        assert_true(dictfunc in self.a.recorders.values())
 
     def test_custom_constructor(self):
         a = d.Database(filepath='testfile.h5')
