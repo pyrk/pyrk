@@ -60,7 +60,10 @@ def f_n(t, y, si):
     end_pg = 1 + si.n_pg
     f = np.zeros(shape=(n_n,), dtype=float)
     i = 0
-    f[i] = si.ne.dpdt(si.timer.ts, si.components, y[0], y[1:end_pg])
+    f[i] = si.ne.dpdt(si.timer.ts,
+                      si.components,
+                      y[0],
+                      y[1:end_pg])
     for j in range(0, si.n_pg):
         i += 1
         f[i] = si.ne.dzetadt(t, y[0], y[i], j)
@@ -107,7 +110,8 @@ def y0(si):
     f[i] = 1.0  # power is normalized is 1
     for j in range(0, si.n_pg):
         i += 1
-        f[i] = si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
+        f[i] = f[0] * \
+            si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
     for k in range(0, si.n_dg):
         i += 1
         f[i] = 0
@@ -234,9 +238,10 @@ if __name__ == "__main__":
                     default='input')
     ap.add_argument('--logfile', help='the name of the log file',
                     default='pyrk.log')
-    ap.add_argument('--plotdir', help='the name of the directory of output \
-                    plots',
-                    default='images')
+    ap.add_argument(
+        '--plotdir',
+        help='the name of the directory of output plots',
+        default='images')
     ap.add_argument('--outfile', help='the name of the output database',
                     default='pyrk.h5')
     args = ap.parse_args()

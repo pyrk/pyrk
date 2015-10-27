@@ -1,7 +1,9 @@
 # Ignore possible build & documentation
 docs/_build/
 build/
-
+pyrk.egg_info/
+dist/
+RELEASE-VERSION
 # Ignore temp files
 *.pyc
 *.save
@@ -23,9 +25,17 @@ matplotlibrc
 # Ignore rope files introduced by python-mode
 .ropeproject
 
-# Ignore produced image files
-*.eps
 *.pdf
+*.eps
 
-# Ignore log files
+.DS_Store
+
+# Ignore cluster files
+*.out
 *.log
+*.serr
+*.err
+*.sub
+
+# Ignore mergetool temp file
+*.orig

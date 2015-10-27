@@ -11,7 +11,8 @@ class Timer(object):
     def __init__(self,
                  t0=0.0*units.seconds,
                  tf=1.0*units.seconds,
-                 dt=1.0*units.seconds):
+                 dt=1.0*units.seconds,
+                 t_feedback=0.0*units.seconds):
         """Initialize the timer object. There should be only one.
 
         :param t0: first times in the simulation
@@ -29,6 +30,7 @@ class Timer(object):
                                                  num=self.timesteps()),
                                      'seconds')
         self.ts = 0
+        self.t_idx_feedback = self.t_idx(t_feedback)
 
     def t_idx(self, time):
         """given the actual time, in seconds, this returns the index of t.

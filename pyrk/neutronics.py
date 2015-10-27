@@ -9,6 +9,7 @@ from timer import Timer
 
 
 class Neutronics(object):
+
     """This class handles calculations and data related to the
     neutronics subblock
     """
@@ -23,7 +24,7 @@ class Neutronics(object):
         :type iso: str.
         :param e: The energy spectrum 'thermal' or 'fast' are supported.
         :type e: str.
-        :param n_precursors: Number of neutron precursor groups. 6 is supported.
+        :param n_precursors: Number of neutron precursor groups. 6 is supported
         :type n_precursors: int.
         :param n_decay: The number of decay heat groups. 11 is supported.
         :type n_decay: int.
@@ -32,9 +33,10 @@ class Neutronics(object):
         :returns: A Neutronics object that holds neutronics simulation info
         """
 
-        self._iso = v.validate_supported("iso", iso, ['u235', 'pu239', 'sfr'])
-        """_iso (str): Fissioning isotope. 'u235', 'pu239', or 'sfr' are
-        supported."""
+        self._iso = v.validate_supported("iso", iso,
+                                         ['u235', 'pu239', 'sfr', 'fhr'])
+        """_iso (str): Fissioning isotope. 'u235', 'pu239', or 'sfr', "fhr"
+        are supported."""
 
         self._e = v.validate_supported("e", e, ['thermal', 'fast'])
         """_e (str): Energy spectrum 'thermal' or 'fast' are supported."""
@@ -128,18 +130,17 @@ class Neutronics(object):
 
     def reactivity(self, t_idx, components):
         """Returns the reactivity, in $\Delta k$, at time t
-
-        :param t: time
-        :type t: float, units of seconds
-        :param dt: timestep size, units of seconds
-        :type dt: float, units of seconds
+        :param t_idx: time step that reactivity is calculated
+        :type t_idx: int, index
+        :param t_idx_feedback: time step that temperature feedback starts
+        :type t_idx_feedback: int, index
         :param components: thermal hydraulic component objects
-        :type components: list of THComponent objects
+        :type components: list of THComponent and/or THSuperComponent objects
         """
         rho = {}
-        if self.feedback:
+        if self.feedback and t_idx > self._timer.t_idx_feedback:
             for component in components:
-                rho[component.name] = component.temp_reactivity()
+                rho[component.name] = component.temp_reactivity(t_idx)
         rho["external"] = self._rho_ext(t_idx=t_idx).to('delta_k')
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret

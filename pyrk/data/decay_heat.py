@@ -72,6 +72,7 @@ class DecayData(object):
         lambda_dict["u235"] = {}
         lambda_dict["sfr"] = {}
         lambda_dict["pu239"] = {}
+        lambda_dict["fhr"] = {}
 
         # ANS/ANSI 5.1-1971 for 235U thermal fission standard, 11 groups
         lambda_dict["u235"]["thermal"] = [2.658*10**0, 4.619*10**(-1),
@@ -85,6 +86,7 @@ class DecayData(object):
         lambda_dict["sfr"]["fast"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         lambda_dict["pu239"]["thermal"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         lambda_dict["pu239"]["fast"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        lambda_dict["fhr"]["thermal"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         return lambda_dict[nuc][e]
 
     def _get_kappas(self, nuc, e):
@@ -105,6 +107,7 @@ class DecayData(object):
         kappa_dict["sfr"] = {}
         kappa_dict["u235"] = {}
         kappa_dict["pu239"] = {}
+        kappa_dict["fhr"] = {}
 
         # Decay heat data, ANS/ANSI 5.1-1971 for 235U thermal fission, 11grps
         kappa_dict["u235"]["thermal"] = [6.587*10**0,
@@ -122,4 +125,5 @@ class DecayData(object):
         kappa_dict["sfr"]["fast"] = [0.0, 0.0, 0.0]
         kappa_dict["pu239"]["thermal"] = [0.0, 0.0, 0.0]
         kappa_dict["pu239"]["fast"] = [0.0, 0.0, 0.0]
+        kappa_dict["fhr"]["thermal"] = [0.0, 0.0, 0.0]
         return kappa_dict[nuc][e]
