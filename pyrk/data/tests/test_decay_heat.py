@@ -38,7 +38,6 @@ def test_pu239_thermal_constructor():
     assert_equal(d._nuc, nuc)
 
 
-
 def test_pu239_fast_constructor():
     # TODO This should actually test for a warning to be issued
     n = 11
