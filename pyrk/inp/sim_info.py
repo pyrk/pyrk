@@ -23,7 +23,7 @@ class SimInfo(object):
                  feedback=False,
                  plotdir='images',
                  infile='input.py',
-                 db=database.Database()):
+                 db=None):
         """This class holds information about a reactor kinetics simulation
 
         :param timer: the Timer object for the simulation
@@ -62,7 +62,10 @@ class SimInfo(object):
                           dtype=float)
         self.plotdir = plotdir
         self.infile = infile
-        self.db = db
+        if db is not None:
+            self.db = db
+        else:
+            self.db = database.Database()
         self.db.register_recorder('metadata', 'sim_info', self.record)
 
     def init_rho_ext(self, rho_ext):

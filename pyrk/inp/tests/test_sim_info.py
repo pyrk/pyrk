@@ -5,15 +5,16 @@ from pyrk.inp import sim_info as si
 from pyrk.db import database
 
 from utilities.ur import units
-import th_system
 import th_component
 from timer import Timer
+
 
 def test_init_reasonable_sim():
     t0 = 0*units.seconds
     tf = 10*units.seconds
+    t_feedback = 1.*units.seconds
     dt = 0.1*units.seconds
-    ti = Timer(t0=t0,tf=tf,dt=dt)
+    ti = Timer(t0=t0, tf=tf, t_feedback=t_feedback, dt=dt)
     iso = "u235"
     spectrum = "thermal"
     npg = 6
@@ -28,3 +29,5 @@ def test_init_reasonable_sim():
     assert_equal(tf, info.timer.tf)
     assert_equal(dt, info.timer.dt)
     assert_equal(info.timer.timesteps(), 101)
+    info.db.close_db()
+    info.db.delete_db()
