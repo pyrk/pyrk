@@ -231,6 +231,7 @@ def main(args, curr_dir):
     print_logo(curr_dir)
     sol = solve(si=si, y=si.y, infile=infile)
     log_results(si)
+    out_db.close_db()
     plotter.plot(sol, si)
     pyrklog.critical("\nSimulation succeeded.\n")
 
