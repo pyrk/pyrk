@@ -258,14 +258,14 @@ class THComponent(object):
 
     def metadata(self):
         rec = {'name': self.name,
-               'vol': self.vol,
+               'vol': self.vol.magnitude,
                'matname': self.mat.name,
-               'k': self.k,
-               'cp': self.cp,
-               'T0': self.T0,
-               'alpha_temp': self.alpha,
+               'k': self.k.magnitude,
+               'cp': self.cp.magnitude,
+               'T0': self.T0.magnitude,
+               'alpha_temp': self.alpha_temp.magnitude,
                'heatgen': self.heatgen,
-               'power_tot': self.power_tot
+               'power_tot': self.power_tot.magnitude
                }
         return rec
 
@@ -275,11 +275,11 @@ class THComponent(object):
                'component': self.name,
                'temp': self.temp(t_idx),
                'density': self.rho(t_idx),
-               'k': self.k,
-               'cp': self.cp,
-               'alpha_temp': self.alpha,
+               'k': self.k.magnitude,
+               'cp': self.cp.magnitude,
+               'alpha_temp': self.alpha_temp.magnitude,
                'heatgen': self.heatgen,
-               'power_tot': self.power_tot
+               'power_tot': self.power_tot.magnitude
                }
         return rec
 
