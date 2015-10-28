@@ -147,15 +147,17 @@ class Neutronics(object):
         return to_ret
 
     def record(self):
-        rec = {'t_idx': self._timer.time(),
-               'rho_tot': self._rho[self._timer.time()],
+        t = self._timer.current_timestep()
+        rec = {'t_idx': t,
+               'rho_tot': self._rho[t],
                'rho_ext':
-               self._rho_ext(t_idx=self._timer.time()).to('delta_k').magnitude
+               self._rho_ext(t_idx=t).to('delta_k').magnitude
                }
         return rec
 
     def metadata(self, component):
-        rec = {'t_idx': self._timer.time(),
-               'component': component,
-               'rho': self._rho[component]}
+        timestep = self._timer.current_timestep()
+        rec = {'t_idx': timestep,
+               'component': component.name,
+               'rho': self._rho[component.temp_reactivity(timestep)]}
         return rec

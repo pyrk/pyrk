@@ -74,12 +74,13 @@ class SimInfo(object):
         self.db.register_recorder('metadata', 'sim_input', self.metadata,
                                   timeseries=False)
         self.db.register_recorder('neutronics', 'neutronics_params',
-                                  lambda: self.ne.metadata(),
+                                  self.ne.record,
                                   timeseries=True)
 
         for c in self.components:
+
             self.db.register_recorder('neutronics', 'neutronics_timeseries',
-                                      lambda: self.ne.record(c),
+                                      lambda: self.ne.metadata(c),
                                       timeseries=True)
 
             self.db.register_recorder('th', 'th_timeseries',

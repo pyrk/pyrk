@@ -9,6 +9,7 @@ class NeutronicsParamsRow(tb.IsDescription):
     :type <++>: <++>
     """
     t_idx = tb.Int32Col()
+    component = tb.StringCol(16)
     rho_tot = tb.Float64Col()
     rho_ext = tb.Float64Col()
 
@@ -78,7 +79,7 @@ class ThTimeseriesRow(tb.IsDescription):
 
 class ThMetadataRow(tb.IsDescription):
     """This describes a THComponentParams record structure"""
-    name = tb.StringCol(16)
+    component = tb.StringCol(16)
     vol = tb.Float64Col()
     matname = tb.StringCol(16)
     k = tb.Float64Col()

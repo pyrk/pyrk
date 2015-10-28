@@ -257,7 +257,7 @@ class THComponent(object):
         }
 
     def metadata(self):
-        rec = {'name': self.name,
+        rec = {'component': self.name,
                'vol': self.vol.magnitude,
                'matname': self.mat.name,
                'k': self.k.magnitude,
@@ -270,11 +270,11 @@ class THComponent(object):
         return rec
 
     def record(self):
-        t_idx = self.timer.time()
-        rec = {'t_idx': t_idx,
+        timestep = self.timer.current_timestep()
+        rec = {'t_idx': timestep,
                'component': self.name,
-               'temp': self.temp(t_idx),
-               'density': self.rho(t_idx),
+               'temp': self.temp(timestep).magnitude,
+               'density': self.rho(timestep).magnitude,
                'k': self.k.magnitude,
                'cp': self.cp.magnitude,
                'alpha_temp': self.alpha_temp.magnitude,
