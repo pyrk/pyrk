@@ -145,3 +145,17 @@ class Neutronics(object):
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret
         return to_ret
+
+    def record(self):
+        rec = {'t_idx': self._timer.time(),
+               'rho_tot': self._rho[self._timer.time()],
+               'rho_ext':
+               self._rho_ext(t_idx=self._timer.time()).to('delta_k').magnitude
+               }
+        return rec
+
+    def metadata(self, component):
+        rec = {'t_idx': self._timer.time(),
+               'component': component,
+               'rho': self._rho[component]}
+        return rec

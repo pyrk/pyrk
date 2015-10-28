@@ -261,4 +261,8 @@ class THSystem(object):
         denom = res.to(units.kelvin/units.watt)
         return num/denom
 
+    def record(self, component):
+        return component.record()
 
+    def metadata(self, component):
+        return component.metadata()

@@ -9,8 +9,6 @@ class NeutronicsParamsRow(tb.IsDescription):
     :type <++>: <++>
     """
     t_idx = tb.Int32Col()
-    t = tb.Float64Col()
-    power_tot = tb.Float64Col()
     rho_tot = tb.Float64Col()
     rho_ext = tb.Float64Col()
 
@@ -28,9 +26,7 @@ class NeutronicsTimeseriesRow(tb.IsDescription):
     :type <++>: <++>
     """
     t_idx = tb.Int32Col()
-    t = tb.Float64Col()
-    component = tb.StringCol(16)  # 16 character string
-    power = tb.Float64Col()
+    component = tb.StringCol(16)
     rho = tb.Float64Col()
 
 
@@ -47,7 +43,6 @@ class ZetasTimestepRow(tb.IsDescription):
     :type <++>: <++>
     """
     t_idx = tb.Int32Col()
-    t = tb.Float64Col()
     zeta_idx = tb.Float64Col()
     zeta = tb.Float64Col()
 
@@ -65,35 +60,32 @@ class OmegasTimestepRow(tb.IsDescription):
     :type <++>: <++>
     """
     t_idx = tb.Int32Col()
-    t = tb.Float64Col()
     omega_idx = tb.Float64Col()
     omega = tb.Float64Col()
 
 
 class ThTimeseriesRow(tb.IsDescription):
-    t_idx = tb.Int32Col()
-    t = tb.Float64Col()
-    component = tb.StringCol(16)  # 16 character string
-    temp = tb.Float64Col()            # 32 bit float
-    matname = tb.StringCol(16)
-    k = tb.Float64Col()     # 32 bit integer column
+    t_idx = tb.Int64Col()
+    component = tb.StringCol(16)
+    temp = tb.Float64Col()
+    density = tb.Float64Col()
+    k = tb.Float64Col()
     cp = tb.Float64Col()
-    T0 = tb.Float64Col()
     alpha_temp = tb.Float64Col()
-    heatgen = tb.Float64Col()
+    heatgen = tb.BoolCol()
     power_tot = tb.Float64Col()
 
 
 class ThMetadataRow(tb.IsDescription):
     """This describes a THComponentParams record structure"""
-    name = tb.StringCol(16)  # 16 character string
-    vol = tb.Float64Col()            # 32 bit float
+    name = tb.StringCol(16)
+    vol = tb.Float64Col()
     matname = tb.StringCol(16)
-    k = tb.Float64Col()     # 32 bit integer column
+    k = tb.Float64Col()
     cp = tb.Float64Col()
     T0 = tb.Float64Col()
     alpha_temp = tb.Float64Col()
-    heatgen = tb.Float64Col()
+    heatgen = tb.BoolCol()
     power_tot = tb.Float64Col()
 
 

@@ -256,6 +256,33 @@ class THComponent(object):
             "cp": cp.to('joule/kg/kelvin')
         }
 
+    def metadata(self):
+        rec = {'name': self.name,
+               'vol': self.vol,
+               'matname': self.mat.name,
+               'k': self.k,
+               'cp': self.cp,
+               'T0': self.T0,
+               'alpha_temp': self.alpha,
+               'heatgen': self.heatgen,
+               'power_tot': self.power_tot
+               }
+        return rec
+
+    def record(self):
+        t_idx = self.timer.time()
+        rec = {'t_idx': t_idx,
+               'component': self.name,
+               'temp': self.temp(t_idx),
+               'density': self.rho(t_idx),
+               'k': self.k,
+               'cp': self.cp,
+               'alpha_temp': self.alpha,
+               'heatgen': self.heatgen,
+               'power_tot': self.power_tot
+               }
+        return rec
+
 
 class THSuperComponent(THComponent):
 

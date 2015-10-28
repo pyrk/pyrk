@@ -66,10 +66,29 @@ class SimInfo(object):
             self.db = db
         else:
             self.db = database.Database()
+        self.register_recorders()
+
+    def register_recorders(self):
         self.db.register_recorder('metadata', 'sim_info', self.record,
                                   timeseries=False)
         self.db.register_recorder('metadata', 'sim_input', self.metadata,
                                   timeseries=False)
+        self.db.register_recorder('neutronics', 'neutronics_params',
+                                  lambda: self.ne.metadata(),
+                                  timeseries=True)
+
+        for c in self.components:
+            self.db.register_recorder('neutronics', 'neutronics_timeseries',
+                                      lambda: self.ne.record(c),
+                                      timeseries=True)
+
+            self.th.register_recorder('th', 'th_timeseries',
+                                      lambda: self.th.record(c),
+                                      timeseries=True)
+
+            self.db.register_recorder('th', 'th_params', self.th.metadata(c),
+                                      timeseries=False)
+        # TODO: for all n_pg and n_dg, report zetas and omegas
 
     def init_rho_ext(self, rho_ext):
         """Initializes reactivity insertion object for the none case.
