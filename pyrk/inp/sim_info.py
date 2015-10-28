@@ -66,7 +66,10 @@ class SimInfo(object):
             self.db = db
         else:
             self.db = database.Database()
-        self.db.register_recorder('metadata', 'sim_info', self.record)
+        self.db.register_recorder('metadata', 'sim_info', self.record,
+                                  timeseries=False)
+        self.db.register_recorder('metadata', 'sim_input', self.metadata,
+                                  timeseries=False)
 
     def init_rho_ext(self, rho_ext):
         """Initializes reactivity insertion object for the none case.
@@ -119,15 +122,15 @@ class SimInfo(object):
             self.components[th_component.name] = th_component
             return th_component
 
-    def get_git_revision_hash():
+    def get_git_revision_hash(self):
         import subprocess
         return subprocess.check_output(['git', 'rev-parse', 'HEAD'])
 
-    def get_git_revision_short_hash():
+    def get_git_revision_short_hash(self):
         import subprocess
         return subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'])
 
-    def get_timestamp():
+    def get_timestamp(self):
         # time since epoch, a float
         import time
         ts = time.time()
@@ -136,10 +139,10 @@ class SimInfo(object):
         st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
         return ts, st
 
-    def get_input_blob(filename):
-        f = open(filename, 'r')
-        instring = f.read()
-        return instring
+    def get_input_blob(self, filename):
+        with open(filename, 'r') as f:
+            instring = f.read()
+            return instring
 
     def add_entry(table, rec):
         for k, v in rec.iteritems():
@@ -147,7 +150,7 @@ class SimInfo(object):
             table.row.append()
             table.flush()
 
-    def get_sim_hash():
+    def get_sim_hash(self):
         # TODO fix. Currently nonsense
         return 010101010101010101
 

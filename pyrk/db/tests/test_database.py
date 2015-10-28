@@ -56,7 +56,8 @@ class DatabaseTest(unittest.TestCase):
         assert_true(self.custom.h5file.isopen)
 
     def test_register_recorder(self):
-        self.a.register_recorder('metadata', 'sim_info', dictfunc)
+        self.a.register_recorder('metadata', 'sim_info', dictfunc,
+                                 timeseries=True)
         assert_true(dictfunc in self.a.recorders.values())
 
     def test_custom_constructor(self):
@@ -100,6 +101,7 @@ class DatabaseTest(unittest.TestCase):
                                            'neutronics'])
             assert_true(t['tablename'] in ['th_params', 'th_timeseries',
                                            'sim_info',
+                                           'sim_input',
                                            'neutronics_timeseries',
                                            'neutronics_params',
                                            'zetas',

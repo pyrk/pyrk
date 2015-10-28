@@ -23,15 +23,6 @@ def nostderr():
         sys.stderr = savestderr
 
 
-@contextlib.contextmanager
-def open_h5(db):
-    db.open_db()
-    try:
-        yield db
-    finally:
-        db.close_db()
-
-
 class Database(object):
     """The Database class handles operations on the pyrk simulation backend and
     provides utilities for interacting with it.
@@ -159,6 +150,14 @@ class Database(object):
 
     def set_up_tables(self):
         tables = []
+        tables.append({'groupname': 'metadata',
+                       'tablename': 'sim_info',
+                       'description': desc.SimInfoRow,
+                       'tabletitle': 'Simulation Information'})
+        tables.append({'groupname': 'metadata',
+                       'tablename': 'sim_input',
+                       'description': desc.SimInputRow,
+                       'tabletitle': 'Simulation Input Data'})
         tables.append({'groupname': 'th',
                        'tablename': 'th_params',
                        'description': desc.ThMetadataRow,
@@ -167,10 +166,6 @@ class Database(object):
                        'tablename': 'th_timeseries',
                        'description': desc.ThTimeseriesRow,
                        'tabletitle': 'TH Timeseries'})
-        tables.append({'groupname': 'metadata',
-                       'tablename': 'sim_info',
-                       'description': desc.SimInfoRow,
-                       'tabletitle': 'Simulation Information'})
         tables.append({'groupname': 'neutronics',
                        'tablename': 'neutronics_timeseries',
                        'description': desc.NeutronicsTimeseriesRow,
@@ -189,10 +184,14 @@ class Database(object):
                        'tabletitle': 'Decay Heat Fractions'})
         return tables
 
-    def register_recorder(self, groupname, tablename, recorder):
+    def register_recorder(self, groupname, tablename, recorder,
+                          timeseries=False):
         self.open_db()
         tab = self.get_table(groupname, tablename)
-        self.recorders[tab] = recorder
+        if timeseries is False:
+            self.add_row(tab, recorder())
+        else:
+            self.recorders[tab] = recorder
 
     def get_tablepath(self, grp, tbl):
         return '/'+grp+'/'+tbl

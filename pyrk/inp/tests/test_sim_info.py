@@ -9,6 +9,7 @@ import th_component
 from timer import Timer
 
 
+
 def test_init_reasonable_sim():
     t0 = 0*units.seconds
     tf = 10*units.seconds
@@ -22,12 +23,15 @@ def test_init_reasonable_sim():
     kappa = 0.06
     tester = th_component.THComponent()
     kappa = 0.0
+    testfile = 'testfile.py'
+    fakefile = open(testfile, 'w+')
     info = si.SimInfo(timer=ti, components={}, iso=iso, e=spectrum,
                       n_precursors=npg, n_decay=ndg, kappa=kappa,
-                      db=database.Database(mode='w'))
+                      infile=testfile, db=database.Database(mode='w'))
     assert_equal(t0, info.timer.t0)
     assert_equal(tf, info.timer.tf)
     assert_equal(dt, info.timer.dt)
     assert_equal(info.timer.timesteps(), 101)
     info.db.close_db()
     info.db.delete_db()
+

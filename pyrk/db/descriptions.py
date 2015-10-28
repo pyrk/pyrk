@@ -99,11 +99,11 @@ class ThMetadataRow(tb.IsDescription):
 
 class SimInfoRow(tb.IsDescription):
     """This describes a SimInfoParams record structure"""
-    sim = tb.Int64Col()            # 64 bit float
-    t0 = tb.Float64Col()            # 64 bit float
-    tf = tb.Float64Col()            # 64 bit float
-    dt = tb.Float64Col()            # 64 bit float
-    t_feedback = tb.Float64Col()    # 64 bit float
+    sim = tb.Int64Col()
+    t0 = tb.Float64Col()
+    tf = tb.Float64Col()
+    dt = tb.Float64Col()
+    t_feedback = tb.Float64Col()
     iso = tb.StringCol(16)
     e = tb.StringCol(16)
     n_pg = tb.Int32Col()
@@ -112,12 +112,13 @@ class SimInfoRow(tb.IsDescription):
     plotdir = tb.StringCol(16)
 
 
-class SimulationRow(tb.IsDescription):
+class SimInputRow(tb.IsDescription):
     """This describes a simulation record structure"""
-    simhash = tb.Int64Col()            # 64 bit float
-    timestep = tb.Int64Col()            # 64 bit float
+    simhash = tb.Int64Col()
+    timestamp = tb.Int64Col()
+    humantime = tb.StringCol(16)
+    revision = tb.StringCol(16)
     # pytables can't handle VL strings
     # a long input file might be 10000 bytes
     # for now, anything longer will be cut off...
     inputblob = tb.StringCol(10000)
-    revision = tb.StringCol(16)
