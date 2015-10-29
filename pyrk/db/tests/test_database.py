@@ -58,7 +58,7 @@ class DatabaseTest(unittest.TestCase):
     def test_register_recorder(self):
         self.a.register_recorder('metadata', 'sim_info', dictfunc,
                                  timeseries=True)
-        assert_true(dictfunc in self.a.recorders.values())
+        assert_true(any(dictfunc in r for r in self.a.recorders))
 
     def test_custom_constructor(self):
         assert_equal(self.custom.filepath, 'testfile.h5')

@@ -78,15 +78,12 @@ class SimInfo(object):
                                   timeseries=True)
 
         for c in self.components:
-
             self.db.register_recorder('neutronics', 'neutronics_timeseries',
                                       lambda: self.ne.metadata(c),
                                       timeseries=True)
-
             self.db.register_recorder('th', 'th_timeseries',
                                       lambda: self.th.record(c),
                                       timeseries=True)
-
             self.db.register_recorder('th', 'th_params',
                                       lambda: self.th.metadata(c),
                                       timeseries=False)

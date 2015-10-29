@@ -41,7 +41,7 @@ class Database(object):
         :param title: The title of the database
         :type title: str
         """
-        self.recorders = {}
+        self.recorders = []
         self.tablehandles = {}
         self.mode = mode
         self.title = title
@@ -110,11 +110,10 @@ class Database(object):
 
     def close_db(self):
         with nostderr():
-            #self.h5file.close()
             tb.file._open_files.close_all()
 
     def record_all(self):
-        for t, r in self.recorders.iteritems():
+        for t, r in enumerate(self.recorders):
             self.add_row(t, r())
 
     def delete_db(self):
@@ -191,7 +190,7 @@ class Database(object):
         if timeseries is False:
             self.add_row(tab, recorder())
         else:
-            self.recorders[tab] = recorder
+            self.recorders.append((tab, recorder))
 
     def get_tablepath(self, grp, tbl):
         return '/'+grp+'/'+tbl
