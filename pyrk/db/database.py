@@ -113,7 +113,9 @@ class Database(object):
             tb.file._open_files.close_all()
 
     def record_all(self):
-        for t, r in enumerate(self.recorders):
+        for i in self.recorders:
+            t = i[0]
+            r = i[1]
             self.add_row(t, r())
 
     def delete_db(self):
