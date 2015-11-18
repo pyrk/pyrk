@@ -5,6 +5,7 @@ from utilities.ur import units
 class THSystem(object):
 
     """This class models:
+
     - lumped capacitance model for slab geometry
     - 1-D heat diffusion in spherical geometry, for heat
     generation at any radius in the sphere,
