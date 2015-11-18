@@ -1,3 +1,4 @@
+import six
 import numpy as np
 from inp import validation
 from utilities.ur import units
@@ -305,7 +306,7 @@ class THSuperComponent(THComponent):
         :param t_innercomp: temperature of the component that is inside self
         :type t_innercomp: float
         '''
-        for envname, d in self.conv.iteritems():
+        for envname, d in six.iteritems(self.conv):
             h = self.conv[envname]["h"].magnitude
             k = self.conv[envname]["k"].magnitude
             dr = self.conv[envname]["dr"].magnitude

@@ -31,10 +31,10 @@
 #
 #   include RELEASE-VERSION
 
+from __future__ import print_function
 __all__ = ["get_git_version"]
 
 from subprocess import Popen, PIPE
-
 
 def call_git_describe():
     try:
@@ -50,11 +50,11 @@ def call_git_describe():
 
 def read_release_version():
     try:
-        f = open("RELEASE-VERSION", "r")
+        f = open("RELEASE-VERSION", "rt")
 
         try:
-            version = f.readlines()[0]
-            return version.strip()
+            v = f.readlines()[0]
+            return v.strip()
 
         finally:
             f.close()
@@ -63,9 +63,9 @@ def read_release_version():
         return None
 
 
-def write_release_version(version):
+def write_release_version(v):
     f = open("RELEASE-VERSION", "w")
-    f.write("%s\n" % version)
+    f.write("%s\n" % v)
     f.close()
 
 
@@ -74,38 +74,39 @@ def get_git_version():
     release_version = read_release_version()
 
     # First try to get the current version using “git describe”.
-    version = call_git_describe()
+    v = call_git_describe()
 
     # adapt to PEP 440 compatible versioning scheme
-    version = pep440adapt(version)
+    v = pep440adapt(v)
 
     # If that doesn't work, fall back on the value that's in
     # RELEASE-VERSION.
-    if version is None:
-        version = release_version
+    if v is None:
+        v = release_version
 
     # If we still don't have anything, that's an error.
-    if version is None:
+    if v is None:
         raise ValueError("Cannot find the version number!")
 
     # If the current version is different from what's in the
     # RELEASE-VERSION file, update the file to be current.
-    if version != release_version:
-        write_release_version(version)
+    if v != release_version:
+        write_release_version(v)
 
     # Finally, return the current version.
-    return version
+    return v
 
 
-def pep440adapt(version):
-    if version is not None and '-' in version:
+def pep440adapt(v):
+    dash = b'-'
+    if v is not None and dash in v:
         # adapt git-describe version to be in line with PEP 440
         # by setting a dev release identifier
-        parts = version.split('-')
-        parts[-2] = 'dev' + parts[-1].lstrip('g')
-        version = '.'.join(parts[:-1])
-    return version
+        parts = v.split(dash)
+        parts[-2] = b'dev' + parts[-1].lstrip(b'g')
+        v = b'.'.join(parts[:-1])
+    return v
 
 
 if __name__ == "__main__":
-    print get_git_version()
+    print(get_git_version())
