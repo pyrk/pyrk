@@ -8,7 +8,7 @@ class THSystem(object):
 
     - lumped capacitance model for slab geometry
     - 1-D heat diffusion in spherical geometry, for heat
-    generation at any radius in the sphere,
+      generation at any radius in the sphere,
     - advective heat transfer by fluid
     - convective heat transfer at the solid surface to fluid.
     """
