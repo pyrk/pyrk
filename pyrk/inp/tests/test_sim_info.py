@@ -1,6 +1,8 @@
 from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 
+import os
+
 from pyrk.inp import sim_info as si
 from pyrk.db import database
 
@@ -8,7 +10,16 @@ from utilities.ur import units
 import th_component
 from timer import Timer
 
+def setup_func():
+    "set up test fixtures"
+    file = open('testfile.py', 'w+')
+    file.close()
 
+def teardown_func():
+    "tear down test fixtures"
+    os.remove('testfile.py')
+
+@with_setup(setup_func, teardown_func)
 def test_init_reasonable_sim_no_components():
     t0 = 0*units.seconds
     tf = 10*units.seconds
@@ -34,7 +45,7 @@ def test_init_reasonable_sim_no_components():
     info.db.delete_db()
 
 
-
+@with_setup(setup_func, teardown_func)
 def test_init_reasonable_sim_w_components():
     t0 = 0*units.seconds
     tf = 10*units.seconds

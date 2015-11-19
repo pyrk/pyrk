@@ -2,13 +2,16 @@
 import tables as tb
 import descriptions as desc
 
-
 import contextlib
 import sys
 
 
 @contextlib.contextmanager
 def nostderr():
+    """This context manager catches standard error output.
+    It is used mostly to catch the unnecessary fileclosed warnings from
+    pytables.
+    """
     savestderr = sys.stderr
 
     class Devnull(object):
@@ -73,7 +76,17 @@ class Database(object):
 
     def add_table(self, groupname, tablename, description, tabletitle):
         """Creates a new table
-        All groupnames must be directly under root"""
+        All groupnames must be directly under root
+
+        :param groupname: name of the group to add
+        :type groupname: str
+        :param tablename: name of the table to add
+        :type tablename: str
+        :param description: metadata for the table
+        :type : str
+        :param tabletitle: metadata to store in plain english, a title
+        :type tabletitle: str
+        """
         self.open_db()
         p = self.get_tablepath(groupname, tablename)
         self.tablehandles[p] = self.h5file.create_table('/'+groupname,
@@ -83,6 +96,13 @@ class Database(object):
         return self.tablehandles[p]
 
     def add_row(self, table, row_dict):
+        """Adds a row to the table
+
+        :param table: handle to the table where the row will reside
+        :type tablename: pytables Table object
+        :param row_dict: metadata to store in plain english, a title
+        :type row_dict: dictionary of row keys and values
+        """
         self.open_db()
         for k, v in row_dict.iteritems():
             table.row[k] = v
