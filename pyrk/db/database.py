@@ -96,7 +96,7 @@ class Database(object):
         return self.tablehandles[p]
 
     def add_row(self, table, row_dict):
-        """Adds a row to the table
+        """Adds a row to the table and flushes the table
 
         :param table: handle to the table where the row will reside
         :type tablename: pytables Table object
@@ -110,6 +110,15 @@ class Database(object):
         table.flush()
 
     def group_exists(self, path_to_group, groupname):
+        """Checks whether the group exsts, with that name, at that path
+
+        :param groupname: name of the group to add
+        :type groupname: str
+        :param path_to_group: the database path, starts with '/'
+        :type path_to_group: str
+        :returns: returns the group
+        :rtype: pytables Group object
+        """
         self.open_db()
         try:
             group = self.h5file.get_node(path_to_group,
@@ -133,6 +142,8 @@ class Database(object):
             tb.file._open_files.close_all()
 
     def record_all(self):
+        """For each row sent by current recorders, add the row.
+        """
         for i in self.recorders:
             t = i[0]
             r = i[1]
@@ -144,12 +155,16 @@ class Database(object):
         os.remove(self.filepath)
 
     def make_groups(self):
+        """For each group in groups, add group to the db.
+        """
         for g in self.groups:
             self.add_group(groupname=g['groupname'],
                            grouptitle=g['grouptitle'],
                            path_to_group=g['path'])
 
     def make_tables(self):
+        """For each table in tables, add table to the db.
+        """
         for t in self.tables:
             self.add_table(groupname=t['groupname'],
                            tablename=t['tablename'],
@@ -157,6 +172,11 @@ class Database(object):
                            tabletitle=t['tabletitle'])
 
     def set_up_groups(self):
+        """We know what groups need to exist for a PyRK simulation. This is
+        their info.
+
+        :returns: groups that define the simulation in PyRK
+        """
         groups = []
         groups.append({'groupname': 'th',
                        'grouptitle': 'TH',
@@ -170,6 +190,11 @@ class Database(object):
         return groups
 
     def set_up_tables(self):
+        """We know what tables need to exist for a PyRK simulation. This is
+        their info.
+
+        :returns: tables that define the simulation in PyRK
+        """
         tables = []
         tables.append({'groupname': 'metadata',
                        'tablename': 'sim_info',
@@ -207,6 +232,17 @@ class Database(object):
 
     def register_recorder(self, groupname, tablename, recorder,
                           timeseries=False):
+        """Register an entity that wants to represent itself in the Database
+
+        :param groupname: name of the group to add
+        :type groupname: str
+        :param path_to_group: the database path, starts with '/'
+        :type path_to_group: str
+        :param recorder: a function pointer that returns a table row
+        :type recorder: function object
+        :param timeseries: should this be recorded each timestep?
+        :type timeseries: bool
+        """
         self.open_db()
         tab = self.get_table(groupname, tablename)
         if timeseries is False:
@@ -214,12 +250,30 @@ class Database(object):
         else:
             self.recorders.append((tab, recorder))
 
-    def get_tablepath(self, grp, tbl):
-        return '/'+grp+'/'+tbl
+    def get_tablepath(self, groupname, tablename):
+        """Compiles the string for a table within a group
 
-    def get_table(self, grp, tbl):
+        :param groupname: name of the group
+        :type groupname: str
+        :param tablename: name of the table in the group
+        :type tablename: str
+        :returns: the path to the table in the group
+        :rtype: str
+        """
+        return '/'+groupname+'/'+tablename
+
+    def get_table(self, groupname, tablename):
+        """Compiles the string for a table within a group
+
+        :param groupname: name of the group
+        :type groupname: str
+        :param tablename: name of the table in the group
+        :type tablename: str
+        :returns: the path to the table in the group
+        :rtype: str
+        """
         self.open_db()
-        p = self.get_tablepath(grp, tbl)
+        p = self.get_tablepath(groupname, tablename)
         try:
             return self.tablehandles[p]
         except KeyError:
