@@ -262,7 +262,7 @@ class THSystem(object):
         return num/denom
 
     def record(self, component):
-        return component.record()
+        return self.comp_from_name(component).record()
 
     def metadata(self, component):
-        return component.metadata()
+        return self.comp_from_name(component).metadata()

@@ -82,10 +82,10 @@ class SimInfo(object):
                                       lambda: self.ne.metadata(c),
                                       timeseries=True)
             self.db.register_recorder('th', 'th_timeseries',
-                                      lambda: self.th.record(c),
+                                      c.record,
                                       timeseries=True)
             self.db.register_recorder('th', 'th_params',
-                                      lambda: self.th.metadata(c),
+                                      c.metadata,
                                       timeseries=False)
         # TODO: for all n_pg and n_dg, report zetas and omegas
 

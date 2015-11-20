@@ -1,6 +1,6 @@
 # Licensed under a 3-clause BSD style license - see LICENSE
 import tables as tb
-import descriptions as desc
+from db import descriptions as desc
 
 import contextlib
 import sys
@@ -138,6 +138,7 @@ class Database(object):
         return self.h5file
 
     def close_db(self):
+        """Closes all currently open handles to the database."""
         with nostderr():
             tb.file._open_files.close_all()
 
@@ -263,7 +264,7 @@ class Database(object):
         return '/'+groupname+'/'+tablename
 
     def get_table(self, groupname, tablename):
-        """Compiles the string for a table within a group
+        """Returns the table handle for a table within a group
 
         :param groupname: name of the group
         :type groupname: str
