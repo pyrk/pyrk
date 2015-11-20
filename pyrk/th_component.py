@@ -270,7 +270,7 @@ class THComponent(object):
         return rec
 
     def record(self):
-        timestep = self.timer.current_timestep()
+        timestep = self.prev_t_idx
         rec = {'t_idx': timestep,
                'component': self.name,
                'temp': self.temp(timestep).magnitude,
