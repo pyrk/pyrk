@@ -184,7 +184,7 @@ class THComponent(object):
         :type area: float
         '''
         self.conv[env] = {
-            "h": h.to('joule/second/kelvin/meter**2'),
+            "h": h,
             "area": area
         }
 
@@ -210,7 +210,7 @@ class THComponent(object):
         :type R: float
         '''
         self.convBC[env] = {
-            "h": h.to('joule/second/kelvin/meter**2'),
+            "h": h,
             "prev_comp": prev_comp,
             "R": R
         }
@@ -295,7 +295,7 @@ class THSuperComponent(THComponent):
         self.add_conduction_in_mesh()
         self.alpha_temp = 0.0*units.delta_k/units.kelvin
 
-    def compute_tr(self, t_env, t_innercomp):
+    def compute_tr(self, t_env, t_innercomp, h):
         '''compute temperature at r=R for the sphere from the temperature at r=R-dr
         and the temperature of the env/fluid/coolant
 
@@ -306,7 +306,7 @@ class THSuperComponent(THComponent):
         :type t_innercomp: float
         '''
         for envname, d in self.conv.iteritems():
-            h = self.conv[envname]["h"].magnitude
+            #h = self.conv[envname]["h"].h(env.rho(t_env)).magnitude
             k = self.conv[envname]["k"].magnitude
             dr = self.conv[envname]["dr"].magnitude
         return (-h/k*t_env+t_innercomp/dr)/(1/dr-h/k)
