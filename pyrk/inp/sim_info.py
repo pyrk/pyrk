@@ -22,7 +22,8 @@ class SimInfo(object):
                  rho_ext=None,
                  feedback=False,
                  plotdir='images',
-                 infile='input.py',
+                 infile=None,
+                 sim_id=None,
                  db=None):
         """This class holds information about a reactor kinetics simulation
 
@@ -62,6 +63,11 @@ class SimInfo(object):
                           dtype=float)
         self.plotdir = plotdir
         self.infile = infile
+        if sim_id is not None:
+            self.sim_id = sim_id
+        else:
+            self.sim_id = self.generate_sim_id()
+
         if db is not None:
             self.db = db
         else:
@@ -155,19 +161,19 @@ class SimInfo(object):
         return ts, st
 
     def get_input_blob(self, filename):
-        with open(filename, 'r') as f:
-            instring = f.read()
-            return instring
+        instring = ''
+        if filename is not None:
+            with open(filename, 'r') as f:
+                instring = f.read()
+        return instring
 
-    def add_entry(table, rec):
-        for k, v in rec.iteritems():
-            table.row[k] = v
-            table.row.append()
-            table.flush()
+    def generate_sim_id(self):
+        """generates sim id, unique to this simulation.
 
-    def get_sim_hash(self):
-        # TODO fix. Currently nonsense
-        return 010101010101010101
+        :rtype: str"""
+        import uuid
+        sim_id = uuid.uuid4().hex
+        return sim_id
 
     def record(self):
         rec = {'t0': self.timer.t0.magnitude,
@@ -184,7 +190,7 @@ class SimInfo(object):
 
     def metadata(self):
         ts, st = self.get_timestamp()
-        rec = {'simhash': self.get_sim_hash(),
+        rec = {'simhash': self.generate_sim_id(),
                'timestamp': ts,
                'humantime': st,
                'revision': self.get_git_revision_short_hash(),

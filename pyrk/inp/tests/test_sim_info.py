@@ -36,7 +36,7 @@ def test_init_reasonable_sim_no_components():
     open(testfile, 'w+')
     info = si.SimInfo(timer=ti, components={}, iso=iso, e=spectrum,
                       n_precursors=npg, n_decay=ndg, kappa=kappa,
-                      infile=testfile, db=database.Database(mode='w'))
+                      infile=testfile, sim_id=None, db=database.Database(mode='w'))
     assert_equal(t0, info.timer.t0)
     assert_equal(tf, info.timer.tf)
     assert_equal(dt, info.timer.dt)
@@ -72,3 +72,10 @@ def test_init_reasonable_sim_w_components():
     info.db.close_db()
     info.db.delete_db()
 
+def test_sim_id():
+    info = si.SimInfo()
+    first_id = info.generate_sim_id()
+    next_id = info.generate_sim_id()
+    assert_false(first_id == next_id)
+    info.db.close_db()
+    info.db.delete_db()

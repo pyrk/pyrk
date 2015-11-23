@@ -107,7 +107,7 @@ class SimInfoRow(tb.IsDescription):
 
 class SimInputRow(tb.IsDescription):
     """This describes a simulation record structure"""
-    simhash = tb.Int64Col()
+    simhash = tb.StringCol(16)
     timestamp = tb.Int64Col()
     humantime = tb.StringCol(16)
     revision = tb.StringCol(16)
