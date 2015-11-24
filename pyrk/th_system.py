@@ -96,18 +96,12 @@ class THSystem(object):
                         env.T[t_idx].magnitude, Qconv.magnitude)
                 to_ret -= Qconv/cap/component.vol.magnitude
             for name, d in component.adv.iteritems():
-                Qadv = self.advection(t_out=component.T[t_idx].magnitude*2.0 -
-                                      d['t_in'].magnitude,
+                Qadv = self.advection(component,
+                                      t_idx,
                                       t_in=d['t_in'].magnitude,
                                       m_flow=d['m_flow'],
                                       cp=d['cp'])
                 to_ret -= Qadv/cap/component.vol.magnitude
-                assert Qadv >= 0, '''at step %d, Qadv>=0, means %s is heating
-                the system by %f watts. Qadv needs to be <0.
-                Tin is %f, tout is %f, tcomp is %f''' % (
-                    t_idx, component.name, Qadv, d['t_in'].magnitude,
-                    (component.T[t_idx]*2 - d['t_in']).magnitude,
-                    component.T[t_idx].magnitude)
             return to_ret*units.kelvin/units.seconds
 
     def BC_center(self, component, t_idx):
@@ -212,11 +206,13 @@ class THSystem(object):
         denom = (L/(k*A)).magnitude
         return num/denom
 
-    def advection(self, t_out, t_in, m_flow, cp):
+    def advection(self, component, t_idx, t_in, m_flow, cp):
         ''' calculate heat transfer by advection in watts
 
-        :param t_out: outlet temperature
-        :type t_out: float
+        :param component: name of the component
+        :type component: str
+        :param t_idx: time step that conduction heat is computed
+        :type t_idx: int
         :param t_in: inlet temperature
         :type t_in: float
         :param m_flow: mass flow rate though the control volume
@@ -226,8 +222,15 @@ class THSystem(object):
         :return: dimemsionless quantity of Qadvective
         :rtype: float
         '''
-        return m_flow.magnitude*cp.magnitude*(t_out-t_in)
 
+        #check if the temperature is the initial temperature 0degC
+        #set Qadv=0 in this case for computation stability
+        if component.T[t_idx] == 0*units.degC.to('kelvin'):
+                        Qadv = 0
+        else:
+            t_out = component.T[t_idx].magnitude*2.0 - t_in
+            Qadv = m_flow.magnitude*cp.magnitude*(t_out-t_in)
+        return Qadv
     def mass_trans(self, t_b, t_inlet, H, u):
         """
         :param t_b: The temperature of the body
