@@ -44,12 +44,14 @@ class THComponent(object):
         :type heatgen: bool
         :param power_tot: power generated in this component
         :type power_tot: float
-        :param sph: is this component a spherical component, spherical equations
-        for heatgen, conduction are different, post-processing is different too
+        :param sph: is this component a spherical component, spherical
+        equations for heatgen, conduction are different,
+        post-processing is different too
         :type sph: bool
         :param ri: inner radius of the sph/annular component, ri=0 for sphere
         :type ri: float
-        :param ro: outer radius of the sph/annular component, ro=radius for sphere
+        :param ro: outer radius of the sph/annular component,
+        ro=radius for sphere
         :type ro: float
         """
         self.name = name
@@ -213,8 +215,7 @@ class THComponent(object):
             "R": R
         }
 
-    def add_conduction(self, env, k,
-                       area=0.0*units.meter**2, L=0.0*units.meter,
+    def add_conduction(self, env, area=0.0*units.meter**2, L=0.0*units.meter,
                        r_b=0.0*units.meter, r_env=0.0*units.meter):
         '''Add parameters for conduction heat transfer calculation
         area and L are used for slab geometry
@@ -222,9 +223,6 @@ class THComponent(object):
 
         :param env: name of the component that this component conduct heat to
         :type env: str
-        :param k: thermal conductivity of the material that heat is conducted
-        in(may not be the 'self' component)
-        :type k:float
         :param area: conduction surface for the slab
         :type area: float
         :param L: thickness of the slab
@@ -235,7 +233,6 @@ class THComponent(object):
         :type r_env: float
         '''
         self.cond[env] = {
-            "k": k.to('watts/meter/kelvin'),
             "area": area.to('meter**2'),
             "L": L.to('meter'),
             "r_b": r_b.to('meter'),
@@ -258,6 +255,33 @@ class THComponent(object):
             "t_in": t_in.to('kelvin'),
             "cp": cp.to('joule/kg/kelvin')
         }
+
+    def metadata(self):
+        rec = {'component': self.name,
+               'vol': self.vol.magnitude,
+               'matname': self.mat.name,
+               'k': self.k.magnitude,
+               'cp': self.cp.magnitude,
+               'T0': self.T0.magnitude,
+               'alpha_temp': self.alpha_temp.magnitude,
+               'heatgen': self.heatgen,
+               'power_tot': self.power_tot.magnitude
+               }
+        return rec
+
+    def record(self):
+        timestep = self.prev_t_idx
+        rec = {'t_idx': timestep,
+               'component': self.name,
+               'temp': self.temp(timestep).magnitude,
+               'density': self.rho(timestep).magnitude,
+               'k': self.k.magnitude,
+               'cp': self.cp.magnitude,
+               'alpha_temp': self.alpha_temp.magnitude,
+               'heatgen': self.heatgen,
+               'power_tot': self.power_tot.magnitude
+               }
+        return rec
 
 
 class THSuperComponent(THComponent):
@@ -340,17 +364,13 @@ class THSuperComponent(THComponent):
         N = len(self.sub_comp)
         # element i=0:
         self.sub_comp[0].add_conduction(
-            self.sub_comp[1].name,
-            self.sub_comp[0].k)
+            self.sub_comp[1].name)
         # element i=1:elementNb-3
         for i in range(1, N-2):
             self.sub_comp[i].add_conduction(
-                self.sub_comp[i - 1].name,
-                self.sub_comp[i].k)
+                self.sub_comp[i - 1].name)
             self.sub_comp[i].add_conduction(
-                self.sub_comp[i + 1].name,
-                self.sub_comp[i].k)
+                self.sub_comp[i + 1].name)
         # element i=elementNb-2
         self.sub_comp[N - 2].add_conduction(
-            self.sub_comp[N - 3].name,
-            self.sub_comp[N - 2].k)
+            self.sub_comp[N - 3].name)

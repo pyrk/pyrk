@@ -68,7 +68,6 @@ class THSystem(object):
                 else:
                     Qcond = self.conduction_slab(component, env, t_idx,
                                                  L=d["L"],
-                                                 k=d["k"],
                                                  A=d["area"])
                 to_ret -= Qcond/cap
             for interface, d in component.conv.iteritems():
@@ -112,7 +111,8 @@ class THSystem(object):
             return to_ret*units.kelvin/units.seconds
 
     def BC_center(self, component, t_idx):
-        '''Qconduction from the center of a sphere to the first boundary
+        '''Volumetric conductive heat flux Qconduction from the center of a
+        sphere to the first boundary
         (conduction without interface) in watts/meter**3
 
         :param component: name of the inner most component(mesh element)
@@ -191,9 +191,7 @@ class THSystem(object):
         k = component.k.magnitude
         return k/r_b * (r_b * T_b - r_env * T_env)/(dr**2)
 
-    def conduction_slab(self, component, env, t_idx,
-                        L=0.0*units.meter,
-                        k=0.0*units.watt/units.meter/units.kelvin,
+    def conduction_slab(self, component, env, t_idx, L,
                         A=0.0*units.meter**2):
         """
         compute volumetric heat transfer by conduction(watts/m3)
@@ -204,14 +202,13 @@ class THSystem(object):
         :type env: str
         :param t_idx: time step that conduction heat is computed
         :type t_idx: int
-        :pram k: conductivity
-        :type k: float, units w/mk
         :return: Qond, dimemsionless quantity
         :rtype: float
         """
         T_b = component.T[t_idx].magnitude
         T_env = env.T[t_idx].magnitude
         num = (T_b-T_env)
+        k = component.k
         denom = (L/(k*A)).magnitude
         return num/denom
 
@@ -229,10 +226,7 @@ class THSystem(object):
         :return: dimemsionless quantity of Qadvective
         :rtype: float
         '''
-        if t_out > t_in:
-            return m_flow.magnitude*cp.magnitude*(t_out-t_in)
-        else:
-            return 0.0
+        return m_flow.magnitude*cp.magnitude*(t_out-t_in)
 
     def mass_trans(self, t_b, t_inlet, H, u):
         """
@@ -267,4 +261,8 @@ class THSystem(object):
         denom = res.to(units.kelvin/units.watt)
         return num/denom
 
+    def record(self, component):
+        return self.comp_from_name(component).record()
 
+    def metadata(self, component):
+        return self.comp_from_name(component).metadata()

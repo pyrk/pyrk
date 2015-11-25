@@ -23,7 +23,8 @@ class Timer(object):
         :type dt: float, units of seconds
         """
         self.t0 = validation.validate_ge("t0", t0, 0.0*units.seconds)
-        self.tf = validation.validate_ge("tf", tf, t0)
+        self.t_feedback = validation.validate_ge("t_feedback", t_feedback, t0)
+        self.tf = validation.validate_ge("tf", tf, t_feedback)
         self.dt = validation.validate_ge("dt", dt, 0.0*units.seconds)
         self.series = units.Quantity(np.linspace(start=t0.magnitude,
                                                  stop=tf.magnitude,
