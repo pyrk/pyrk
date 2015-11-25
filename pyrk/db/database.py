@@ -4,6 +4,7 @@ from db import descriptions as desc
 
 import contextlib
 import sys
+import six
 
 
 @contextlib.contextmanager
@@ -104,7 +105,7 @@ class Database(object):
         :type row_dict: dictionary of row keys and values
         """
         self.open_db()
-        for k, v in row_dict.iteritems():
+        for k, v in six.iteritems(row_dict):
             table.row[k] = v
         table.row.append()
         table.flush()
