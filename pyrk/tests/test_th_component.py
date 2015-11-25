@@ -1,3 +1,4 @@
+from __future__ import print_function
 from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 
@@ -61,7 +62,7 @@ def test_dtemp():
 
     T2 = 50*units.kelvin
     tester.update_temp(time1-1, T2)
-    print tester.T[time1-1]
+    print(tester.T[time1-1])
     assert_equal(tester.dtemp(time1), T2 - tester.T[ti.t_idx_feedback])
 
 
