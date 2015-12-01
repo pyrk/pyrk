@@ -9,4 +9,5 @@ units.define('mult_factor = [] = 1000 * pcm = keff')
 units.define('per_cent_delta_k = 0.01 * delta_k')
 units.define('delta_k = keff/keff')
 
+units.define('Pa = kg/meter/second**2')
 units.define('MeV = 1.6e-19 * joules')

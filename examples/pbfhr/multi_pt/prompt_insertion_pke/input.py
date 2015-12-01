@@ -10,6 +10,7 @@ from utilities.ur import units
 import th_component as th
 import math
 from materials.material import Material
+from convective_model import ConvectiveModel
 from density_model import DensityModel
 from timer import Timer
 import numpy as np
@@ -68,7 +69,8 @@ a_pb = area_sphere(r_shell)
 
 # Coolant flow properties
 # 4700TODO implement h(T) model
-h_cool = 4700.0*units.watt/units.kelvin/units.meter**2
+h_cool = ConvectiveModel(h0=4700.0*units.watt/units.kelvin/units.meter**2,
+                         model='constant')
 m_flow = 976.0*units.kg/units.seconds
 t_inlet = units.Quantity(600.0, units.degC)
 
@@ -114,20 +116,21 @@ rho_ext = StepReactivityInsertion(timer=ti,
 # maximum number of internal steps that the ode solver will take
 nsteps = 5000
 
+mu0=0*units.pascal*units.second
 k_mod = 17*units.watt/(units.meter*units.kelvin)
 cp_mod = 1650.0*units.joule/(units.kg*units.kelvin)
 rho_mod = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
-Moderator = Material('mod', k_mod, cp_mod, rho_mod)
+Moderator = Material('mod', k_mod, cp_mod, mu0, rho_mod)
 
 k_fuel = 15*units.watt/(units.meter*units.kelvin)
 cp_fuel = 1818.0*units.joule/units.kg/units.kelvin
 rho_fuel = DensityModel(a=2220.0*units.kg/(units.meter**3), model="constant")
-Fuel = Material('fuel', k_fuel, cp_fuel, rho_fuel)
+Fuel = Material('fuel', k_fuel, cp_fuel, mu0, rho_fuel)
 
 k_shell = 17*units.watt/(units.meter*units.kelvin)
 cp_shell = 1650.0*units.joule/(units.kg*units.kelvin)
 rho_shell = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
-Shell = Material('shell', k_shell, cp_shell, rho_shell)
+Shell = Material('shell', k_shell, cp_shell, mu0, rho_shell)
 
 k_cool = 1*units.watt/(units.meter*units.kelvin)
 cp_cool = 2415.78*units.joule/(units.kg*units.kelvin)
@@ -137,7 +140,7 @@ rho_cool = DensityModel(a=2415.6 *
                         units.kg /
                         (units.meter**3) /
                         units.kelvin, model="linear")
-cool = Material('cool', k_cool, cp_cool, rho_cool)
+cool = Material('cool', k_cool, cp_cool, mu0, rho_cool)
 
 mod = th.THComponent(name="mod",
                      mat=Moderator,

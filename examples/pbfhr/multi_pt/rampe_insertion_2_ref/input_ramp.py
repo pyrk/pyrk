@@ -11,6 +11,7 @@ import th_component as th
 import math
 from materials.material import Material
 from density_model import DensityModel
+from convective_model import ConvectiveModel
 from timer import Timer
 import numpy as np
 #############################################
@@ -33,7 +34,7 @@ t_feedback = 150.0*units.seconds
 # Temperature feedbacks of reactivity
 alpha_fuel = -3.19*units.pcm/units.kelvin
 alpha_mod = -0.7*units.pcm/units.kelvin
-alpha_shell = 0*units.pcm/units.kelvin
+alpha_shell = -0.7*units.pcm/units.kelvin
 alpha_cool = 0.23*units.pcm/units.kelvin
 
 # initial temperature
@@ -64,12 +65,15 @@ vol_mod = vol_sphere(r_mod)
 vol_fuel = vol_sphere(r_fuel) - vol_sphere(r_mod)
 vol_shell = vol_sphere(r_shell) - vol_sphere(r_fuel)
 vol_cool = (vol_mod + vol_fuel + vol_shell)*0.4/0.6
+vol_unit_cell = vol_sphere(r_shell) + vol_cool
 a_pb = area_sphere(r_shell)
 
 # Coolant flow properties
-# 4700TODO implement h(T) model
-h_cool = 4700.0*units.watt/units.kelvin/units.meter**2
+#full core flow rate
 m_flow = 976.0*units.kg/units.seconds
+dp = 3.0/100*units.meter
+#full core flow area
+a_flow = math.pi*(1.25**2 - 0.35**2)*units.meter**2
 t_inlet = units.Quantity(600.0, units.degC)
 
 #############################################
@@ -110,8 +114,8 @@ rho_ext = RampReactivityInsertion(timer=ti,
                                   t_start=t_feedback + 10.0*units.seconds,
                                   t_end=t_feedback + 20.0*units.seconds,
                                   rho_init=0.0*units.delta_k,
-                                  rho_rise=600.0*units.pcm,
-                                  rho_final=600.0*units.pcm)
+                                  rho_rise=650.0*units.pcm,
+                                  rho_final=650.0*units.pcm)
 
 # maximum number of internal steps that the ode solver will take
 nsteps = 5000
@@ -140,7 +144,13 @@ rho_cool = DensityModel(a=2415.6 *
                         (units.meter**3) /
                         units.kelvin, model="linear")
 cool = Material('cool', k_cool, cp_cool, rho_cool)
-
+cool.mu = 4.638 * 10**5/( 650**2.79)*units.pascal*units.second
+h_cool = ConvectiveModel(cool,
+                         h0=4700.0*units.watt/units.kelvin/units.meter**2,
+                         m_flow=m_flow,
+                         a_flow=a_flow,
+                         length_scale=dp,
+                         model='wakao')
 mod = th.THComponent(name="mod",
                      mat=Moderator,
                      vol=vol_mod,
@@ -196,3 +206,32 @@ components = []
 for i in range(0, len(pebble.sub_comp)):
     components.append(pebble.sub_comp[i])
 components.extend([pebble, cool])
+<<<<<<< HEAD:examples/pbfhr/multi_pt/rampe_insertion_2_ref/input_ramp.py
+||||||| merged common ancestors
+
+uncert = [
+    alpha_cool,
+    alpha_fuel,
+    k_mod,
+    k_fuel,
+    k_shell,
+    cp_mod,
+    cp_fuel,
+    cp_shell,
+    cp_cool,
+    h_cool]
+uncertainty_param = np.array([o.magnitude for o in uncert])
+=======
+
+uncert = [
+    alpha_cool,
+    alpha_fuel,
+    k_mod,
+    k_fuel,
+    k_shell,
+    cp_mod,
+    cp_fuel,
+    cp_shell,
+    cp_cool]
+uncertainty_param = np.array([o.magnitude for o in uncert])
+>>>>>>> withUnits:examples/pbfhr/multi_pt/input.py

@@ -56,7 +56,8 @@ class THSystem(object):
                 QconvBC = self.convBoundary(component,
                                             t_b=component.T[t_idx].magnitude,
                                             t_env=env.T[t_idx].magnitude,
-                                            h=d["h"],
+                                            h=d["h"].h(env.rho(t_idx),
+                                                       env.mat.mu),
                                             R=d["R"])
                 to_ret -= QconvBC/cap
             if component.heatgen:
@@ -74,40 +75,37 @@ class THSystem(object):
                 env = self.comp_from_name(interface)
                 if isinstance(env, THSuperComponent):
                     Tr = env.compute_tr(component.T[t_idx].magnitude,
-                                        env.sub_comp[-2].T[t_idx].magnitude)
+                                        env.sub_comp[-2].T[t_idx].magnitude,
+                                        h=d['h'].h(component.rho(t_idx),
+                                                   component.mat.mu).magnitude)
                     Qconv = self.convection(t_b=component.T[t_idx].magnitude,
                                             t_env=Tr,
-                                            h=d['h'],
+                                            h=d['h'].h(component.rho(t_idx),
+                                                       component.mat.mu),
                                             A=d['area'])
                     assert (Qconv*(component.T[t_idx].magnitude-Tr)) >= 0, '''
                     convection from %s to %s, from low temperature %f to
-                    high temperature %f is not physical: %f''' % (
+                    high %f is not physical: %f''' % (
                         component.name, env.name, component.T[t_idx].magnitude,
                         Tr, Qconv.magnitude)
                 else:
                     Qconv = self.convection(t_b=component.T[t_idx].magnitude,
                                             t_env=env.T[t_idx].magnitude,
-                                            h=d['h'],
+                                            h=d['h'].h(),
                                             A=d['area'])
                     assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, \
-                        '''convection from %s to %s, from low temperature %f to
-                    high temperature %f is not physical: %f''' % (
-                        component.name, env.name, component.T[t_idx].magnitude,
-                        env.T[t_idx].magnitude, Qconv.magnitude)
+                        'convection from %s to %s, %fc to %fc is not physical' \
+                        % (component.name, env.name,
+                           component.T[t_idx].magnitude,
+                           env.T[t_idx].magnitude)
                 to_ret -= Qconv/cap/component.vol.magnitude
             for name, d in component.adv.iteritems():
-                Qadv = self.advection(t_out=component.T[t_idx].magnitude*2.0 -
-                                      d['t_in'].magnitude,
+                Qadv = self.advection(component,
+                                      t_idx,
                                       t_in=d['t_in'].magnitude,
                                       m_flow=d['m_flow'],
                                       cp=d['cp'])
                 to_ret -= Qadv/cap/component.vol.magnitude
-                assert Qadv >= 0, '''at step %d, Qadv>=0, means %s is heating
-                the system by %f watts. Qadv needs to be <0.
-                Tin is %f, tout is %f, tcomp is %f''' % (
-                    t_idx, component.name, Qadv, d['t_in'].magnitude,
-                    (component.T[t_idx]*2 - d['t_in']).magnitude,
-                    component.T[t_idx].magnitude)
             return to_ret*units.kelvin/units.seconds
 
     def BC_center(self, component, t_idx):
@@ -212,11 +210,9 @@ class THSystem(object):
         denom = (L/(k*A)).magnitude
         return num/denom
 
-    def advection(self, t_out, t_in, m_flow, cp):
+    def advection(self, component, t_idx, t_in, m_flow, cp):
         ''' calculate heat transfer by advection in watts
 
-        :param t_out: outlet temperature
-        :type t_out: float
         :param t_in: inlet temperature
         :type t_in: float
         :param m_flow: mass flow rate though the control volume
@@ -226,8 +222,12 @@ class THSystem(object):
         :return: dimemsionless quantity of Qadvective
         :rtype: float
         '''
-        return m_flow.magnitude*cp.magnitude*(t_out-t_in)
-
+        if component.T[t_idx] == 0*units.degC.to('kelvin'):
+            Qadv = 0
+        else:
+            t_out = component.T[t_idx].magnitude*2.0 - t_in
+            Qadv = m_flow.magnitude*cp.magnitude*(t_out-t_in)
+        return Qadv
     def mass_trans(self, t_b, t_inlet, H, u):
         """
         :param t_b: The temperature of the body
