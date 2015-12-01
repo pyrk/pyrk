@@ -1,6 +1,6 @@
 from utilities.ur import units
 from density_model import DensityModel
-from material import Material
+from materials.material import Material
 
 
 class Sodium(Material):

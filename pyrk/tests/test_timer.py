@@ -1,3 +1,4 @@
+import six
 from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 
@@ -97,12 +98,12 @@ def test_troublemaker():
 def test_idx_from_t():
     dt = 0.005*units.seconds
     t0 = 0.0*units.seconds
-    test_dict = {0.12*units.seconds: 24,
-                 0.125*units.seconds: 25,
-                 0.13*units.seconds: 26,
-                 0.135*units.seconds: 27,
-                 0.14*units.seconds: 28}
-    for time, exp in test_dict.iteritems():
+    test_dict = {24: 0.12*units.seconds,
+                 25: 0.125*units.seconds,
+                 26: 0.13*units.seconds,
+                 27: 0.135*units.seconds,
+                 28: 0.14*units.seconds}
+    for exp, time in six.iteritems(test_dict):
         obs = default.idx_from_t(time=time, t0=t0, dt=dt)
         assert_equal(obs, exp)
 
@@ -110,12 +111,12 @@ def test_idx_from_t():
 def test_idx_from_t_and_back():
     dt = 0.005*units.seconds
     t0 = 0.0*units.seconds
-    test_dict = {0.12*units.seconds: 24,
-                 0.125*units.seconds: 25,
-                 0.13*units.seconds: 26,
-                 0.135*units.seconds: 27,
-                 0.14*units.seconds: 28}
-    for time, exp in test_dict.iteritems():
+    test_dict = {24: 0.12*units.seconds,
+                 25: 0.125*units.seconds,
+                 26: 0.13*units.seconds,
+                 27: 0.135*units.seconds,
+                 28: 0.14*units.seconds}
+    for exp, time in six.iteritems(test_dict):
         idx = trouble.idx_from_t(time=time, t0=t0, dt=dt)
         other_idx = trouble.idx_from_t(time=trouble.t(idx), t0=t0, dt=dt)
         assert_equal(idx, other_idx)
