@@ -203,9 +203,9 @@ class Database(object):
                        'description': desc.SimInfoRow,
                        'tabletitle': 'Simulation Information'})
         tables.append({'groupname': 'metadata',
-                       'tablename': 'sim_input',
-                       'description': desc.SimInputRow,
-                       'tabletitle': 'Simulation Input Data'})
+                       'tablename': 'sim_timeseries',
+                       'description': desc.SimTimeseriesRow,
+                       'tabletitle': 'Simulation Power Data'})
         tables.append({'groupname': 'th',
                        'tablename': 'th_params',
                        'description': desc.ThMetadataRow,

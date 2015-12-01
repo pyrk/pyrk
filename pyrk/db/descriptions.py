@@ -66,7 +66,14 @@ class ThMetadataRow(tb.IsDescription):
 class SimInfoRow(tb.IsDescription):
     """A row descriptor for simulation information
     """
-    sim = tb.Int64Col()
+    simhash = tb.StringCol(16)
+    timestamp = tb.Int64Col()
+    humantime = tb.StringCol(16)
+    revision = tb.StringCol(16)
+    # pytables can't handle VL strings
+    # a long input file might be 10000 bytes
+    # for now, anything longer will be cut off...
+    inputblob = tb.StringCol(10000)
     t0 = tb.Float64Col()
     tf = tb.Float64Col()
     dt = tb.Float64Col()
@@ -79,15 +86,9 @@ class SimInfoRow(tb.IsDescription):
     plotdir = tb.StringCol(16)
 
 
-class SimInputRow(tb.IsDescription):
+class SimTimeseriesRow(tb.IsDescription):
     """
-    Simulation input information
+    Power Info
     """
-    simhash = tb.StringCol(16)
-    timestamp = tb.Int64Col()
-    humantime = tb.StringCol(16)
-    revision = tb.StringCol(16)
-    # pytables can't handle VL strings
-    # a long input file might be 10000 bytes
-    # for now, anything longer will be cut off...
-    inputblob = tb.StringCol(10000)
+    t_idx = tb.Int64Col()
+    power = tb.Float64Col()
