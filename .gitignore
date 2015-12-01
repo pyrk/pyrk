@@ -4,8 +4,10 @@ build/
 pyrk\.egg_info/
 dist/
 RELEASE-VERSION
+
 # Ignore temp files
-*.pyc
+__pycache__/
+*.py[cod]
 *.save
 *.bak
 .*.swp

@@ -5,6 +5,7 @@ from timer import Timer
 import neutronics
 import reactivity_insertion as ri
 import th_system
+from db import database
 
 
 class SimInfo(object):
@@ -20,7 +21,10 @@ class SimInfo(object):
                  kappa=0.0,
                  rho_ext=None,
                  feedback=False,
-                 plotdir='images'):
+                 plotdir='images',
+                 infile=None,
+                 sim_id=None,
+                 db=None):
         """This class holds information about a reactor kinetics simulation
 
         :param timer: the Timer object for the simulation
@@ -53,10 +57,40 @@ class SimInfo(object):
         self.rho_ext = self.init_rho_ext(rho_ext)
         self.feedback = feedback
         self.ne = self.init_ne()
+        self.kappa = kappa
         self.th = th_system.THSystem(kappa=kappa, components=components)
         self.y = np.zeros(shape=(timer.timesteps(), self.n_entries()),
                           dtype=float)
         self.plotdir = plotdir
+        self.infile = infile
+        if sim_id is not None:
+            self.sim_id = sim_id
+        else:
+            self.sim_id = self.generate_sim_id()
+
+        if db is not None:
+            self.db = db
+        else:
+            self.db = database.Database()
+        self.register_recorders()
+
+    def register_recorders(self):
+        self.db.register_recorder('metadata', 'sim_info', self.metadata,
+                                  timeseries=False)
+        self.db.register_recorder('metadata', 'sim_timeseries', self.record,
+                                timeseries=True)
+        self.db.register_recorder('neutronics', 'neutronics_params',
+                                  self.ne.record,
+                                  timeseries=True)
+
+        for c in self.components:
+            self.db.register_recorder('th', 'th_timeseries',
+                                      c.record,
+                                      timeseries=True)
+            self.db.register_recorder('th', 'th_params',
+                                      c.metadata,
+                                      timeseries=False)
+        # TODO: for all n_pg and n_dg, report zetas and omegas
 
     def init_rho_ext(self, rho_ext):
         """Initializes reactivity insertion object for the none case.
@@ -108,3 +142,61 @@ class SimInfo(object):
         else:
             self.components[th_component.name] = th_component
             return th_component
+
+    def get_git_revision_hash(self):
+        import subprocess
+        return subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+
+    def get_git_revision_short_hash(self):
+        import subprocess
+        return subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'])
+
+    def get_timestamp(self):
+        # time since epoch, a float
+        import time
+        ts = time.time()
+        # human readable time, a string
+        import datetime
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        return ts, st
+
+    def get_input_blob(self, filename):
+        instring = ''
+        if filename is not None:
+            with open(filename, 'r') as f:
+                instring = f.read()
+        return instring
+
+    def generate_sim_id(self):
+        """generates sim id, unique to this simulation.
+
+        :rtype: str"""
+        import uuid
+        sim_id = uuid.uuid4().hex
+        return sim_id
+
+    def metadata(self):
+        ts, st = self.get_timestamp()
+        rec = {'simhash': self.generate_sim_id(),
+               'timestamp': ts,
+               'humantime': st,
+               'revision': self.get_git_revision_short_hash(),
+               'inputblob': self.get_input_blob(self.infile),
+               't0': self.timer.t0.magnitude,
+               'tf': self.timer.tf.magnitude,
+               'dt': self.timer.dt.magnitude,
+               't_feedback': self.timer.t_feedback.magnitude,
+               'iso': self.iso,
+               'e': self.e,
+               'n_pg': self.n_pg,
+               'n_dg': self.n_dg,
+               'kappa': self.kappa,
+               'plotdir': self.plotdir}
+        return rec
+
+    def record(self):
+        t_idx = self.timer.current_timestep() - 1
+        power = self.y[t_idx][0]
+        rec = {'t_idx': t_idx,
+               'power': power}
+        return rec

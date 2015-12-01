@@ -1,3 +1,4 @@
+import six
 import numpy as np
 from inp import validation
 from utilities.ur import units
@@ -255,6 +256,33 @@ class THComponent(object):
             "t_in": t_in.to('kelvin'),
             "cp": cp.to('joule/kg/kelvin')
         }
+
+    def metadata(self):
+        rec = {'component': self.name,
+               'vol': self.vol.magnitude,
+               'matname': self.mat.name,
+               'k': self.k.magnitude,
+               'cp': self.cp.magnitude,
+               'T0': self.T0.magnitude,
+               'alpha_temp': self.alpha_temp.magnitude,
+               'heatgen': self.heatgen,
+               'power_tot': self.power_tot.magnitude
+               }
+        return rec
+
+    def record(self):
+        timestep = self.prev_t_idx
+        rec = {'t_idx': timestep,
+               'component': self.name,
+               'temp': self.temp(timestep).magnitude,
+               'density': self.rho(timestep).magnitude,
+               'k': self.k.magnitude,
+               'cp': self.cp.magnitude,
+               'alpha_temp': self.alpha_temp.magnitude,
+               'heatgen': self.heatgen,
+               'power_tot': self.power_tot.magnitude
+               }
+        return rec
 
 
 class THSuperComponent(THComponent):

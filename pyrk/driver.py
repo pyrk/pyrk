@@ -11,6 +11,7 @@ import numpy as np
 from scipy.integrate import ode
 import importlib
 import argparse
+from db import database
 from utilities import logger
 from utilities.logger import pyrklog
 from inp import sim_info
@@ -165,6 +166,7 @@ def solve(si, y, infile):
            and n.t < si.timer.tf.magnitude
            and th.t < si.timer.tf.magnitude):
         si.timer.advance_one_timestep()
+        si.db.record_all()
         n.integrate(si.timer.current_time().magnitude)
         update_n(n.t, n.y, si)
         th.integrate(si.timer.current_time().magnitude)
@@ -213,6 +215,7 @@ def main(args, curr_dir):
     np.set_printoptions(precision=5, threshold=np.inf)
     logger.set_up_pyrklog(args.logfile)
     infile = load_infile(args.infile)
+    out_db = database.Database(filepath=args.outfile)
     si = sim_info.SimInfo(timer=infile.ti,
                           components=infile.components,
                           iso=infile.fission_iso,
@@ -222,10 +225,13 @@ def main(args, curr_dir):
                           kappa=infile.kappa,
                           feedback=infile.feedback,
                           rho_ext=infile.rho_ext,
-                          plotdir=args.plotdir)
+                          plotdir=args.plotdir,
+                          infile=args.infile,
+                          db=out_db)
     print_logo(curr_dir)
     sol = solve(si=si, y=si.y, infile=infile)
     log_results(si)
+    out_db.close_db()
     plotter.plot(sol, si)
     pyrklog.critical("\nSimulation succeeded.\n")
 
