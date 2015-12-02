@@ -16,7 +16,6 @@ from utilities import logger
 from utilities.logger import pyrklog
 from inp import sim_info
 from utilities.ur import units
-from utilities import plotter
 import os
 
 
@@ -232,7 +231,6 @@ def main(args, curr_dir):
     sol = solve(si=si, y=si.y, infile=infile)
     log_results(si)
     out_db.close_db()
-    plotter.plot(sol, si)
     pyrklog.critical("\nSimulation succeeded.\n")
 
 
