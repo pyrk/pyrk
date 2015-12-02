@@ -263,7 +263,13 @@ class THSystem(object):
         return num/denom
 
     def record(self, component):
+        """a recorder function that calls down to each component.
+        used for the th/th_timeseries table
+        """
         return self.comp_from_name(component).record()
 
     def metadata(self, component):
+        """a recorder function that calls down to each component.
+        used for the th/th_params table
+        """
         return self.comp_from_name(component).metadata()
