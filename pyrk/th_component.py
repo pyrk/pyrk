@@ -1,3 +1,4 @@
+import six
 import numpy as np
 from inp import validation
 from utilities.ur import units
@@ -257,6 +258,8 @@ class THComponent(object):
         }
 
     def metadata(self):
+        """A recorder function to fill the th/th_params table
+        """
         rec = {'component': self.name,
                'vol': self.vol.magnitude,
                'matname': self.mat.name,
@@ -270,6 +273,8 @@ class THComponent(object):
         return rec
 
     def record(self):
+        """A recorder function to fill the th/th_timeseries table
+        """
         timestep = self.prev_t_idx
         rec = {'t_idx': timestep,
                'component': self.name,
@@ -332,7 +337,7 @@ class THSuperComponent(THComponent):
         :param t_innercomp: temperature of the component that is inside self
         :type t_innercomp: float
         '''
-        for envname, d in self.conv.iteritems():
+        for envname, d in six.iteritems(self.conv):
             h = self.conv[envname]["h"].magnitude
             k = self.conv[envname]["k"].magnitude
             dr = self.conv[envname]["dr"].magnitude

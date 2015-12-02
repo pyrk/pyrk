@@ -75,10 +75,12 @@ class SimInfo(object):
         self.register_recorders()
 
     def register_recorders(self):
-        self.db.register_recorder('metadata', 'sim_info', self.record,
+        """Registers the function pointers that return database rows
+        """
+        self.db.register_recorder('metadata', 'sim_info', self.metadata,
                                   timeseries=False)
-        self.db.register_recorder('metadata', 'sim_input', self.metadata,
-                                  timeseries=False)
+        self.db.register_recorder('metadata', 'sim_timeseries', self.record,
+                                timeseries=True)
         self.db.register_recorder('neutronics', 'neutronics_params',
                                   self.ne.record,
                                   timeseries=True)
@@ -175,8 +177,16 @@ class SimInfo(object):
         sim_id = uuid.uuid4().hex
         return sim_id
 
-    def record(self):
-        rec = {'t0': self.timer.t0.magnitude,
+    def metadata(self):
+        """A recorder function for the metadata/sim_info table
+        """
+        ts, st = self.get_timestamp()
+        rec = {'simhash': self.generate_sim_id(),
+               'timestamp': ts,
+               'humantime': st,
+               'revision': self.get_git_revision_short_hash(),
+               'inputblob': self.get_input_blob(self.infile),
+               't0': self.timer.t0.magnitude,
                'tf': self.timer.tf.magnitude,
                'dt': self.timer.dt.magnitude,
                't_feedback': self.timer.t_feedback.magnitude,
@@ -188,12 +198,13 @@ class SimInfo(object):
                'plotdir': self.plotdir}
         return rec
 
-    def metadata(self):
-        ts, st = self.get_timestamp()
-        rec = {'simhash': self.generate_sim_id(),
-               'timestamp': ts,
-               'humantime': st,
-               'revision': self.get_git_revision_short_hash(),
-               'inputblob': self.get_input_blob(self.infile)
-               }
+    def record(self):
+        """A recorder function for the metadata/sim_timeseries table
+
+        TODO: reconsider the database structure.
+        """
+        t_idx = self.timer.current_timestep() - 1
+        power = self.y[t_idx][0]
+        rec = {'t_idx': t_idx,
+               'power': power}
         return rec

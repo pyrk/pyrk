@@ -1,5 +1,5 @@
 from ur import units
-from material import Material
+from materials.material import Material
 from density_model import DensityModel
 
 class Fhrfuel(Material):
