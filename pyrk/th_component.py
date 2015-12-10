@@ -5,6 +5,7 @@ from utilities.ur import units
 from timer import Timer
 import math
 from materials.material import Material
+from convective_model import ConvectiveModel
 
 
 class THComponent(object):
@@ -184,12 +185,17 @@ class THComponent(object):
         :param area: heat transfer area
         :type area: float
         '''
+        if type(h) is not ConvectiveModel:
+            h = ConvectiveModel(h0=h)
         self.conv[env] = {
             "h": h,
             "area": area
         }
 
     def add_mass_trans(self, env, H, u):
+
+        if type(H) is not ConvectiveModel:
+            H = ConvectiveModel(h0=H)
         self.mass[env] = {"H": H,
                           "u": u}
 
@@ -206,10 +212,13 @@ class THComponent(object):
         boundary component
         :type prev_comp: str
         :param h: convective heat transfer coefficient
-        :type h: float
+        :type h: float or obj of Convective Model
         :param R: radius of the sphere
         :type R: float
         '''
+        if type(h) is not ConvectiveModel:
+            h = ConvectiveModel(h0=h)
+
         self.convBC[env] = {
             "h": h,
             "prev_comp": prev_comp,
