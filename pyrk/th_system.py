@@ -214,6 +214,10 @@ class THSystem(object):
     def advection(self, component, t_idx, t_in, m_flow, cp):
         ''' calculate heat transfer by advection in watts
 
+        :param component: name of the component
+        :type component: str
+        :param t_idx: time step that conduction heat is computed
+        :type t_idx: int
         :param t_in: inlet temperature
         :type t_in: float
         :param m_flow: mass flow rate though the control volume
@@ -223,12 +227,16 @@ class THSystem(object):
         :return: dimemsionless quantity of Qadvective
         :rtype: float
         '''
+
+        #check if the temperature is the initial temperature 0degC
+        #set Qadv=0 in this case for computation stability
         if component.T[t_idx] == 0*units.degC.to('kelvin'):
             Qadv = 0
         else:
             t_out = component.T[t_idx].magnitude*2.0 - t_in
             Qadv = m_flow.magnitude*cp.magnitude*(t_out-t_in)
         return Qadv
+
     def mass_trans(self, t_b, t_inlet, H, u):
         """
         :param t_b: The temperature of the body
@@ -263,7 +271,13 @@ class THSystem(object):
         return num/denom
 
     def record(self, component):
+        """a recorder function that calls down to each component.
+        used for the th/th_timeseries table
+        """
         return self.comp_from_name(component).record()
 
     def metadata(self, component):
+        """a recorder function that calls down to each component.
+        used for the th/th_params table
+        """
         return self.comp_from_name(component).metadata()

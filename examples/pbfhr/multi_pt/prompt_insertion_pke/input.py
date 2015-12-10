@@ -34,7 +34,7 @@ t_feedback = 150.0*units.seconds
 # Temperature feedbacks of reactivity
 alpha_fuel = -3.19*units.pcm/units.kelvin
 alpha_mod = -0.7*units.pcm/units.kelvin
-alpha_shell = 0*units.pcm/units.kelvin
+alpha_shell = -0.7*units.pcm/units.kelvin
 alpha_cool = 0.23*units.pcm/units.kelvin
 
 # initial temperature
@@ -92,6 +92,7 @@ n_pg = 6
 # Number of decay heat groups
 n_dg = 0
 
+n_ref=2
 # Fissioning Isotope
 fission_iso = "fhr"
 # Spectrum
@@ -111,7 +112,8 @@ from reactivity_insertion import StepReactivityInsertion
 rho_ext = StepReactivityInsertion(timer=ti,
                                   t_step=t_feedback + 10.0*units.seconds,
                                   rho_init=0.0*units.delta_k,
-                                  rho_final=600.0*units.pcm)
+                                  rho_rise=650.0*2*units.pcm,
+                                  rho_final=650.0*2*units.pcm)
 
 # maximum number of internal steps that the ode solver will take
 nsteps = 5000
@@ -197,3 +199,17 @@ components = []
 for i in range(0, len(pebble.sub_comp)):
     components.append(pebble.sub_comp[i])
 components.extend([pebble, cool])
+
+uncert = [
+    alpha_cool,
+    alpha_fuel,
+    k_mod,
+    k_fuel,
+    k_shell,
+    cp_mod,
+    cp_fuel,
+    cp_shell,
+    cp_cool,
+    h_cool]
+uncertainty_param = np.array([o.magnitude for o in uncert])
+

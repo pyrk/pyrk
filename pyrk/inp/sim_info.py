@@ -96,6 +96,8 @@ class SimInfo(object):
         self.register_recorders()
 
     def register_recorders(self):
+        """Registers the function pointers that return database rows
+        """
         self.db.register_recorder('metadata', 'sim_info', self.metadata,
                                   timeseries=False)
         self.db.register_recorder('metadata', 'sim_timeseries', self.record,
@@ -201,6 +203,8 @@ class SimInfo(object):
         return sim_id
 
     def metadata(self):
+        """A recorder function for the metadata/sim_info table
+        """
         ts, st = self.get_timestamp()
         rec = {'simhash': self.generate_sim_id(),
                'timestamp': ts,
@@ -220,6 +224,10 @@ class SimInfo(object):
         return rec
 
     def record(self):
+        """A recorder function for the metadata/sim_timeseries table
+
+        TODO: reconsider the database structure.
+        """
         t_idx = self.timer.current_timestep() - 1
         power = self.y[t_idx][0]
         rec = {'t_idx': t_idx,

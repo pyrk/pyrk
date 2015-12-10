@@ -267,6 +267,8 @@ class THComponent(object):
         }
 
     def metadata(self):
+        """A recorder function to fill the th/th_params table
+        """
         rec = {'component': self.name,
                'vol': self.vol.magnitude,
                'matname': self.mat.name,
@@ -280,6 +282,8 @@ class THComponent(object):
         return rec
 
     def record(self):
+        """A recorder function to fill the th/th_timeseries table
+        """
         timestep = self.prev_t_idx
         rec = {'t_idx': timestep,
                'component': self.name,

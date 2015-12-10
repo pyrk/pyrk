@@ -203,6 +203,8 @@ class Neutronics(object):
         return to_ret
 
     def record(self):
+        """A recorder function to hold total and external reactivity
+        """
         t = self._timer.current_timestep() - 1
         rec = {'t_idx': t,
                'rho_tot': self._rho[t],
@@ -212,6 +214,8 @@ class Neutronics(object):
         return rec
 
     def metadata(self, component):
+        """A recorder function to hold reactivity in each component
+        """
         timestep = self._timer.current_timestep() - 1
         rec = {'t_idx': timestep,
                'component': component.name,
