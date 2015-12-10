@@ -50,8 +50,6 @@ class ConvectiveModel(object):
         :param temp: the temperature
         :type temp: float.
         """
-        print 'h'
-        print self.implemented[self.model](rho, mu)
 
         return self.implemented[self.model](rho, mu)
 
