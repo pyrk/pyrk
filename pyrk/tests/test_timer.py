@@ -17,16 +17,20 @@ large = 1000.0*units.seconds
 default = timer.Timer()
 short_sim = timer.Timer(t0=zero,
                         tf=one,
+                        t_feedback=zero,
                         dt=ptone)
 
 long_sim = timer.Timer(t0=zero,
                        tf=large,
+                       t_feedback=small,
                        dt=small)
 late_start = timer.Timer(t0=ten,
                          tf=large,
+                         t_feedback=ten,
                          dt=small)
 long_dt = timer.Timer(t0=zero,
                       tf=large,
+                      t_feedback=small,
                       dt=ten)
 
 all_ints = timer.Timer(t0=0*units.seconds,

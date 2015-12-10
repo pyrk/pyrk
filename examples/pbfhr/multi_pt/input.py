@@ -33,7 +33,7 @@ t_feedback = 150.0*units.seconds
 # Temperature feedbacks of reactivity
 alpha_fuel = -3.19*units.pcm/units.kelvin
 alpha_mod = -0.7*units.pcm/units.kelvin
-alpha_shell = 0*units.pcm/units.kelvin
+alpha_shell = -0.7*units.pcm/units.kelvin
 alpha_cool = 0.23*units.pcm/units.kelvin
 
 # initial temperature
@@ -90,6 +90,7 @@ n_pg = 6
 # Number of decay heat groups
 n_dg = 0
 
+n_ref=2
 # Fissioning Isotope
 fission_iso = "fhr"
 # Spectrum
@@ -104,8 +105,8 @@ rho_ext = RampReactivityInsertion(timer=ti,
                                   t_start=t_feedback + 10.0*units.seconds,
                                   t_end=t_feedback + 20.0*units.seconds,
                                   rho_init=0.0*units.delta_k,
-                                  rho_rise=600.0*units.pcm,
-                                  rho_final=600.0*units.pcm)
+                                  rho_rise=650.0*2*units.pcm,
+                                  rho_final=650.0*2*units.pcm)
 
 # maximum number of internal steps that the ode solver will take
 nsteps = 5000
@@ -203,3 +204,4 @@ uncert = [
     cp_cool,
     h_cool]
 uncertainty_param = np.array([o.magnitude for o in uncert])
+

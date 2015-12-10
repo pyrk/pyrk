@@ -15,6 +15,7 @@ from materials.sodium import Sodium
 t0 = 0.00*units.seconds
 dt = 0.005*units.seconds
 tf = 5.0*units.seconds
+t_feedback = 0.05*units.seconds
 
 # Temperature feedbacks of reactivity (Ragusa2009)
 # Fuel: Note Doppler model not implemented
