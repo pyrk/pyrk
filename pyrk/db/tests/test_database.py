@@ -101,7 +101,7 @@ class DatabaseTest(unittest.TestCase):
                                            'neutronics'])
             assert_true(t['tablename'] in ['th_params', 'th_timeseries',
                                            'sim_info',
-                                           'sim_input',
+                                           'sim_timeseries',
                                            'neutronics_timeseries',
                                            'neutronics_params',
                                            'zetas',

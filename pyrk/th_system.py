@@ -1,3 +1,4 @@
+import six
 from th_component import THSuperComponent
 from utilities.ur import units
 
@@ -51,7 +52,7 @@ class THSystem(object):
             if component.sph and component.ri.magnitude == 0.0:
                 Qcent = self.BC_center(component, t_idx)
                 to_ret -= Qcent/cap
-            for interface, d in component.convBC.iteritems():
+            for interface, d in six.iteritems(component.convBC):
                 env = self.comp_from_name(interface)
                 QconvBC = self.convBoundary(component,
                                             t_b=component.T[t_idx].magnitude,
@@ -62,7 +63,7 @@ class THSystem(object):
                 to_ret -= QconvBC/cap
             if component.heatgen:
                 to_ret += self.heatgen(component, power, omegas)/cap
-            for interface, d in component.cond.iteritems():
+            for interface, d in six.iteritems(component.cond):
                 env = self.comp_from_name(interface)
                 if component.sph:
                     Qcond = self.conductionFVM(component, env, t_idx)
@@ -71,7 +72,7 @@ class THSystem(object):
                                                  L=d["L"],
                                                  A=d["area"])
                 to_ret -= Qcond/cap
-            for interface, d in component.conv.iteritems():
+            for interface, d in six.iteritems(component.conv):
                 env = self.comp_from_name(interface)
                 if isinstance(env, THSuperComponent):
                     Tr = env.compute_tr(component.T[t_idx].magnitude,
@@ -99,7 +100,7 @@ class THSystem(object):
                            component.T[t_idx].magnitude,
                            env.T[t_idx].magnitude)
                 to_ret -= Qconv/cap/component.vol.magnitude
-            for name, d in component.adv.iteritems():
+            for name, d in six.iteritems(component.adv):
                 Qadv = self.advection(component,
                                       t_idx,
                                       t_in=d['t_in'].magnitude,

@@ -1,5 +1,7 @@
 from utilities.ur import units
-
+import sys
+if sys.version_info > (3,):
+    long = int
 
 def validate_ge(valname, val, llim):
     """Raises errors if the value is less than the lower limit (llim) or if it
