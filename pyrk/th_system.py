@@ -92,7 +92,8 @@ class THSystem(object):
                 else:
                     Qconv = self.convection(t_b=component.T[t_idx].magnitude,
                                             t_env=env.T[t_idx].magnitude,
-                                            h=d['h'].h(),
+                                            h=d['h'].h(component.rho(t_idx),
+                                                       component.mat.mu),
                                             A=d['area'])
                     assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, \
                         'convection from %s to %s, %fc to %fc is not physical' \

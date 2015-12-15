@@ -235,16 +235,26 @@ def main(args, curr_dir):
     logger.set_up_pyrklog(args.logfile)
     infile = load_infile(args.infile)
     out_db = database.Database(filepath=args.outfile)
+    if not hasattr(infile, 'n_ref'):
+        n_ref = 0
+        ref_lambda = 0
+        ref_rho = 0
+        Lambda_ref = 0
+    else:
+        n_ref = infile.n_ref
+        ref_lambda = infile.ref_lambda
+        ref_rho = infile.ref_rho
+        Lambda_ref = infile.Lambda_ref
     si = sim_info.SimInfo(timer=infile.ti,
                           components=infile.components,
                           iso=infile.fission_iso,
                           e=infile.spectrum,
                           n_precursors=infile.n_pg,
                           n_decay=infile.n_dg,
-                          n_reflector=infile.n_ref,
-                          Lambda_ref=infile.Lambda_ref,
-                          ref_lambda=infile.ref_lambda,
-                          ref_rho=infile.ref_rho,
+                          n_reflector=n_ref,
+                          Lambda_ref=Lambda_ref,
+                          ref_lambda=ref_lambda,
+                          ref_rho=ref_rho,
                           kappa=infile.kappa,
                           feedback=infile.feedback,
                           rho_ext=infile.rho_ext,

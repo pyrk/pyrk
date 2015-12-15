@@ -3,7 +3,7 @@ docs/_build/
 build/
 pyrk\.egg_info/
 dist/
-RELEASE-VERSION
+RELEASE\-VERSION
 
 # Ignore temp files
 __pycache__/
