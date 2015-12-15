@@ -107,12 +107,19 @@ ref_rho = [0.084349, 0.168983]
 feedback = True
 
 # External Reactivity
-from reactivity_insertion import StepReactivityInsertion
-rho_ext = StepReactivityInsertion(timer=ti,
-                                  t_step=t_feedback + 10.0*units.seconds,
-                                  rho_init=0.0*units.delta_k,
-                                  rho_final=600.0*units.pcm)
+from reactivity_insertion import RampReactivityInsertion
+#from reactivity_insertion import StepReactivityInsertion
+#rho_ext = StepReactivityInsertion(timer=ti,
+#                                  t_step=t_feedback + 10.0*units.seconds,
+#                                  rho_init=0.0*units.delta_k,
+#                                  rho_final=600.0*units.pcm)
 
+rho_ext = RampReactivityInsertion(timer=ti,
+                                  t_start=t_feedback + 10.0*units.seconds,
+                                  t_end=t_feedback + 12.0*units.seconds,
+                                  rho_init=0.0*units.delta_k,
+                                  rho_rise=650.0*units.pcm,
+                                  rho_final=650.0*units.pcm)
 # maximum number of internal steps that the ode solver will take
 nsteps = 5000
 
