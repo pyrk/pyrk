@@ -1,8 +1,10 @@
 from utilities.ur import units
 from materials.material import Material
 
+
 class ConvectiveModel(object):
     """
+    This class defines the model for convective heat transfer coefficient: h
     """
 
     def __init__(self,

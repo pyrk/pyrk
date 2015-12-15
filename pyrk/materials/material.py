@@ -17,9 +17,11 @@ class Material(object):
         :param name: The name of the component (i.e., "fuel" or "cool")
         :type name: str.
         :param k: The thermal conductivity of the component
-        :type k: float.
+        :type k: float, pint.unit.Quantity :math:'watt/meter/K'
         :param cp: specific heat capacity, :math:`c_p`, in :math:`J/kg-K`
         :type cp: float, pint.unit.Quantity :math:`J/kg-K`
+        :param mu: dynamic viscosity(for fluid), :math:`mu`, in :math:`Pa.s`
+        :type mu: float, pint.unit.Quantity :math:`Pa.s`
         :param dm: The density of the material
         :type dm: DensityModel object
         """
