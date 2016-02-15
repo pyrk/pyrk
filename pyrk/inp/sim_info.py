@@ -44,7 +44,7 @@ class SimInfo(object):
         :param n_decay: number of decay groups
         :type n_decay: int
         :param n_reflector: number of reflector neutron groups for 'two-point'
-        point kinetics, every reflector is considered separatly
+        point kinetics, every reflector is considered separately
         :type n_reflector: int
         :param Lambda_ref: mean prompt neutron lifetime in the core without
         reflector(parameter needed for two-point kinetic model for reflectors)

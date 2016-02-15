@@ -101,18 +101,17 @@ class Neutronics(object):
     def dpdt(self, t_idx, components, power, zetas, zeta_refs=[]):
         """Calculates the power term. The first in the neutronics block.
 
-        :param t: the time
-        :type t: float.
-        :param dt: the timestep
-        :type dt: float.
+        :param t_idx: the time step index
+        :type t_idx: int
         :param components: the THComponents making up this reactor
         :type components: list of THComponent objects
         :param power: the current reactor power in Watts (timestep t-1 ?)
         :type power: float.
         :param zetas: the current delayed neutron precursor populations, zeta_i
         :type zetas: np.ndarray.
-        :param rho_r: sum of the reactivity gain by all the reflectors
-        :type rho_r: float
+        :param zeta_refs: frictitious neutron precusor population for the
+        neutrons coming back from the reflectors
+        :type zeta_refs: np.ndarray.
         """
         rho = self.reactivity(t_idx, components)
         beta = self._pd.beta()

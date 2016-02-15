@@ -10,14 +10,25 @@ class ConvectiveModel(object):
     def __init__(self,
                  h0=0*units.watt/units.meter**2/units.kelvin,
                  mat=Material(),
-                 m_flow=0*units.kg/units.second,
-                 a_flow=0*units.meter**2,
-                 length_scale=0*units.meter,
+                 m_flow=None,
+                 a_flow=None,
+                 length_scale=None,
                  model="constant"):
         """
         Initializes the DensityModel object.
 
-        :param model: The keyword for a model type.
+        :param h0: convective heat transfer coefficient when it's a constant
+        :type h0: double
+        :param mat: material of the fluid
+        :type mat: Material object
+        :param m_flow: mass flow rate
+        :type m_flow: double
+        :param a_flow: flow cross section surface area
+        :type a_flow: double
+        :param length_scale: heat transfer length scale
+        :type length_scale: double
+        :param model: The keyword for a model type, implemented types are
+        'constant' and 'wakao'
         :type model: string
         """
         self.h0 = h0
@@ -51,7 +62,8 @@ class ConvectiveModel(object):
         :param mu: The dynamic viscosity of the object
         :type mu: float
         """
-        return self.implemented[self.model](rho, mu)
+        return self.implemented[self.model](rho.to(units.kg/units.meter**3),
+                                            mu.to(units.pascal*units.second))
 
     def constant(self, rho, mu):
         """
@@ -66,7 +78,7 @@ class ConvectiveModel(object):
 
     def wakao(self, rho, mu):
         """
-        This function implement the Wakao correlation for convective heat
+        This function implements the Wakao correlation for convective heat
         transfer coefficient
         :param rho: The density of the object
         :type rho: float
@@ -74,7 +86,7 @@ class ConvectiveModel(object):
         :type mu: float
         """
         u = self.m_flow/self.a_flow/rho
-        Re = rho * self.length_scale * u / mu
+        Re = rho * self.length_scale * u / self.mu
         Pr = self.cp * self.mu / self.k
         Nu = 2 + 1.1 * Pr.magnitude ** (1/3.0)*Re.magnitude**0.6
         ret = Nu * self.k/self.length_scale

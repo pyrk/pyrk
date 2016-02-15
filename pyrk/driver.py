@@ -62,7 +62,7 @@ def f_n(t, y, si):
         msg += 'should be at least the number of neutronics equations %d' % n_n
         raise ValueError(msg)
     end_pg = 1 + si.n_pg
-    end_ref = 1 + si.n_pg + si.n_ref
+    end_ref = end_pg + si.n_ref
     f = np.zeros(shape=(n_n,), dtype=float)
     i = 0
     f[i] = si.ne.dpdt(si.timer.ts,
