@@ -87,6 +87,7 @@ class DecayData(object):
         lambda_dict["pu239"]["thermal"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         lambda_dict["pu239"]["fast"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         lambda_dict["fhr"]["thermal"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        lambda_dict["fhr"]["multipt"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         return lambda_dict[nuc][e]
 
     def _get_kappas(self, nuc, e):
@@ -126,4 +127,5 @@ class DecayData(object):
         kappa_dict["pu239"]["thermal"] = [0.0, 0.0, 0.0]
         kappa_dict["pu239"]["fast"] = [0.0, 0.0, 0.0]
         kappa_dict["fhr"]["thermal"] = [0.0, 0.0, 0.0]
+        kappa_dict["fhr"]["multipt"] = [0.0, 0.0, 0.0]
         return kappa_dict[nuc][e]
