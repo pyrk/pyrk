@@ -180,6 +180,7 @@ graph_peb = th.THComponent(name="graph_peb",
 components = [fuel, cool, refl, mod, graph_peb, core]
 
 # The fuel conducts to the moderator graphite
+# TODO: add argument L, conduction length in the following add_conduction function calls
 fuel.add_conduction('mod', area=a_fuel)
 
 # The moderator graphite conducts to the core graphite

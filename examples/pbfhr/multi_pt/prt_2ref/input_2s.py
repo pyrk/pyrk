@@ -95,7 +95,7 @@ n_dg = 0
 # Fissioning Isotope
 fission_iso = "fhr"
 # Spectrum
-spectrum = "thermal"
+spectrum = "multipt"
 
 #two-point model
 n_ref = 2
