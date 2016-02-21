@@ -44,10 +44,10 @@ class Neutronics(object):
         """_iso (str): Fissioning isotope. 'u235', 'pu239', or 'sfr', "fhr"
         are supported."""
 
-        self._e = v.validate_supported("e", e, ['thermal', 'fast'])
+        self._e = v.validate_supported("e", e, ['thermal', 'fast', 'multipt'])
         """_e (str): Energy spectrum 'thermal' or 'fast' are supported."""
 
-        self._npg = v.validate_supported("n_precursors", n_precursors, [6, 0])
+        self._npg = v.validate_supported("n_precursors", n_precursors, [6, 8, 0])
         """_npg (int): Number of neutron precursor groups. 6 is supported."""
 
         self._ndg = v.validate_supported("n_decay", n_decay, [11, 0])
@@ -94,7 +94,7 @@ class Neutronics(object):
         rho = self.reactivity(t_idx, components)
         beta = self._pd.beta()
         lams = self._pd.lambdas()
-        Lambda = self._Lambda
+        Lambda = self._pd.Lambda()
         precursors = 0
         for j in range(0, len(lams)):
             assert len(lams) == len(zetas)
@@ -115,7 +115,7 @@ class Neutronics(object):
         :param j: the precursor group index
         :type j: int
         """
-        Lambda = self._Lambda
+        Lambda = self._pd._Lambda
         lambda_j = self._pd.lambdas()[j]
         beta_j = self._pd.betas()[j]
         return beta_j*power/Lambda - lambda_j*zeta

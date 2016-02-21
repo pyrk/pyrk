@@ -192,7 +192,7 @@ class THSystem(object):
         return k/r_b * (r_b * T_b - r_env * T_env)/(dr**2)
 
     def conduction_slab(self, component, env, t_idx, L,
-                        A=0.0*units.meter**2):
+                        A):
         """
         compute volumetric heat transfer by conduction(watts/m3)
 
@@ -205,6 +205,8 @@ class THSystem(object):
         :return: Qond, dimemsionless quantity
         :rtype: float
         """
+        assert(A.magnitude>0)
+        assert(L.magnitude>0)
         T_b = component.T[t_idx].magnitude
         T_env = env.T[t_idx].magnitude
         num = (T_b-T_env)

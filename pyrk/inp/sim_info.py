@@ -18,10 +18,7 @@ class SimInfo(object):
                  e="thermal",
                  n_precursors=6,
                  n_decay=11,
-                 n_fictitious_gr=0,
-                 #Lambda_ref=0,
-                 #ref_rho=[],
-                 #ref_lambda=[],
+                 n_fic=0,
                  kappa=0.0,
                  rho_ext=None,
                  feedback=False,
@@ -59,12 +56,8 @@ class SimInfo(object):
         self.components = components
         self.iso = iso
         self.e = e
-        self.n_pg = n_precursors
+        self.n_pg = n_precursors + n_fic
         self.n_dg = n_decay
-        self.n_fic = n_fic
-        #self.Lambda_ref = Lambda_ref
-        #self.ref_lambda = ref_lambda
-        #self.ref_rho = ref_rho
         self.rho_ext = self.init_rho_ext(rho_ext)
         self.feedback = feedback
         self.ne = self.init_ne()
@@ -121,10 +114,6 @@ class SimInfo(object):
         ne = neutronics.Neutronics(iso=self.iso, e=self.e,
                                    n_precursors=self.n_pg,
                                    n_decay=self.n_dg,
-                                   n_fic=self.n_fic,
-                                   #Lambda_ref=self.Lambda_ref,
-                                   #ref_rho=self.ref_rho,
-                                   #ref_lambda=self.ref_lambda,
                                    timer=self.timer,
                                    rho_ext=self.rho_ext,
                                    feedback=self.feedback)
@@ -139,7 +128,7 @@ class SimInfo(object):
     def n_entries(self):
         """The number of entries in the pde to be solved
         """
-        to_ret = 1 + self.n_pg + self.n_dg + self.n_fic + len(self.components)
+        to_ret = 1 + self.n_pg + self.n_dg + len(self.components)
         return int(to_ret)
 
     def add_th_component(self, th_component):
