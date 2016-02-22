@@ -11,6 +11,7 @@ import th_component as th
 import math
 from materials.material import Material
 from density_model import DensityModel
+from convective_model import ConvectiveModel
 from timer import Timer
 import numpy as np
 #############################################
@@ -33,7 +34,7 @@ t_feedback = 150.0*units.seconds
 # Temperature feedbacks of reactivity
 alpha_fuel = -3.19*units.pcm/units.kelvin
 alpha_mod = -0.7*units.pcm/units.kelvin
-alpha_shell = -0.7*units.pcm/units.kelvin
+alpha_shell = 0*units.pcm/units.kelvin
 alpha_cool = 0.23*units.pcm/units.kelvin
 
 # initial temperature
@@ -68,7 +69,8 @@ a_pb = area_sphere(r_shell)
 
 # Coolant flow properties
 # 4700TODO implement h(T) model
-h_cool = 4700.0*units.watt/units.kelvin/units.meter**2
+h_cool = ConvectiveModel(h0=4700.0*units.watt/units.kelvin/units.meter**2,
+                         model='constant')
 m_flow = 976.0*units.kg/units.seconds
 t_inlet = units.Quantity(600.0, units.degC)
 
@@ -90,41 +92,52 @@ n_pg = 6
 # Number of decay heat groups
 n_dg = 0
 
-n_ref=2
 # Fissioning Isotope
 fission_iso = "fhr"
 # Spectrum
 spectrum = "thermal"
+
+#two-point model
+n_ref = 2
+Lambda_ref = 0.000226807
+ref_lambda = [786.3172199, 1209.079474]
+ref_rho = [0.084349, 0.168983]
 
 # Feedbacks, False to turn reactivity feedback off. True otherwise.
 feedback = True
 
 # External Reactivity
 from reactivity_insertion import RampReactivityInsertion
+#from reactivity_insertion import StepReactivityInsertion
+#rho_ext = StepReactivityInsertion(timer=ti,
+#                                  t_step=t_feedback + 10.0*units.seconds,
+#                                  rho_init=0.0*units.delta_k,
+#                                  rho_final=600.0*units.pcm)
+
 rho_ext = RampReactivityInsertion(timer=ti,
                                   t_start=t_feedback + 10.0*units.seconds,
                                   t_end=t_feedback + 20.0*units.seconds,
                                   rho_init=0.0*units.delta_k,
-                                  rho_rise=650.0*2*units.pcm,
-                                  rho_final=650.0*2*units.pcm)
-
+                                  rho_rise=650.0*units.pcm,
+                                  rho_final=650.0*units.pcm)
 # maximum number of internal steps that the ode solver will take
 nsteps = 5000
 
+mu0=0*units.pascal*units.second
 k_mod = 17*units.watt/(units.meter*units.kelvin)
 cp_mod = 1650.0*units.joule/(units.kg*units.kelvin)
 rho_mod = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
-Moderator = Material('mod', k_mod, cp_mod, rho_mod)
+Moderator = Material('mod', k_mod, cp_mod, mu0, rho_mod)
 
 k_fuel = 15*units.watt/(units.meter*units.kelvin)
 cp_fuel = 1818.0*units.joule/units.kg/units.kelvin
 rho_fuel = DensityModel(a=2220.0*units.kg/(units.meter**3), model="constant")
-Fuel = Material('fuel', k_fuel, cp_fuel, rho_fuel)
+Fuel = Material('fuel', k_fuel, cp_fuel, mu0, rho_fuel)
 
 k_shell = 17*units.watt/(units.meter*units.kelvin)
 cp_shell = 1650.0*units.joule/(units.kg*units.kelvin)
 rho_shell = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
-Shell = Material('shell', k_shell, cp_shell, rho_shell)
+Shell = Material('shell', k_shell, cp_shell, mu0, rho_shell)
 
 k_cool = 1*units.watt/(units.meter*units.kelvin)
 cp_cool = 2415.78*units.joule/(units.kg*units.kelvin)
@@ -134,7 +147,7 @@ rho_cool = DensityModel(a=2415.6 *
                         units.kg /
                         (units.meter**3) /
                         units.kelvin, model="linear")
-cool = Material('cool', k_cool, cp_cool, rho_cool)
+cool = Material('cool', k_cool, cp_cool, mu0, rho_cool)
 
 mod = th.THComponent(name="mod",
                      mat=Moderator,
@@ -191,17 +204,3 @@ components = []
 for i in range(0, len(pebble.sub_comp)):
     components.append(pebble.sub_comp[i])
 components.extend([pebble, cool])
-
-uncert = [
-    alpha_cool,
-    alpha_fuel,
-    k_mod,
-    k_fuel,
-    k_shell,
-    cp_mod,
-    cp_fuel,
-    cp_shell,
-    cp_cool,
-    h_cool]
-uncertainty_param = np.array([o.magnitude for o in uncert])
-

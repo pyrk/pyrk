@@ -57,6 +57,10 @@ def f_n(t, y, si):
     :type y: np.ndarray
     """
     n_n = 1 + si.n_pg + si.n_dg
+    if len(y) < n_n:
+        msg = 'equation numbers %d ' % len(y)
+        msg += 'should be at least the number of neutronics equations %d' % n_n
+        raise ValueError(msg)
     end_pg = 1 + si.n_pg
     f = np.zeros(shape=(n_n,), dtype=float)
     i = 0
@@ -89,7 +93,7 @@ def f_th(t, y_th, si):
                        'kelvin / second')
     power = si.y[t_idx][0]
     o_i = 1+si.n_pg
-    o_f = 1+si.n_pg+si.n_dg
+    o_f = 1+si.n_pg + si.n_dg
     omegas = si.y[t_idx][o_i:o_f]
     for idx, comp in enumerate(si.components):
         f[idx] = si.th.dtempdt(component=comp,
@@ -106,15 +110,19 @@ def y0(si):
     :type si: SimInfo
     """
     i = 0
+    end_pg = 1 + si.n_pg
+    end_dg = 1 + si.n_pg + si.n_dg
     f = np.zeros(shape=(si.n_entries(),), dtype=float)
     f[i] = 1.0  # power is normalized is 1
     for j in range(0, si.n_pg):
         i += 1
         f[i] = f[0] * \
-            si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd.Lambda())
+            si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd._Lambda)
+    assert(i == end_pg-1)
     for k in range(0, si.n_dg):
         i += 1
         f[i] = 0
+    assert(i == end_dg - 1)
     for idx, comp in enumerate(si.components):
         f[i+idx+1] = comp.T0.magnitude
     assert len(f) == si.n_entries()
@@ -128,7 +136,7 @@ def y0_n(si):
     :param si: the simulation info object
     :type si: SimInfo
     """
-    idx = si.n_pg+si.n_dg + 1
+    idx = si.n_pg + si.n_dg + 1
     y = y0(si)[:idx]
     return y
 
@@ -139,7 +147,7 @@ def y0_th(si):
     :param si: the simulation info object
     :type si: SimInfo
     """
-    thidx = si.n_pg+si.n_dg + 1
+    thidx = si.n_pg + si.n_dg + 1
     y = y0(si)[thidx:]
     return y
 
@@ -215,18 +223,25 @@ def main(args, curr_dir):
     logger.set_up_pyrklog(args.logfile)
     infile = load_infile(args.infile)
     out_db = database.Database(filepath=args.outfile)
+    if not hasattr(infile, 'n_ref'):
+        n_ref = 0
+    else:
+        n_ref = infile.n_ref
     si = sim_info.SimInfo(timer=infile.ti,
                           components=infile.components,
                           iso=infile.fission_iso,
                           e=infile.spectrum,
                           n_precursors=infile.n_pg,
                           n_decay=infile.n_dg,
+                          n_fic=n_ref,
                           kappa=infile.kappa,
                           feedback=infile.feedback,
                           rho_ext=infile.rho_ext,
                           plotdir=args.plotdir,
                           infile=args.infile,
                           db=out_db)
+    # TODO: think about weather to add n_ref to all input files, or put n_ref in
+    # database files
     print_logo(curr_dir)
     sol = solve(si=si, y=si.y, infile=infile)
     log_results(si)

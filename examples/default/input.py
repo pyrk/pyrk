@@ -179,18 +179,19 @@ graph_peb = th.THComponent(name="graph_peb",
 
 components = [fuel, cool, refl, mod, graph_peb, core]
 
+#TODO: verify the conduction lengths and maybe calibrate for spherical components
 # The fuel conducts to the moderator graphite
-fuel.add_conduction('mod', area=a_fuel)
+fuel.add_conduction('mod', area=a_fuel, L=4*units.millimeter)
 
 # The moderator graphite conducts to the core graphite
-mod.add_conduction('core', area=a_core)
+mod.add_conduction('core', area=a_core, L=25*units.millimeter)
 # The moderator graphite conducts to the fuel
-mod.add_conduction('fuel', area=a_mod)
+mod.add_conduction('fuel', area=a_mod, L=25*units.millimeter)
 # The moderator graphite convects to the coolant
 mod.add_convection('cool', h=h_mod, area=a_mod)
 
 # The core graphite conducts to the moderator graphite
-core.add_conduction('mod', area=a_core)
+core.add_conduction('mod', area=a_core, L=25*units.centimeter)
 
 # The graphite pebbles convect to the coolant
 graph_peb.add_convection('cool', h=h_mod, area=a_graph_peb)

@@ -18,6 +18,7 @@ class SimInfo(object):
                  e="thermal",
                  n_precursors=6,
                  n_decay=11,
+                 n_fic=0,
                  kappa=0.0,
                  rho_ext=None,
                  feedback=False,
@@ -39,6 +40,9 @@ class SimInfo(object):
         :type n_precursors: int
         :param n_decay: number of decay groups
         :type n_decay: int
+        :param n_fic: number of fictitious neutron groups for multi
+        point kinetics
+        :type n_fic: int
         :param kappa: the value for kappa, a decay heat parameter
         :type kappa: float
         :param rho_ext: external reactivity
@@ -52,7 +56,7 @@ class SimInfo(object):
         self.components = components
         self.iso = iso
         self.e = e
-        self.n_pg = n_precursors
+        self.n_pg = n_precursors + n_fic
         self.n_dg = n_decay
         self.rho_ext = self.init_rho_ext(rho_ext)
         self.feedback = feedback
