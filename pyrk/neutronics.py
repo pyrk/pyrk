@@ -15,7 +15,10 @@ class Neutronics(object):
     """
 
     def __init__(self, iso="u235", e="thermal", n_precursors=6, n_decay=11,
-                 timer=Timer(), rho_ext=None, feedback=False):
+                 n_fic=0,
+                 timer=Timer(),
+                 rho_ext=None,
+                 feedback=False):
         """
         Creates a Neutronics object that holds the neutronics simulation
         information.
@@ -28,6 +31,9 @@ class Neutronics(object):
         :type n_precursors: int.
         :param n_decay: The number of decay heat groups. 11 is supported.
         :type n_decay: int.
+        :param n_fic: number of fictitious neutron groups for 'two-point'
+        point kinetics
+        :type n_fic: int
         :param rho_ext: External reactivity, a function of time
         :type rho_ext: function
         :returns: A Neutronics object that holds neutronics simulation info
@@ -38,14 +44,16 @@ class Neutronics(object):
         """_iso (str): Fissioning isotope. 'u235', 'pu239', or 'sfr', "fhr"
         are supported."""
 
-        self._e = v.validate_supported("e", e, ['thermal', 'fast'])
+        self._e = v.validate_supported("e", e, ['thermal', 'fast', 'multipt'])
         """_e (str): Energy spectrum 'thermal' or 'fast' are supported."""
 
-        self._npg = v.validate_supported("n_precursors", n_precursors, [6, 0])
+        self._npg = v.validate_supported("n_precursors", n_precursors, [6, 8, 0])
         """_npg (int): Number of neutron precursor groups. 6 is supported."""
 
         self._ndg = v.validate_supported("n_decay", n_decay, [11, 0])
         """_ndg (int): Number of decay heat groups. 11 is supported."""
+
+        self._nfic = n_fic
 
         self._pd = pr.PrecursorData(iso, e, n_precursors)
         """_pd (PrecursorData): A data.precursors.PrecursorData object"""
@@ -74,10 +82,8 @@ class Neutronics(object):
     def dpdt(self, t_idx, components, power, zetas):
         """Calculates the power term. The first in the neutronics block.
 
-        :param t: the time
-        :type t: float.
-        :param dt: the timestep
-        :type dt: float.
+        :param t_idx: the time step index
+        :type t_idx: int
         :param components: the THComponents making up this reactor
         :type components: list of THComponent objects
         :param power: the current reactor power in Watts (timestep t-1 ?)
@@ -91,6 +97,7 @@ class Neutronics(object):
         Lambda = self._pd.Lambda()
         precursors = 0
         for j in range(0, len(lams)):
+            assert len(lams) == len(zetas)
             precursors += lams[j]*zetas[j]
         dp = power*(rho - beta)/Lambda + precursors
         return dp
@@ -104,11 +111,11 @@ class Neutronics(object):
         :param power: the reactor power at this timestep
         :type power: float, in units of watts
         :param zeta: $\zeta_j$, the concentration for precursor group j
-        :type zeta: float #TODO units?
+        :type zeta: float
         :param j: the precursor group index
         :type j: int
         """
-        Lambda = self._pd.Lambda()
+        Lambda = self._pd._Lambda
         lambda_j = self._pd.lambdas()[j]
         beta_j = self._pd.betas()[j]
         return beta_j*power/Lambda - lambda_j*zeta
@@ -145,3 +152,23 @@ class Neutronics(object):
         to_ret = sum(rho.values()).magnitude
         self._rho[t_idx] = to_ret
         return to_ret
+
+    def record(self):
+        """A recorder function to hold total and external reactivity
+        """
+        t = self._timer.current_timestep() - 1
+        rec = {'t_idx': t,
+               'rho_tot': self._rho[t],
+               'rho_ext':
+               self._rho_ext(t_idx=t).to('delta_k').magnitude
+               }
+        return rec
+
+    def metadata(self, component):
+        """A recorder function to hold reactivity in each component
+        """
+        timestep = self._timer.current_timestep() - 1
+        rec = {'t_idx': timestep,
+               'component': component.name,
+               'rho': component.temp_reactivity(timestep)}
+        return rec

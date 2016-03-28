@@ -1,11 +1,13 @@
 # Ignore possible build & documentation
 docs/_build/
 build/
-pyrk.egg_info/
+pyrk\.egg_info/
 dist/
-RELEASE-VERSION
+RELEASE\-VERSION
+pyrk/RELEASE\-VERSION
 # Ignore temp files
-*.pyc
+__pycache__/
+*.py[cod]
 *.save
 *.bak
 .*.swp

@@ -1,8 +1,9 @@
+from __future__ import print_function
 from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 
 import th_component as th
-from inp import sim_info
+from db import database
 from utilities.ur import units
 from timer import Timer
 from materials.material import Material
@@ -26,10 +27,9 @@ tfeedback = 5*units.seconds
 dt = 0.1*units.seconds
 ti = Timer(t0=t0, tf=tf, dt=dt, t_feedback=tfeedback)
 tester = th.THComponent(name=name, mat=mat, vol=vol, T0=T0, timer=ti)
-si = sim_info.SimInfo(kappa=kappa, timer=ti)
-
 tester_sph = th.THComponent(name=name, mat=mat, vol=vol, T0=T0, timer=ti,
                             sph=True, ri=0*units.meter, ro=1*units.meter)
+
 
 def test_constructor():
     assert_equal(tester.name, name)
@@ -61,7 +61,7 @@ def test_dtemp():
 
     T2 = 50*units.kelvin
     tester.update_temp(time1-1, T2)
-    print tester.T[time1-1]
+    print(tester.T[time1-1])
     assert_equal(tester.dtemp(time1), T2 - tester.T[ti.t_idx_feedback])
 
 
