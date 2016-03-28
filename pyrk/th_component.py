@@ -167,7 +167,7 @@ class THComponent(object):
         :param timestep: the timestep at which to calculate reactivity feedback
         :type timestep: int
         :param T0_timestep: the timestep at which the temperature is used as
-        reference temperature
+          reference temperature
         :type T0_timestep: int
         '''
         assert timestep > self.timer.t_idx_feedback, "timestep that feedback\
@@ -206,10 +206,10 @@ class THComponent(object):
         '''add convective boundary condition
 
         :param env: name of the environment for convective heat transfer
-        (the fluid)
+          (the fluid)
         :type env: str
         :param prev_comp: name of the component that is immediately inside the
-        boundary component
+          boundary component
         :type prev_comp: str
         :param h: convective heat transfer coefficient
         :type h: float or obj of Convective Model
@@ -341,7 +341,7 @@ class THSuperComponent(THComponent):
         and the temperature of the env/fluid/coolant
 
         :param t_env: temperature of the component(env) that self tranfers
-        heat with
+          heat with
         :type t_env: float
         :param t_innercomp: temperature of the component that is inside self
         :type t_innercomp: float

@@ -84,7 +84,7 @@ class Database(object):
         :param tablename: name of the table to add
         :type tablename: str
         :param description: metadata for the table
-        :type : str
+        :type description: str
         :param tabletitle: metadata to store in plain english, a title
         :type tabletitle: str
         """

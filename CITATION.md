@@ -9,7 +9,7 @@ If you use the PyRK software, we ask that you cite the version of PyRK that you
 used::
 
 
-#### Version 0.1
+#### Version 0.2
 ```tex
 
 @article{huff_pyrk_2015-2,
