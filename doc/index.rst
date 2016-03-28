@@ -38,6 +38,7 @@ Documentation
    installing
    tutorial
    src/index
+   src/modules
 
 Indices and tables
 ------------------
@@ -65,7 +66,7 @@ See also
 - Katy Huff's `SciPy2015 talk`_ introducing PyRK to an interdisciplinary audience.
 - The associated `Scipy2015 slides`_
 - The associated short `SciPy2015 paper`_ from the conference describing the software structure.
-- Xin Wang's `ICAPP paper` using PyRK for PBFHR analysis.
+- Xin Wang's `ICAPP paper`_ using PyRK for PBFHR analysis.
 
 .. _SciPy2015 talk: https://www.youtube.com/watch?v=2HToG61wMWI
 .. _SciPy2015 slides: http://pyrk.github.io/scipy-2015
