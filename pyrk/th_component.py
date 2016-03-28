@@ -206,10 +206,10 @@ class THComponent(object):
         '''add convective boundary condition
 
         :param env: name of the environment for convective heat transfer
-        (the fluid)
+          (the fluid)
         :type env: str
         :param prev_comp: name of the component that is immediately inside the
-        boundary component
+          boundary component
         :type prev_comp: str
         :param h: convective heat transfer coefficient
         :type h: float or obj of Convective Model
