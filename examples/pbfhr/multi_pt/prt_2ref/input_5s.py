@@ -11,7 +11,7 @@ import th_component as th
 import math
 from materials.material import Material
 from density_model import DensityModel
-import random
+from convective_model import ConvectiveModel
 from timer import Timer
 import numpy as np
 #############################################
@@ -26,21 +26,25 @@ t0 = 0.00*units.seconds
 # Timestep
 dt = 0.02*units.seconds
 # Final Time
-tf = 100.0*units.seconds
+tf = 250.0*units.seconds
+# Time to turn on feedback
+t_feedback = 150.0*units.seconds
+
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
-alpha_fuel =random.gauss(-3.19, 0.1595)*units.pcm/units.kelvin
+alpha_fuel = -3.19*units.pcm/units.kelvin
 alpha_mod = -0.7*units.pcm/units.kelvin
 alpha_shell = 0*units.pcm/units.kelvin
-alpha_cool =random.gauss(0.23, 0.11)*units.pcm/units.kelvin
+alpha_cool = 0.23*units.pcm/units.kelvin
 
-#initial temperature
+# initial temperature
 t_mod = (800+273.15)*units.kelvin
 t_fuel = (800+273.15)*units.kelvin
 t_shell = (770+273.15)*units.kelvin
 t_cool = (650+273.15)*units.kelvin
 
 kappa = 0.0
+
 
 def area_sphere(r):
     assert(r >= 0*units.meter)
@@ -65,14 +69,11 @@ a_pb = area_sphere(r_shell)
 
 # Coolant flow properties
 # 4700TODO implement h(T) model
-h_cool = random.gauss(4700.0, 4700.0*0.05)*units.watt/units.kelvin/units.meter**2
-m_flow = 976.0*units.kg/units.second
-t_inlet = units.Quantity(600.0, units.degC)  # degrees C
+h_cool = ConvectiveModel(h0=4700.0*units.watt/units.kelvin/units.meter**2,
+                         model='constant')
+m_flow = 976.0*units.kg/units.seconds
+t_inlet = units.Quantity(600.0, units.degC)
 
-n_ref = 0
-Lambda_ref =0
-ref_lambda = []
-ref_rho = []
 #############################################
 #
 # Required Input
@@ -80,11 +81,10 @@ ref_rho = []
 #############################################
 
 # Total power, Watts, thermal
-power_tot =234000000.0*units.watt
-#power_tot = 0.0*units.watt
+power_tot = 234000000.0*units.watt
 
 # Timer instance, based on t0, tf, dt
-ti = Timer(t0=t0, tf=tf, dt=dt)
+ti = Timer(t0=t0, tf=tf, dt=dt, t_feedback=t_feedback)
 
 # Number of precursor groups
 n_pg = 6
@@ -93,45 +93,61 @@ n_pg = 6
 n_dg = 0
 
 # Fissioning Isotope
-fission_iso = "u235"
-
+fission_iso = "fhr"
 # Spectrum
 spectrum = "thermal"
+
+#two-point model
+n_ref = 2
+Lambda_ref = 0.000226807
+ref_lambda = [786.3172199, 1209.079474]
+ref_rho = [0.084349, 0.168983]
 
 # Feedbacks, False to turn reactivity feedback off. True otherwise.
 feedback = True
 
 # External Reactivity
 from reactivity_insertion import RampReactivityInsertion
-rho_ext = RampReactivityInsertion(timer=ti,
-                                     t_start=60.0*units.seconds,
-                                     t_end=70.0*units.seconds,
-                                     rho_init=0.0*units.delta_k,
-                                     rho_rise=600.0*units.pcm,
-                                     rho_final=600.0*units.pcm)
+#from reactivity_insertion import StepReactivityInsertion
+#rho_ext = StepReactivityInsertion(timer=ti,
+#                                  t_step=t_feedback + 10.0*units.seconds,
+#                                  rho_init=0.0*units.delta_k,
+#                                  rho_final=600.0*units.pcm)
 
+rho_ext = RampReactivityInsertion(timer=ti,
+                                  t_start=t_feedback + 10.0*units.seconds,
+                                  t_end=t_feedback + 15.0*units.seconds,
+                                  rho_init=0.0*units.delta_k,
+                                  rho_rise=650.0*units.pcm,
+                                  rho_final=650.0*units.pcm)
 # maximum number of internal steps that the ode solver will take
 nsteps = 5000
 
-k_mod =random.gauss(17, 17*0.05)*units.watt/(units.meter*units.kelvin)
-cp_mod=random.gauss(1650.0, 1650.0*0.05)*units.joule/(units.kg*units.kelvin)
-rho_mod =DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
-Moderator=Material('mod', k_mod, cp_mod, rho_mod)
+mu0=0*units.pascal*units.second
+k_mod = 17*units.watt/(units.meter*units.kelvin)
+cp_mod = 1650.0*units.joule/(units.kg*units.kelvin)
+rho_mod = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
+Moderator = Material('mod', k_mod, cp_mod, mu0, rho_mod)
 
-k_fuel=random.uniform(15.0, 19.0)*units.watt/(units.meter*units.kelvin)
-cp_fuel=random.gauss(1818.0, 1818*0.05)*units.joule/units.kg/units.kelvin # [J/kg/K]
-rho_fuel=DensityModel(a=2220.0*units.kg/(units.meter**3), model="constant")
-Fuel=Material('fuel', k_fuel, cp_fuel, rho_fuel)
+k_fuel = 15*units.watt/(units.meter*units.kelvin)
+cp_fuel = 1818.0*units.joule/units.kg/units.kelvin
+rho_fuel = DensityModel(a=2220.0*units.kg/(units.meter**3), model="constant")
+Fuel = Material('fuel', k_fuel, cp_fuel, mu0, rho_fuel)
 
-k_shell =random.gauss(17, 17*0.05)*units.watt/(units.meter*units.kelvin)
-cp_shell=random.gauss(1650.0, 1650.0*0.05)*units.joule/(units.kg*units.kelvin)
-rho_shell =DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
-Shell=Material('shell', k_shell, cp_shell, rho_shell)
+k_shell = 17*units.watt/(units.meter*units.kelvin)
+cp_shell = 1650.0*units.joule/(units.kg*units.kelvin)
+rho_shell = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
+Shell = Material('shell', k_shell, cp_shell, mu0, rho_shell)
 
-k_cool=1*units.watt/(units.meter*units.kelvin)
-cp_cool=random.gauss(2415.78, 2415.78*0.05)*units.joule/(units.kg*units.kelvin)
-rho_cool =  DensityModel(a=2415.6*units.kg/(units.meter**3), b=0.49072*units.kg/(units.meter**3)/units.kelvin, model="linear")
-cool=Material('cool', k_cool, cp_cool, rho_cool)
+k_cool = 1*units.watt/(units.meter*units.kelvin)
+cp_cool = 2415.78*units.joule/(units.kg*units.kelvin)
+rho_cool = DensityModel(a=2415.6 *
+                        units.kg /
+                        (units.meter**3), b=0.49072 *
+                        units.kg /
+                        (units.meter**3) /
+                        units.kelvin, model="linear")
+cool = Material('cool', k_cool, cp_cool, mu0, rho_cool)
 
 mod = th.THComponent(name="mod",
                      mat=Moderator,
@@ -184,10 +200,7 @@ cool = th.THComponent(name="cool",
 cool.add_convection('pebble', h=h_cool, area=a_pb)
 cool.add_advection('cool', m_flow/n_pebbles, t_inlet, cp=cool.cp)
 
-components=[]
+components = []
 for i in range(0, len(pebble.sub_comp)):
     components.append(pebble.sub_comp[i])
 components.extend([pebble, cool])
-
-uncert=[alpha_cool, alpha_fuel, k_mod, k_fuel, k_shell, cp_mod, cp_fuel, cp_shell, cp_cool, h_cool]
-uncertainty_param=np.array([o.magnitude for o in uncert])

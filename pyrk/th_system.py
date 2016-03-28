@@ -57,7 +57,8 @@ class THSystem(object):
                 QconvBC = self.convBoundary(component,
                                             t_b=component.T[t_idx].magnitude,
                                             t_env=env.T[t_idx].magnitude,
-                                            h=d["h"],
+                                            h=d["h"].h(env.rho(t_idx),
+                                                       env.mat.mu),
                                             R=d["R"])
                 to_ret -= QconvBC/cap
             if component.heatgen:
@@ -75,26 +76,30 @@ class THSystem(object):
                 env = self.comp_from_name(interface)
                 if isinstance(env, THSuperComponent):
                     Tr = env.compute_tr(component.T[t_idx].magnitude,
-                                        env.sub_comp[-2].T[t_idx].magnitude)
+                                        env.sub_comp[-2].T[t_idx].magnitude,
+                                        h=d['h'].h(component.rho(t_idx),
+                                                   component.mat.mu).magnitude)
                     Qconv = self.convection(t_b=component.T[t_idx].magnitude,
                                             t_env=Tr,
-                                            h=d['h'],
+                                            h=d['h'].h(component.rho(t_idx),
+                                                       component.mat.mu),
                                             A=d['area'])
                     assert (Qconv*(component.T[t_idx].magnitude-Tr)) >= 0, '''
                     convection from %s to %s, from low temperature %f to
-                    high temperature %f is not physical: %f''' % (
+                    high %f is not physical: %f''' % (
                         component.name, env.name, component.T[t_idx].magnitude,
                         Tr, Qconv.magnitude)
                 else:
                     Qconv = self.convection(t_b=component.T[t_idx].magnitude,
                                             t_env=env.T[t_idx].magnitude,
-                                            h=d['h'],
+                                            h=d['h'].h(component.rho(t_idx),
+                                                       component.mat.mu),
                                             A=d['area'])
                     assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, \
-                        '''convection from %s to %s, from low temperature %f to
-                    high temperature %f is not physical: %f''' % (
-                        component.name, env.name, component.T[t_idx].magnitude,
-                        env.T[t_idx].magnitude, Qconv.magnitude)
+                        'convection from %s to %s, %fc to %fc is not physical' \
+                        % (component.name, env.name,
+                           component.T[t_idx].magnitude,
+                           env.T[t_idx].magnitude)
                 to_ret -= Qconv/cap/component.vol.magnitude
             for name, d in six.iteritems(component.adv):
                 Qadv = self.advection(component,
@@ -187,7 +192,7 @@ class THSystem(object):
         return k/r_b * (r_b * T_b - r_env * T_env)/(dr**2)
 
     def conduction_slab(self, component, env, t_idx, L,
-                        A=0.0*units.meter**2):
+                        A):
         """
         compute volumetric heat transfer by conduction(watts/m3)
 
@@ -200,6 +205,8 @@ class THSystem(object):
         :return: Qond, dimemsionless quantity
         :rtype: float
         """
+        assert(A.magnitude>0)
+        assert(L.magnitude>0)
         T_b = component.T[t_idx].magnitude
         T_env = env.T[t_idx].magnitude
         num = (T_b-T_env)
@@ -227,11 +234,12 @@ class THSystem(object):
         #check if the temperature is the initial temperature 0degC
         #set Qadv=0 in this case for computation stability
         if component.T[t_idx] == 0*units.degC.to('kelvin'):
-                        Qadv = 0
+            Qadv = 0
         else:
             t_out = component.T[t_idx].magnitude*2.0 - t_in
             Qadv = m_flow.magnitude*cp.magnitude*(t_out-t_in)
         return Qadv
+
     def mass_trans(self, t_b, t_inlet, H, u):
         """
         :param t_b: The temperature of the body
