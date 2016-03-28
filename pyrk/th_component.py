@@ -167,7 +167,7 @@ class THComponent(object):
         :param timestep: the timestep at which to calculate reactivity feedback
         :type timestep: int
         :param T0_timestep: the timestep at which the temperature is used as
-        reference temperature
+          reference temperature
         :type T0_timestep: int
         '''
         assert timestep > self.timer.t_idx_feedback, "timestep that feedback\
@@ -341,7 +341,7 @@ class THSuperComponent(THComponent):
         and the temperature of the env/fluid/coolant
 
         :param t_env: temperature of the component(env) that self tranfers
-        heat with
+          heat with
         :type t_env: float
         :param t_innercomp: temperature of the component that is inside self
         :type t_innercomp: float
