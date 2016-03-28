@@ -38,7 +38,6 @@ Documentation
    installing
    tutorial
    src/index
-   src/modules
 
 Indices and tables
 ------------------
