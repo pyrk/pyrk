@@ -1,5 +1,5 @@
 from utilities.ur import units
-
+from inp import validation
 
 class ReactivityInsertion(object):
     """This is the default reactivity insertion object class from whence all
@@ -135,8 +135,8 @@ class RampReactivityInsertion(ReactivityInsertion):
                  rho_init=0.0*units.delta_k,
                  rho_rise=1.0*units.delta_k,
                  rho_final=1.0*units.delta_k):
+        self.t_end = validation.validate_g('t_end', t_end, t_start)
         self.t_start = t_start
-        self.t_end = t_end
         self.rho_init = rho_init
         self.rho_rise = rho_rise
         self.rho_final = rho_final
