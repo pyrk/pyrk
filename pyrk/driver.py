@@ -203,6 +203,14 @@ def print_logo(curr_dir):
                          logo.read())
 
 def name_from_path(infile_path):
+    """Returns just the base of the filename from the path
+    
+    :param infile_path: path to infile. (absolute, relative, or missing 
+      extension okay)"
+    :type infile_path: string
+    :return: returns the base name without the extension or path
+    :rtype: string
+    """
     import os.path
     import sys
     file_dir = os.path.dirname(infile_path)
