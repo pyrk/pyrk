@@ -213,7 +213,7 @@ def load_infile(infile_path):
     import sys
     file_dir = os.path.dirname(infile_path)
     sys.path.append(file_dir)
-    file_name = os.path.basename(infile_path).rstrip('.py')
+    file_name = os.path.basename(infile_path).replace(".py", "")
     infile = importlib.import_module(file_name)
     return infile
 
