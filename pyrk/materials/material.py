@@ -31,6 +31,7 @@ class Material(object):
         self.cp = cp.to('joule/kg/kelvin')
         validation.validate_ge("cp", cp, 0*units.joule/units.kg/units.kelvin)
         self.mu = mu.to('pascal*seconds')
+        validation.validate_ge("mu", mu, 0*units.pascal*units.seconds)
         self.dm = dm
 
     def rho(self, temp):
