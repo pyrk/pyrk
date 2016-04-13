@@ -234,7 +234,7 @@ class THSystem(object):
 
         #check if the temperature is the initial temperature 0degC
         #set Qadv=0 in this case for computation stability
-        if component.T[t_idx] == 0*units.degC.to('kelvin'):
+        if component.T[t_idx].to('kelvin') == 0*units.kelvin:
             Qadv = 0
         else:
             t_out = component.T[t_idx].magnitude*2.0 - t_in
