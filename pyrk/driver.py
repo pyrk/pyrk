@@ -202,6 +202,22 @@ def print_logo(curr_dir):
                          "Perhaps it's time for a coffee.\n" +
                          logo.read())
 
+def name_from_path(infile_path):
+    """Returns just the base of the filename from the path
+    
+    :param infile_path: path to infile. (absolute, relative, or missing 
+      extension okay)"
+    :type infile_path: string
+    :return: returns the base name without the extension or path
+    :rtype: string
+    """
+    import os.path
+    import sys
+    file_dir = os.path.dirname(infile_path)
+    sys.path.append(file_dir)
+    file_name = os.path.basename(infile_path)
+    file_name_base = os.path.splitext(file_name)[0]
+    return file_name_base
 
 def load_infile(infile_path):
     """Loads the input file as a python package import based on the path
@@ -209,11 +225,7 @@ def load_infile(infile_path):
     :param infile_path: path to the infile
     :type infile_path: string
     """
-    import os.path
-    import sys
-    file_dir = os.path.dirname(infile_path)
-    sys.path.append(file_dir)
-    file_name = os.path.basename(infile_path).rstrip('.py')
+    file_name = name_from_path(infile_path)
     infile = importlib.import_module(file_name)
     return infile
 
