@@ -97,7 +97,7 @@ n_dg = 0
 # Fissioning Isotope
 fission_iso = "fhr"
 # Spectrum
-spectrum = "thermal"
+spectrum = "multipt"
 
 #two-point model
 n_ref = 2
@@ -145,8 +145,8 @@ rho_cool = DensityModel(a=2415.6 *
                         units.kelvin, model="linear")
 cool = Material('cool', k_cool, cp_cool, rho_cool)
 cool.mu = 4.638 * 10**5/( 650**2.79)*units.pascal*units.second
-h_cool = ConvectiveModel(cool,
-                         h0=4700.0*units.watt/units.kelvin/units.meter**2,
+h_cool = ConvectiveModel(h0=4700.0*units.watt/units.kelvin/units.meter**2,
+                         mat=cool,
                          m_flow=m_flow,
                          a_flow=a_flow,
                          length_scale=dp,
