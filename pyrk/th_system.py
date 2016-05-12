@@ -6,9 +6,10 @@ from utilities.ur import units
 class THSystem(object):
 
     """This class models:
+
     - lumped capacitance model for slab geometry
     - 1-D heat diffusion in spherical geometry, for heat
-    generation at any radius in the sphere,
+      generation at any radius in the sphere,
     - advective heat transfer by fluid
     - convective heat transfer at the solid surface to fluid.
     """
@@ -233,7 +234,7 @@ class THSystem(object):
 
         #check if the temperature is the initial temperature 0degC
         #set Qadv=0 in this case for computation stability
-        if component.T[t_idx] == 0*units.degC.to('kelvin'):
+        if component.T[t_idx].to('kelvin') == 0*units.kelvin:
             Qadv = 0
         else:
             t_out = component.T[t_idx].magnitude*2.0 - t_in

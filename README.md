@@ -18,7 +18,7 @@ variable.
 ## Documentation
 
 The documentation for pyrk can be found at 
-[pyrk.github.io](pyrk.github.io). Additionally, the entire contents of that 
+[pyrk.github.io](http://pyrk.github.io). Additionally, the entire contents of that 
 website can be built from the doc directory in the source code using the 
 following steps
 
