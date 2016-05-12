@@ -1,5 +1,5 @@
 from utilities.ur import units
-from materials.material import Material
+from materials.material import Material, LiquidMaterial, GasMaterial
 
 
 class ConvectiveModel(object):
