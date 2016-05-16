@@ -9,7 +9,7 @@ class ConvectiveModel(object):
 
     def __init__(self,
                  h0=0*units.watt/units.meter**2/units.kelvin,
-                 mat=Material(),
+                 mat=LiquidMaterial(),
                  m_flow=None,
                  a_flow=None,
                  length_scale=None,

@@ -2,7 +2,7 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 from utilities.ur import units
 from convective_model import ConvectiveModel
-from materials.material import Material
+from materials.material import Material, LiquidMaterial
 
 def test_constant_model():
     h_constant = ConvectiveModel(
@@ -17,7 +17,7 @@ def test_constant_model():
         200000*units.W/units.meter**2/units.kelvin)
 
 def test_wakao_model():
-    mat=Material(k=1*units.watt/units.meter/units.kelvin,
+    mat = LiquidMaterial(k=1*units.watt/units.meter/units.kelvin,
                  cp=1*units.joule/units.kg/units.kelvin,
                  mu=2*units.pascal*units.second
                  )
