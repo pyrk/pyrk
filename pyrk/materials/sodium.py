@@ -1,9 +1,9 @@
 from utilities.ur import units
 from density_model import DensityModel
-from materials.material import Material
+from materials.material import LiquidMaterial
 
 
-class Sodium(Material):
+class Sodium(LiquidMaterial):
     """This class represents Sodium. It inherits from the material
     class and possesses attributes intrinsic to flibe.
     """
@@ -13,11 +13,11 @@ class Sodium(Material):
         :param name: The name of the component (i.e., "fuel" or "cool")
         :type name: str.
         """
-        Material.__init__(self,
-                          name=name,
-                          k=self.thermal_conductivity(),
-                          cp=self.specific_heat_capacity(),
-                          dm=self.density())
+        LiquidMaterial.__init__(self,
+                                name=name,
+                                k=self.thermal_conductivity(),
+                                cp=self.specific_heat_capacity(),
+                                dm=self.density())
 
     def thermal_conductivity(self):
         """Sodium thermal conductivity in [W/m-K]

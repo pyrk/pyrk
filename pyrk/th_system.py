@@ -1,6 +1,7 @@
 import six
 from th_component import THSuperComponent
 from utilities.ur import units
+from materials.material import LiquidMaterial
 
 
 class THSystem(object):
@@ -91,16 +92,29 @@ class THSystem(object):
                         component.name, env.name, component.T[t_idx].magnitude,
                         Tr, Qconv.magnitude)
                 else:
+                    if isinstance(component.mat, LiquidMaterial):
+                        h_conv = d['h'].h(component.rho(t_idx),
+                                          component.mat.mu)
+                    else:
+                        if isinstance(env.mat, LiquidMaterial):
+                            h_conv = d['h'].h(env.rho(t_idx), env.mat.mu)
+                        else:
+                            msg = 'neither of the components are liquid:'
+                            msg += env.name
+                            msg += ' and '
+                            msg += component.name
+                            raise TypeError(msg)
+
                     Qconv = self.convection(t_b=component.T[t_idx].magnitude,
                                             t_env=env.T[t_idx].magnitude,
-                                            h=d['h'].h(component.rho(t_idx),
-                                                       component.mat.mu),
+                                            h=h_conv,
                                             A=d['area'])
-                    assert (Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, \
+                    assert (
+                        Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, \
                         'convection from %s to %s, %fc to %fc is not physical' \
                         % (component.name, env.name,
-                           component.T[t_idx].magnitude,
-                           env.T[t_idx].magnitude)
+                            component.T[t_idx].magnitude,
+                            env.T[t_idx].magnitude)
                 to_ret -= Qconv/cap/component.vol.magnitude
             for name, d in six.iteritems(component.adv):
                 Qadv = self.advection(component,
