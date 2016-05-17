@@ -22,7 +22,7 @@ class DensityModel(object):
         :param b: second coefficient of the model.
         :type b: float
         """
-        self.a = a
+        self.a = a.to(units.kg/pow(units.meter, 3))
         self.b = b
 
         self.implemented = {'constant': self.constant,
@@ -55,7 +55,7 @@ class DensityModel(object):
         :param temp: The temperature of the object
         :type temp: float.
         """
-        return self.a.to(units.kg/pow(units.meter, 3))
+        return self.a
 
     def linear(self, temp=0.0*units.kelvin):
         """
