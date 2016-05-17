@@ -23,7 +23,7 @@ class DensityModel(object):
         :type b: float
         """
         self.a = a.to(units.kg/pow(units.meter, 3))
-        self.b = b
+        self.b = b.to(units.kg/units.kelvin/pow(units.meter, 3))
 
         self.implemented = {'constant': self.constant,
                             'linear': self.linear}
@@ -65,4 +65,4 @@ class DensityModel(object):
         :type temp: float. units of kelvin
         """
         ret = self.a + self.b*temp
-        return ret.to(units.kg/pow(units.meter, 3))
+        return ret
