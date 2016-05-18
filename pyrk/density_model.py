@@ -9,8 +9,8 @@ class DensityModel(object):
     """
 
     def __init__(self,
-                 a=0*units.kg/units.meter**3,
-                 b=0*units.kg/units.kelvin/units.meter**3,
+                 a=0*units.kg/pow(units.meter, 3),
+                 b=0*units.kg/units.kelvin/pow(units.meter, 3),
                  model="linear"):
         """
         Initializes the DensityModel object.

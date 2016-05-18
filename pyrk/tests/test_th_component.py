@@ -14,7 +14,7 @@ vol = 20*units.meter**3
 k = 10*units.watt/units.meter/units.kelvin
 cp = 10*units.joule/units.kg/units.kelvin
 dm = density_model.DensityModel(a=0*units.kg/units.meter**3,
-                                b=100*units.kg/units.meter**3,
+                                b=100*units.kg/units.kelvin/pow(units.meter, 3),
                                 model='constant')
 mat = Material(k=k, cp=cp, dm=dm)
 
