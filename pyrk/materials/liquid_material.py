@@ -1,7 +1,8 @@
-from material import Material
+from materials.material import Material
 from utilities.ur import units
 from density_model import DensityModel
 from inp import validation
+
 
 class LiquidMaterial(Material):
     ''' subclass of material for liquid'''
