@@ -2,7 +2,7 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 
 from materials import sodium
-from materials.material import LiquidMaterial
+from materials.liquid_material import LiquidMaterial
 from utilities.ur import units
 
 name = "testname"

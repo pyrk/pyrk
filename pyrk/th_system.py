@@ -1,7 +1,7 @@
 import six
 from th_component import THSuperComponent
 from utilities.ur import units
-from materials.material import LiquidMaterial
+from materials.liquid_material import LiquidMaterial
 
 
 class THSystem(object):
