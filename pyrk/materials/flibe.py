@@ -1,9 +1,9 @@
 from utilities.ur import units
 from density_model import DensityModel
-from materials.material import Material
+from materials.liquid_material import LiquidMaterial
 
 
-class Flibe(Material):
+class Flibe(LiquidMaterial):
     """This class represents FLiBe. It inherits from the material
     class and possesses attributes intrinsic to flibe.
 
@@ -27,11 +27,11 @@ class Flibe(Material):
         :param name: The name of the component (i.e., "fuel" or "cool")
         :type name: str.
         """
-        Material.__init__(self,
-                          name=name,
-                          k=self.thermal_conductivity(),
-                          cp=self.specific_heat_capacity(),
-                          dm=self.density())
+        LiquidMaterial.__init__(self,
+                                name=name,
+                                k=self.thermal_conductivity(),
+                                cp=self.specific_heat_capacity(),
+                                dm=self.density())
 
     def thermal_conductivity(self):
         """FLiBe thermal conductivity in [W/m-K]

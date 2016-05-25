@@ -2,6 +2,7 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
     assert_false, assert_raises, assert_is_instance, with_setup
 
 from materials import flibe
+from materials.liquid_material import LiquidMaterial
 from utilities.ur import units
 
 name = "testname"
@@ -22,3 +23,4 @@ def test_constructor():
     assert_equal(tester.cp, cp_flibe)
     assert_equal(tester.rho(T0), rho_at_time_zero)
     assert_equal(tester.rho(0*units.kelvin), rho_at_temp_zero)
+    assert_true(isinstance(tester, LiquidMaterial))
