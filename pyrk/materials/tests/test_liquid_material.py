@@ -30,6 +30,7 @@ def test_constructor_liq():
     assert_equal(defaultLiq.rho(T0), rho_at_time_zero)
     assert_equal(defaultLiq.rho(0*units.kelvin), rho_at_temp_zero)
 
+
 def test_all_vars_avail_liquid():
     tester = liquid_material.LiquidMaterial(name_test, k_test,
                                             cp_test, rho_test,
@@ -40,7 +41,8 @@ def test_all_vars_avail_liquid():
     assert_equal(tester.mu, mu_default)
     assert_equal(tester.rho(T0), rho_test.rho())
     assert_equal(tester.rho(0*units.kelvin), rho_test.rho())
+
+
 def test_missing_mu():
     tester = liquid_material.LiquidMaterial(name_test, k_test, cp_test, dm=rho_test)
     assert_equal(tester.name, name_test)
-
