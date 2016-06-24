@@ -4,7 +4,7 @@ from nose.tools import assert_equal, assert_almost_equal, assert_true, \
 from utilities.ur import units
 import density_model
 
-u_dens = units.kg/units.meter**3
+u_dens = units.kg/pow(units.meter, 3)
 alpha = 2.0*u_dens
 beta = 3.0*u_dens/units.kelvin
 
