@@ -95,7 +95,7 @@ def get_git_version():
         write_release_version(v)
 
     # Finally, return the current version.
-    return v
+    return v.decode('utf-8')
 
 
 def pep440adapt(v):
