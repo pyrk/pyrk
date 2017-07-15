@@ -9,12 +9,13 @@ The simulation has 3 stages:
 from utilities.ur import units
 import th_component as th
 import math
-from materials.material import Material, LiquidMaterial, SolidMaterial
+from materials.material import Material, LiquidMaterial
 from density_model import DensityModel
 from convective_model import ConvectiveModel
 import random
 from timer import Timer
 import numpy as np
+
 #############################################
 #
 # User Workspace
@@ -53,6 +54,7 @@ def vol_sphere(r):
     assert(r >= 0*units.meter)
     return (4./3.)*math.pi*pow(r.to('meter'), 3)
 
+
 # volumes
 n_pebbles = 470000
 r_mod = 1.25/100.0*units.meter
@@ -74,7 +76,7 @@ a_pb = area_sphere(r_shell)
 
 # Total power, Watts, thermal
 power_tot = 234000000.0*units.watt
-#power_tot = 0.0*units.watt
+# power_tot = 0.0*units.watt
 
 # Timer instance, based on t0, tf, dt
 ti = Timer(t0=t0, tf=tf, dt=dt)

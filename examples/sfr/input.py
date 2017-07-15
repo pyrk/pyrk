@@ -58,21 +58,21 @@ v_cool = 5.0*units.meter/units.second
 # thermal conductivity of the cladding
 k_clad = 21.5*units.watt/units.meter/units.kelvin
 # power factor
-#omega = 4.77E8*units.watt/pow(units.meter, 3)
+# omega = 4.77E8*units.watt/pow(units.meter, 3)
 omega = 4.77E8*units.watt/pow(units.meter, 3)
 
 # TODO: this is not the real value. This is a placeholder:
-#h_cool = 1.0e5*units.joule/units.second/units.kelvin/pow(units.meter, 2)
+# h_cool = 1.0e5*units.joule/units.second/units.kelvin/pow(units.meter, 2)
 # heat transfer
-k_cool = 68.0*units.watt/units.meter/units.kelvin # approximation
-cp_cool = 1277.0*units.joule/units.kg/units.kelvin #approximation
+k_cool = 68.0*units.watt/units.meter/units.kelvin   # approximation
+cp_cool = 1277.0*units.joule/units.kg/units.kelvin  # approximation
 rho_cool = 850.0*units.kg/pow(units.meter, 3)
 pwet = 2.0*math.pi*r_fuel
 dh = 4.0*a_flow/pwet
 pitch_to_diam = a_flow/a_fuel
 pe = (rho_cool*cp_cool*v_cool*dh/k_cool).magnitude
 nu = 0.047*(1 - math.exp(-3.8*(pitch_to_diam - 1)))*(pow(pe, 0.77) + 250.0)
-h_cool=nu*k_cool/dh
+h_cool = nu*k_cool/dh
 h_cool = 1.0e5*units.joule/units.second/units.kelvin/pow(units.meter, 2)
 
 # custom thermal resistance, ragusa
@@ -80,7 +80,6 @@ w = 4.0/9.0
 k_fuel = 0.16*(units.watt/units.centimeter/units.kelvin).to('watt/meter/kelvin')
 res_fuel = a_fuel*(1.0/(r_clad*2.0*math.pi*h_cool)
                    + w/(4.0*math.pi*k_fuel))/vol_fuel
-
 
 
 #############################################
@@ -114,9 +113,9 @@ feedback = False
 # External Reactivity
 from reactivity_insertion import ReactivityInsertion
 rho_ext = ReactivityInsertion(timer=ti)
-#rho_ext = StepReactivityInsertion(timer=ti, t_step=1.0*units.seconds,
-#                                  rho_init=0.0*units.delta_k,
-#                                  rho_final=0.005*units.delta_k)
+# rho_ext = StepReactivityInsertion(timer=ti, t_step=1.0*units.seconds,
+#                                   rho_init=0.0*units.delta_k,
+#                                   rho_final=0.005*units.delta_k)
 
 # maximum number of internal steps that the ode solver will take
 nsteps = 1000
@@ -146,11 +145,11 @@ clad = th.THComponent(name="clad",
                       timer=ti)
 
 inlet = th.THComponent(name="inlet",
-                      mat=Sodium(name="sodiumcoolant"),
-                      vol=vol_cool,
-                      T0=t_inlet,
-                      alpha_temp=0.0*units.pcm/units.kelvin,
-                      timer=ti)
+                       mat=Sodium(name="sodiumcoolant"),
+                       vol=vol_cool,
+                       T0=t_inlet,
+                       alpha_temp=0.0*units.pcm/units.kelvin,
+                       timer=ti)
 
 # The fuel conducts to the clad
 fuel.add_custom('cool', res=res_fuel)
@@ -158,7 +157,7 @@ cool.add_custom('fuel', res=res_fuel)
 fuel.add_conduction('clad', area=a_fuel, L=1*units.meter)
 clad.add_conduction('fuel', area=a_fuel, L=1*units.meter)
 
-#TODO define L, it's assigned to 1 meter as a placeholder now
+# TODO define L, it's assigned to 1 meter as a placeholder now
 
 
 # The clad convects with the coolant

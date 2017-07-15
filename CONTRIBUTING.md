@@ -31,8 +31,8 @@ The mini Anaconda installs are available at https://conda.io/miniconda.html.
 Once your Anaconda package is installed and available, create a Python 2.7
 and 3.6 environment in Anaconda --
 
- - conda create -q -n pyrk-27-test-environment python=2.7 scipy numpy matplotlib nose pytables
- - conda create -q -n pyrk-36-test-environment python=3.6 scipy numpy matplotlib nose pytables
+ - conda create -q -n pyrk-27-test-environment python=2.7 scipy numpy matplotlib nose pytables flake8
+ - conda create -q -n pyrk-36-test-environment python=3.6 scipy numpy matplotlib nose pytables flake8
 
 Each of these commands will take a bit of time -- give it a few minutes
 to download and install the packages and their dependences. Once complete,
@@ -68,6 +68,15 @@ And then for Python 3.6 --
  - cd pyrk
  - PYTHONPATH=$PWD nosetests
 
+##### Run style tests with flake8
+
+Adherance to style checks in flake8 is encouraged though not strictly
+enforced. While you should not feel compelled to fix existing failures,
+please do not add additional flake8 issues.
+
+  - run flake8 from the root of the pyrk working directory to get all flake8 issues
+  - run flake8 and provide a filename to just run checks on that file
+  
 ##### Pull Requests
 
   - **Make sure the test suite passes** on your computer. To do so, run `nosetests` in the tests directory.

@@ -202,10 +202,11 @@ def print_logo(curr_dir):
                          "Perhaps it's time for a coffee.\n" +
                          logo.read())
 
+
 def name_from_path(infile_path):
     """Returns just the base of the filename from the path
-    
-    :param infile_path: path to infile. (absolute, relative, or missing 
+
+    :param infile_path: path to infile. (absolute, relative, or missing
       extension okay)"
     :type infile_path: string
     :return: returns the base name without the extension or path
@@ -218,6 +219,7 @@ def name_from_path(infile_path):
     file_name = os.path.basename(infile_path)
     file_name_base = os.path.splitext(file_name)[0]
     return file_name_base
+
 
 def load_infile(infile_path):
     """Loads the input file as a python package import based on the path
@@ -252,10 +254,10 @@ def main(args, curr_dir):
                           plotdir=args.plotdir,
                           infile=args.infile,
                           db=out_db)
-    # TODO: think about weather to add n_ref to all input files, or put n_ref in
-    # database files
+    # TODO: think about weather to add n_ref to all input files, or put n_ref
+    # in database files
     print_logo(curr_dir)
-    sol = solve(si=si, y=si.y, infile=infile)
+    _ = solve(si=si, y=si.y, infile=infile)
     log_results(si)
     out_db.close_db()
     pyrklog.critical("\nSimulation succeeded.\n")

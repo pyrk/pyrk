@@ -2,6 +2,7 @@ from ur import units
 from materials.material import Material
 from density_model import DensityModel
 
+
 class Fhrfuel(Material):
     """This class represents the material properties of the homogenized fuel
     layer in the FHR fuel pebble"""

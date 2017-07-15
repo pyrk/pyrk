@@ -84,7 +84,7 @@ class SimInfo(object):
         self.db.register_recorder('metadata', 'sim_info', self.metadata,
                                   timeseries=False)
         self.db.register_recorder('metadata', 'sim_timeseries', self.record,
-                                timeseries=True)
+                                  timeseries=True)
         self.db.register_recorder('neutronics', 'neutronics_params',
                                   self.ne.record,
                                   timeseries=True)

@@ -2,6 +2,7 @@
 # changed the way to define conduction
 # parameters are not real material properties, but rather placeholders to
 # check the code
+
 from utilities.ur import units
 import th_component as th
 import math
@@ -29,8 +30,6 @@ t_refl = 923.18521*units.kelvin
 t_mod = 937.39862*units.kelvin
 t_graph_peb = 936.40806*units.kelvin
 t_core = 970.54064*units.kelvin
-
-
 
 # the data below comes from design doc rev c
 
@@ -63,6 +62,7 @@ def vol_sphere(r):
     assert(r >= 0*units.meter)
     return (4./3.)*math.pi*pow(r.to('meter'), 3)
 
+
 # volumes
 n_pebbles = 470000
 n_graph_peb = 218000
@@ -91,8 +91,10 @@ a_graph_peb = area_sphere(r_pebble)*n_graph_peb
 a_fuel = area_sphere(r_particle)*n_pebbles*n_particles_per_pebble
 a_refl = 2*math.pi*core_outer_radius*core_height
 
-h_mod = 4700*units.watt/units.kelvin/units.meter**2  # TODO implement h(T) model
-h_refl = 600*units.watt/units.kelvin/units.meter**2  # TODO placeholder
+# TODO implement h(T) model
+h_mod = 4700*units.watt/units.kelvin/units.meter**2
+# TODO placeholder
+h_refl = 600*units.watt/units.kelvin/units.meter**2
 
 # modified alphas for mod
 vol_mod_tot = vol_mod + vol_graph_peb + vol_core

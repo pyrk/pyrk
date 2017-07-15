@@ -41,5 +41,3 @@ class Material(object):
         """
         ret = self.dm.rho(temp)
         return ret
-
-

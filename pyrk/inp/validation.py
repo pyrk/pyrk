@@ -1,7 +1,9 @@
 from utilities.ur import units
 import sys
+
 if sys.version_info > (3,):
     long = int
+
 
 def validate_ge(valname, val, llim):
     """Raises errors if the value is less than the lower limit (llim) or if it
@@ -23,6 +25,7 @@ def validate_ge(valname, val, llim):
     else:
         return val
 
+
 def validate_g(valname, val, llim):
     """Raises errors if the value is less than the lower limit (llim) or if it
     is of the wrong type
@@ -42,6 +45,7 @@ def validate_g(valname, val, llim):
         raise ValueError(msg)
     else:
         return val
+
 
 def validate_le(valname, val, ulim):
     """Raises errors if the value is greater than the upper limit (ulim) or if it

@@ -347,7 +347,7 @@ class THSuperComponent(THComponent):
         :type t_innercomp: float
         '''
         for envname, d in six.iteritems(self.conv):
-            #h = self.conv[envname]["h"].h(env.rho(t_env)).magnitude
+            # h = self.conv[envname]["h"].h(env.rho(t_env)).magnitude
             k = self.conv[envname]["k"].magnitude
             dr = self.conv[envname]["dr"].magnitude
         return (-h/k*t_env+t_innercomp/dr)/(1/dr-h/k)

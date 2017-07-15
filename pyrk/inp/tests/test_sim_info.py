@@ -1,5 +1,4 @@
-from nose.tools import assert_equal, assert_almost_equal, assert_true, \
-    assert_false, assert_raises, assert_is_instance, with_setup
+from nose.tools import assert_equal, assert_false, with_setup
 
 import os
 
@@ -10,14 +9,17 @@ from utilities.ur import units
 import th_component
 from timer import Timer
 
+
 def setup_func():
     "set up test fixtures"
     file = open('testfile.py', 'w+')
     file.close()
 
+
 def teardown_func():
     "tear down test fixtures"
     os.remove('testfile.py')
+
 
 @with_setup(setup_func, teardown_func)
 def test_init_reasonable_sim_no_components():
@@ -34,9 +36,16 @@ def test_init_reasonable_sim_no_components():
     kappa = 0.0
     testfile = 'testfile.py'
     open(testfile, 'w+')
-    info = si.SimInfo(timer=ti, components={}, iso=iso, e=spectrum,
-                      n_precursors=npg, n_decay=ndg, kappa=kappa,
-                      infile=testfile, sim_id=None, db=database.Database(mode='w'))
+    info = si.SimInfo(timer=ti,
+                      components={},
+                      iso=iso,
+                      e=spectrum,
+                      n_precursors=npg,
+                      n_decay=ndg,
+                      kappa=kappa,
+                      infile=testfile,
+                      sim_id=None,
+                      db=database.Database(mode='w'))
     assert_equal(t0, info.timer.t0)
     assert_equal(tf, info.timer.tf)
     assert_equal(dt, info.timer.dt)
@@ -71,6 +80,7 @@ def test_init_reasonable_sim_w_components():
     assert_equal(info.timer.timesteps(), 101)
     info.db.close_db()
     info.db.delete_db()
+
 
 def test_sim_id():
     info = si.SimInfo()

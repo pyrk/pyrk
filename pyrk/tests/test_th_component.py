@@ -1,9 +1,7 @@
 from __future__ import print_function
-from nose.tools import assert_equal, assert_almost_equal, assert_true, \
-    assert_false, assert_raises, assert_is_instance, with_setup
+from nose.tools import assert_equal, assert_raises
 
 import th_component as th
-from db import database
 from utilities.ur import units
 from timer import Timer
 from materials.material import Material

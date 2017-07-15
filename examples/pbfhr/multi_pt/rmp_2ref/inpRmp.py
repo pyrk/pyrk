@@ -6,6 +6,7 @@ The simulation has 3 stages:
 - turn on feedback
 - turn on external reactivity
 '''
+
 from utilities.ur import units
 import th_component as th
 import math
@@ -13,7 +14,7 @@ from materials.material import Material
 from density_model import DensityModel
 from convective_model import ConvectiveModel
 from timer import Timer
-import numpy as np
+
 #############################################
 #
 # User Workspace
@@ -55,6 +56,7 @@ def vol_sphere(r):
     assert(r >= 0*units.meter)
     return (4./3.)*math.pi*pow(r.to('meter'), 3)
 
+
 # volumes
 n_pebbles = 470000
 r_mod = 1.25/100.0*units.meter
@@ -69,10 +71,10 @@ vol_unit_cell = vol_sphere(r_shell) + vol_cool
 a_pb = area_sphere(r_shell)
 
 # Coolant flow properties
-#full core flow rate
+# full core flow rate
 m_flow = 976.0*units.kg/units.seconds
 dp = 3.0/100*units.meter
-#full core flow area
+# full core flow area
 a_flow = math.pi*(1.25**2 - 0.35**2)*units.meter**2
 t_inlet = units.Quantity(600.0, units.degC)
 
@@ -99,7 +101,7 @@ fission_iso = "fhr"
 # Spectrum
 spectrum = "multipt"
 
-#two-point model
+# two-point model
 n_ref = 2
 Lambda_ref = 0.000226807
 ref_lambda = [786.3172199, 1209.079474]
@@ -144,7 +146,7 @@ rho_cool = DensityModel(a=2415.6 *
                         (units.meter**3) /
                         units.kelvin, model="linear")
 cool = Material('cool', k_cool, cp_cool, rho_cool)
-cool.mu = 4.638 * 10**5/( 650**2.79)*units.pascal*units.second
+cool.mu = 4.638 * 10**5 / (650**2.79) * units.pascal*units.second
 h_cool = ConvectiveModel(h0=4700.0*units.watt/units.kelvin/units.meter**2,
                          mat=cool,
                          m_flow=m_flow,

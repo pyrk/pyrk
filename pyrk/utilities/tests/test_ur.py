@@ -1,5 +1,4 @@
-from nose.tools import assert_equal, assert_almost_equal, assert_true, \
-    assert_false, assert_raises, assert_is_instance, with_setup
+from nose.tools import assert_equal
 
 import utilities.ur as ur
 
@@ -10,6 +9,7 @@ def test_pcm_to_per_cent_delta_k():
     obs = apcm.to('per_cent_delta_k')
     exp = 0.001*ur.units.per_cent_delta_k
     assert_equal(obs, exp)
+
 
 def test_pcm_to_delta_k():
     # one pcm is one one thousandth of a percent
