@@ -86,7 +86,7 @@ feedback = False
 # External Reactivity
 from reactivity_insertion import ReactivityInsertion
 rho_ext = ReactivityInsertion(timer=ti)
-#rho_ext = StepReactivityInsertion(timer=ti, t_step=1.0*units.seconds,
+# rho_ext = StepReactivityInsertion(timer=ti, t_step=1.0*units.seconds,
 #                                  rho_init=0.0*units.delta_k,
 #                                  rho_final=0.005*units.delta_k)
 
@@ -108,11 +108,11 @@ cool = th.THComponent(name="cool",
                       timer=ti)
 
 inlet = th.THComponent(name="inlet",
-                      mat=Sodium(name="sodiumcoolant"),
-                      vol=vol_cool,
-                      T0=t_inlet,
-                      alpha_temp=0.0*units.pcm/units.kelvin,
-                      timer=ti)
+                       mat=Sodium(name="sodiumcoolant"),
+                       vol=vol_cool,
+                       T0=t_inlet,
+                       alpha_temp=0.0*units.pcm/units.kelvin,
+                       timer=ti)
 
 # The clad convects with the coolant
 fuel.add_convection('cool', h=h_cool, area=a_fuel)

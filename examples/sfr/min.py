@@ -49,9 +49,7 @@ vol_cool = a_flow*h_core
 v_cool = 5.0*units.meter/units.second
 
 # constant heat transfer approximation
-h_cool = 1.0e5*(units.watt/
-                units.kelvin/
-                pow(units.meter, 2))
+h_cool = 1.0e5*(units.watt / units.kelvin / pow(units.meter, 2))
 # power density
 omega = 4.77E8*units.watt/pow(units.meter, 3)
 # total power, watts, thermal, per 1 fuel pin
@@ -111,11 +109,11 @@ cool = th.THComponent(name="cool",
                       timer=ti)
 
 inlet = th.THComponent(name="inlet",
-                      mat=Sodium(name="sodiumcoolant"),
-                      vol=vol_cool,
-                      T0=t_inlet,
-                      alpha_temp=0.0*units.pcm/units.K,
-                      timer=ti)
+                       mat=Sodium(name="sodiumcoolant"),
+                       vol=vol_cool,
+                       T0=t_inlet,
+                       alpha_temp=0.0*units.pcm/units.K,
+                       timer=ti)
 
 # The clad convects with the coolant
 fuel.add_convection('cool', h=h_cool, area=a_fuel)

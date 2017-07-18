@@ -6,6 +6,7 @@ The simulation has 3 stages:
 - turn on feedback
 - turn on external reactivity
 '''
+
 from utilities.ur import units
 import th_component as th
 import math
@@ -13,7 +14,7 @@ from materials.material import Material, LiquidMaterial
 from density_model import DensityModel
 from convective_model import ConvectiveModel
 from timer import Timer
-import numpy as np
+
 #############################################
 #
 # User Workspace
@@ -55,6 +56,7 @@ def vol_sphere(r):
     assert(r >= 0*units.meter)
     return (4./3.)*math.pi*pow(r.to('meter'), 3)
 
+
 # volumes
 n_pebbles = 470000
 r_mod = 1.25/100.0*units.meter
@@ -90,7 +92,7 @@ fission_iso = "fhr"
 # Spectrum
 spectrum = "multipt"
 
-#two-point model
+# two-point model
 n_ref = 2
 Lambda_ref = 0.000226807
 ref_lambda = [786.3172199, 1209.079474]
@@ -101,8 +103,8 @@ feedback = True
 
 # External Reactivity
 from reactivity_insertion import RampReactivityInsertion
-#from reactivity_insertion import StepReactivityInsertion
-#rho_ext = StepReactivityInsertion(timer=ti,
+# from reactivity_insertion import StepReactivityInsertion
+# rho_ext = StepReactivityInsertion(timer=ti,
 #                                  t_step=t_feedback + 10.0*units.seconds,
 #                                  rho_init=0.0*units.delta_k,
 #                                  rho_final=600.0*units.pcm)

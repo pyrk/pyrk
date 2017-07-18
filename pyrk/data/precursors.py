@@ -55,18 +55,50 @@ class PrecursorData(object):
         beta_dict["pu239"] = {}
         beta_dict["sfr"] = {}
         beta_dict["fhr"] = {}
-        beta_dict["u235"]["thermal"] = [0.00247, 0.0013845, 0.001222,
-                                        0.0026455, 0.000832, 0.000169]
-        beta_dict["u235"]["fast"] = [0.000266, 0.001491, 0.001316, 0.002849,
-                                     0.000896, 0.000182]
-        beta_dict["pu239"]["thermal"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-        beta_dict["pu239"]["fast"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-        beta_dict["sfr"]["fast"] = [0.009, 0.087, 0.070, 0.0014, 0.0060, 0.0055]
-        beta_dict["fhr"]["thermal"] = [1.48756E-04, 9.45436E-04, 8.29928E-04,
-                                       2.21997E-03, 6.90778E-04, 2.31801E-04]
-        beta_dict["fhr"]["multipt"] = [1.48756E-04, 9.45436E-04, 8.29928E-04,
-                                       2.21997E-03, 6.90778E-04, 2.31801E-04,
-                                       0.084349, 0.168983]
+        beta_dict["u235"]["thermal"] = [0.00247,
+                                        0.0013845,
+                                        0.001222,
+                                        0.0026455,
+                                        0.000832,
+                                        0.000169]
+        beta_dict["u235"]["fast"] = [0.000266,
+                                     0.001491,
+                                     0.001316,
+                                     0.002849,
+                                     0.000896,
+                                     0.000182]
+        beta_dict["pu239"]["thermal"] = [0.0,
+                                         0.0,
+                                         0.0,
+                                         0.0,
+                                         0.0,
+                                         0.0]
+        beta_dict["pu239"]["fast"] = [0.0,
+                                      0.0,
+                                      0.0,
+                                      0.0,
+                                      0.0,
+                                      0.0]
+        beta_dict["sfr"]["fast"] = [0.009,
+                                    0.087,
+                                    0.070,
+                                    0.0014,
+                                    0.0060,
+                                    0.0055]
+        beta_dict["fhr"]["thermal"] = [1.48756E-04,
+                                       9.45436E-04,
+                                       8.29928E-04,
+                                       2.21997E-03,
+                                       6.90778E-04,
+                                       2.31801E-04]
+        beta_dict["fhr"]["multipt"] = [1.48756E-04,
+                                       9.45436E-04,
+                                       8.29928E-04,
+                                       2.21997E-03,
+                                       6.90778E-04,
+                                       2.31801E-04,
+                                       0.084349,
+                                       0.168983]
         return beta_dict[nuc][e]
 
     def _get_lambdas(self, nuc, e):
@@ -107,6 +139,7 @@ class PrecursorData(object):
         Lambda_dict["pu239"]["thermal"] = 0
         Lambda_dict["pu239"]["fast"] = 0
         Lambda_dict["sfr"]["fast"] = 1.0e-5
-        Lambda_dict["fhr"]["thermal"] = 5.35878E-04 #ADJ_NAUCHI_LIFETIME from serpent
+        # ADJ_NAUCHI_LIFETIME from serpent
+        Lambda_dict["fhr"]["thermal"] = 5.35878E-04
         Lambda_dict["fhr"]["multipt"] = 0.000226807
         return Lambda_dict[nuc][e]

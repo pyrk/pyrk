@@ -1,5 +1,4 @@
-from nose.tools import assert_equal, assert_almost_equal, assert_true, \
-    assert_false, assert_raises, assert_is_instance, with_setup
+from nose.tools import assert_equal
 
 from utilities.ur import units
 import density_model
@@ -12,8 +11,9 @@ dm_constant = density_model.DensityModel(a=alpha, b=beta, model="constant")
 dm_linear = density_model.DensityModel(a=alpha, b=beta, model="linear")
 
 dm_flibe = density_model.DensityModel(a=2415.6*units.kg/(units.meter**3),
-                            b=0.49072*units.kg/(units.meter**3)/units.kelvin,
-                            model="linear")
+                                      b=0.49072*units.kg/(units.meter**3)/units.kelvin,
+                                      model="linear")
+
 
 def test_default_constructor():
     dm = density_model.DensityModel()

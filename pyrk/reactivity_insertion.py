@@ -1,6 +1,7 @@
 from utilities.ur import units
 from inp import validation
 
+
 class ReactivityInsertion(object):
     """This is the default reactivity insertion object class from whence all
     others are derived.

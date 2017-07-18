@@ -110,12 +110,12 @@ class THSystem(object):
                                             h=h_conv,
                                             A=d['area'])
                     assert (
-                        Qconv*(component.T[t_idx]-env.T[t_idx])).magnitude >= 0, \
+                        Qconv * (component.T[t_idx] - env.T[t_idx])).magnitude >= 0, \
                         'convection from %s to %s, %fc to %fc is not physical' \
                         % (component.name, env.name,
                             component.T[t_idx].magnitude,
                             env.T[t_idx].magnitude)
-                to_ret -= Qconv/cap/component.vol.magnitude
+                to_ret -= Qconv / cap / component.vol.magnitude
             for name, d in six.iteritems(component.adv):
                 Qadv = self.advection(component,
                                       t_idx,
@@ -220,13 +220,13 @@ class THSystem(object):
         :return: Qond, dimemsionless quantity
         :rtype: float
         """
-        assert(A.magnitude>0)
-        assert(L.magnitude>0)
+        assert(A.magnitude > 0)
+        assert(L.magnitude > 0)
         T_b = component.T[t_idx].magnitude
         T_env = env.T[t_idx].magnitude
-        num = (T_b-T_env)
+        num = (T_b - T_env)
         k = component.k
-        denom = (L/(k*A)).magnitude
+        denom = (L / (k * A)).magnitude
         return num/denom
 
     def advection(self, component, t_idx, t_in, m_flow, cp):
@@ -246,8 +246,8 @@ class THSystem(object):
         :rtype: float
         '''
 
-        #check if the temperature is the initial temperature 0degC
-        #set Qadv=0 in this case for computation stability
+        # check if the temperature is the initial temperature 0degC
+        # set Qadv=0 in this case for computation stability
         if component.T[t_idx].to('kelvin') == 0*units.kelvin:
             Qadv = 0
         else:

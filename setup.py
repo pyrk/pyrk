@@ -1,9 +1,7 @@
-
 from setuptools import setup
 import io
 import os
 
-import pyrk
 from pyrk.ver import get_git_version
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -18,6 +16,7 @@ def read(*filenames, **kwargs):
             buf.append(f.read())
     return sep.join(buf)
 
+
 long_description = read('README.md', 'CONTRIBUTING.md')
 
 setup(
@@ -30,7 +29,7 @@ setup(
     author_email='katyhuff@gmail.com',
     description='Transient Neutron Kinetics Simulation in 0D.',
     long_description=long_description,
-    packages=['pyrk','pyrk.utilities','pyrk.materials','pyrk.inp'],
+    packages=['pyrk', 'pyrk.utilities', 'pyrk.materials', 'pyrk.inp'],
     include_package_data=True,
     platforms='any',
     test_suite='pyrk.test.test_pyrk',

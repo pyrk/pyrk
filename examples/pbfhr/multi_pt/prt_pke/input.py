@@ -6,6 +6,7 @@ The simulation has 3 stages:
 - turn on feedback
 - turn on external reactivity
 '''
+
 from utilities.ur import units
 import th_component as th
 import math
@@ -13,7 +14,7 @@ from materials.material import Material, LiquidMaterial
 from convective_model import ConvectiveModel
 from density_model import DensityModel
 from timer import Timer
-import numpy as np
+
 #############################################
 #
 # User Workspace
@@ -55,6 +56,7 @@ def vol_sphere(r):
     assert(r >= 0*units.meter)
     return (4./3.)*math.pi*pow(r.to('meter'), 3)
 
+
 # volumes
 n_pebbles = 470000
 r_mod = 1.25/100.0*units.meter
@@ -91,11 +93,11 @@ fission_iso = "fhr"
 # Spectrum
 spectrum = "thermal"
 
-#two-point model
-#n_ref = 0
-#Lambda_ref = 0.000226807
-#ref_lambda = [786.3172199, 1209.079474]
-#ref_rho = [0.084349, 0.168983]
+# two-point model
+# n_ref = 0
+# Lambda_ref = 0.000226807
+# ref_lambda = [786.3172199, 1209.079474]
+# ref_rho = [0.084349, 0.168983]
 
 # Feedbacks, False to turn reactivity feedback off. True otherwise.
 feedback = True
@@ -125,7 +127,7 @@ cp_shell = 1650.0*units.joule/(units.kg*units.kelvin)
 rho_shell = DensityModel(a=1740.*units.kg/(units.meter**3), model="constant")
 Shell = Material('shell', k_shell, cp_shell, rho_shell)
 
-mu0=0*units.pascal*units.second
+mu0 = 0*units.pascal*units.second
 k_cool = 1*units.watt/(units.meter*units.kelvin)
 cp_cool = 2415.78*units.joule/(units.kg*units.kelvin)
 rho_cool = DensityModel(a=2415.6 *
@@ -199,4 +201,3 @@ components = []
 for i in range(0, len(pebble.sub_comp)):
     components.append(pebble.sub_comp[i])
 components.extend([pebble, cool])
-

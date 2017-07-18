@@ -28,5 +28,3 @@ class LiquidMaterial(Material):
         Material.__init__(self, name, k, cp, dm)
         self.mu = mu.to('pascal*seconds')
         validation.validate_ge("mu", mu, 0*units.pascal*units.seconds)
-
-

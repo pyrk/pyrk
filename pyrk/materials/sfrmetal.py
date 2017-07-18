@@ -53,5 +53,3 @@ class SFRMetal(Material):
 
         """
         return DensityModel(a=14.1*units.gram/units.cm**3, model='constant')
-
-
