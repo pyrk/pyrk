@@ -77,7 +77,9 @@ h_cool = 1.0e5*units.joule/units.second/units.kelvin/pow(units.meter, 2)
 
 # custom thermal resistance, ragusa
 w = 4.0/9.0
-k_fuel = 0.16*(units.watt/units.centimeter/units.kelvin).to('watt/meter/kelvin')
+k_fuel = units.Quantity(0.16, (units.watt /
+                               units.centimeter /
+                               units.kelvin)).to('watt/meter/kelvin')
 res_fuel = a_fuel*(1.0/(r_clad*2.0*math.pi*h_cool)
                    + w/(4.0*math.pi*k_fuel))/vol_fuel
 
