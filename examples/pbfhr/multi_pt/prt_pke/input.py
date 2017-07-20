@@ -10,7 +10,8 @@ The simulation has 3 stages:
 from utilities.ur import units
 import th_component as th
 import math
-from materials.material import Material, LiquidMaterial
+from materials.material import Material
+from materials.liquid_material import LiquidMaterial
 from convective_model import ConvectiveModel
 from density_model import DensityModel
 from timer import Timer
