@@ -5,8 +5,8 @@ import os
 from pyrk.inp import sim_info as si
 from pyrk.db import database
 
-from utilities.ur import units
-import th_component
+from pyrk.utilities.ur import units
+import pyrk.th_component
 from timer import Timer
 
 

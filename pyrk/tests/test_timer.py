@@ -1,7 +1,7 @@
 import six
 from nose.tools import assert_equal
 
-from utilities.ur import units
+from pyrk.utilities.ur import units
 import timer
 import numpy as np
 
