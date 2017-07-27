@@ -1,8 +1,8 @@
 from nose.tools import assert_equal
 
-from materials import graphite
-from utilities.ur import units
-from timer import Timer
+from pyrk.materials import graphite
+from pyrk.timer import Timer
+from pyrk.utilities.ur import units
 
 name = "testname"
 kappa = 0

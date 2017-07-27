@@ -7,16 +7,17 @@ result in an input file, an input parser, a solver interface, and output
 scripts.
 """
 
-import numpy as np
-from scipy.integrate import ode
-import importlib
 import argparse
-from db import database
-from utilities import logger
-from utilities.logger import pyrklog
-from inp import sim_info
-from utilities.ur import units
+import importlib
+import numpy as np
 import os
+from scipy.integrate import ode
+
+from pyrk.db import database
+from pyrk.inp import sim_info
+from pyrk.utilities import logger
+from pyrk.utilities.logger import pyrklog
+from pyrk.utilities.ur import units
 
 
 def update_n(t, y_n, si):

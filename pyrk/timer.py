@@ -1,7 +1,9 @@
 import numpy as np
-from inp import validation
-from utilities.ur import units
 import logging
+
+from pyrk.inp import validation
+from pyrk.utilities.ur import units
+
 log = logging.getLogger(__name__)
 
 

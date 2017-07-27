@@ -1,11 +1,11 @@
 # Licensed under a 3-clause BSD style license - see LICENSE
 import numpy as np
 
-from timer import Timer
-import neutronics
-import reactivity_insertion as ri
-import th_system
-from db import database
+from pyrk.db import database
+from pyrk.timer import Timer
+import pyrk.neutronics
+import pyrk.reactivity_insertion as ri
+import pyrk.th_system
 
 
 class SimInfo(object):
@@ -62,7 +62,7 @@ class SimInfo(object):
         self.feedback = feedback
         self.ne = self.init_ne()
         self.kappa = kappa
-        self.th = th_system.THSystem(kappa=kappa, components=components)
+        self.th = pyrk.th_system.THSystem(kappa=kappa, components=components)
         self.y = np.zeros(shape=(timer.timesteps(), self.n_entries()),
                           dtype=float)
         self.plotdir = plotdir
@@ -111,12 +111,12 @@ class SimInfo(object):
     def init_ne(self):
         """Initializes the neutronics object owned by the siminfo object
         """
-        ne = neutronics.Neutronics(iso=self.iso, e=self.e,
-                                   n_precursors=self.n_pg,
-                                   n_decay=self.n_dg,
-                                   timer=self.timer,
-                                   rho_ext=self.rho_ext,
-                                   feedback=self.feedback)
+        ne = pyrk.neutronics.Neutronics(iso=self.iso, e=self.e,
+                                        n_precursors=self.n_pg,
+                                        n_decay=self.n_dg,
+                                        timer=self.timer,
+                                        rho_ext=self.rho_ext,
+                                        feedback=self.feedback)
         return ne
 
     def n_components(self):
@@ -140,7 +140,7 @@ class SimInfo(object):
         :type th_component: THComponent
         """
 
-        if th_component.name in self.components:
+        if pyrk.th_component.name in self.components:
             msg = "A component named "
             msg += th_component.name
             msg += " already exists in the simulation."

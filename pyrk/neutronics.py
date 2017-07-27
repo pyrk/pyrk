@@ -1,11 +1,11 @@
 # Licensed under a 3-clause BSD-style license
 import numpy as np
-from inp import validation as v
 
-from data import precursors as pr
-from data import decay_heat as dh
-from reactivity_insertion import ReactivityInsertion
-from timer import Timer
+from pyrk.data import decay_heat as dh
+from pyrk.data import precursors as pr
+from pyrk.inp import validation as v
+from pyrk.reactivity_insertion import ReactivityInsertion
+from pyrk.timer import Timer
 
 
 class Neutronics(object):

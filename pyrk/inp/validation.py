@@ -1,5 +1,6 @@
-from utilities.ur import units
 import sys
+
+from pyrk.utilities.ur import units
 
 if sys.version_info > (3,):
     long = int
@@ -16,6 +17,8 @@ def validate_ge(valname, val, llim):
     :param llim: the lower limit of acceptable value for val
     :type llim: the same type as val
     """
+
+    print(valname, val, llim)
     if validate_num(valname, val) < llim:
         msg = valname + " must be greater than or equal to "
         msg += str(llim) + ".\n"
@@ -37,6 +40,7 @@ def validate_g(valname, val, llim):
     :param llim: the lower limit of acceptable value for val
     :type llim: the same type as val
     """
+    print(valname, val, llim)
     if not validate_num(valname, val) > llim:
         msg = valname + " must be greater than"
         msg += str(llim) + ".\n"
@@ -58,6 +62,7 @@ def validate_le(valname, val, ulim):
     :param ulim: the upper limit of acceptable value for val
     :type ulim: the same type as val
     """
+    print(valname, val, ulim)
     if validate_num(valname, val) > ulim:
         msg = valname + " must be less than or equal to "
         msg += str(ulim) + ".\n"
