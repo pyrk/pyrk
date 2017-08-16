@@ -1,8 +1,7 @@
 import six
-
-from pyrk.materials.liquid_material import LiquidMaterial
-from pyrk.th_component import THSuperComponent
-from pyrk.utilities.ur import units
+from th_component import THSuperComponent
+from utilities.ur import units
+from materials.liquid_material import LiquidMaterial
 
 
 class THSystem(object):
@@ -114,8 +113,8 @@ class THSystem(object):
                         Qconv * (component.T[t_idx] - env.T[t_idx])).magnitude >= 0, \
                         'convection from %s to %s, %fc to %fc is not physical' \
                         % (component.name, env.name,
-                            component.T[t_idx].magnitude,
-                            env.T[t_idx].magnitude)
+                           component.T[t_idx].magnitude,
+                           env.T[t_idx].magnitude)
                 to_ret -= Qconv / cap / component.vol.magnitude
             for name, d in six.iteritems(component.adv):
                 Qadv = self.advection(component,

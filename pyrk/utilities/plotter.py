@@ -1,10 +1,10 @@
 # Licensed under a 3-clause BSD-style license - see LiCENSE.rst
 import os
 import matplotlib
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.cm as cmx
 import matplotlib.colors as colors
+matplotlib.use("Agg")
 
 
 def my_colors(num, n):

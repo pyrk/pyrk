@@ -1,8 +1,8 @@
 import six
 from nose.tools import assert_equal
 
-from utilities.ur import units
-import timer
+from pyrk.utilities.ur import units
+from pyrk.timer import Timer
 import numpy as np
 
 
@@ -13,32 +13,32 @@ ten = 10.0*units.seconds
 small = 0.0001*units.seconds
 large = 1000.0*units.seconds
 
-default = timer.Timer()
-short_sim = timer.Timer(t0=zero,
-                        tf=one,
-                        t_feedback=zero,
-                        dt=ptone)
+default = Timer()
+short_sim = Timer(t0=zero,
+                  tf=one,
+                  t_feedback=zero,
+                  dt=ptone)
 
-long_sim = timer.Timer(t0=zero,
-                       tf=large,
-                       t_feedback=small,
-                       dt=small)
-late_start = timer.Timer(t0=ten,
-                         tf=large,
-                         t_feedback=ten,
-                         dt=small)
-long_dt = timer.Timer(t0=zero,
-                      tf=large,
-                      t_feedback=small,
-                      dt=ten)
+long_sim = Timer(t0=zero,
+                 tf=large,
+                 t_feedback=small,
+                 dt=small)
+late_start = Timer(t0=ten,
+                   tf=large,
+                   t_feedback=ten,
+                   dt=small)
+long_dt = Timer(t0=zero,
+                tf=large,
+                t_feedback=small,
+                dt=ten)
 
-all_ints = timer.Timer(t0=0*units.seconds,
-                       tf=10*units.seconds,
-                       dt=1*units.seconds)
+all_ints = Timer(t0=0*units.seconds,
+                 tf=10*units.seconds,
+                 dt=1*units.seconds)
 
-trouble = timer.Timer(t0=0.0*units.seconds,
-                      tf=5.0*units.seconds,
-                      dt=0.005*units.seconds)
+trouble = Timer(t0=0.0*units.seconds,
+                tf=5.0*units.seconds,
+                dt=0.005*units.seconds)
 
 
 def test_default_constructor():

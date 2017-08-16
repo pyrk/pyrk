@@ -1,6 +1,6 @@
-from utilities.ur import units
-from density_model import DensityModel
-from materials.material import Material
+from pyrk.density_model import DensityModel
+from pyrk.materials.material import Material
+from pyrk.utilities.ur import units
 
 
 class SFRMetal(Material):

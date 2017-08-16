@@ -5,9 +5,9 @@ import os
 from pyrk.inp import sim_info as si
 from pyrk.db import database
 
-from utilities.ur import units
-import th_component
-from timer import Timer
+from pyrk.utilities.ur import units
+import pyrk.th_component
+from pyrk.timer import Timer
 
 
 def setup_func():
@@ -60,13 +60,17 @@ def test_init_reasonable_sim_w_components():
     tf = 10*units.seconds
     t_feedback = 1.*units.seconds
     dt = 0.1*units.seconds
+    print(t0)
+    print(tf)
+    print(t_feedback)
+    print(dt)
     ti = Timer(t0=t0, tf=tf, t_feedback=t_feedback, dt=dt)
     iso = "u235"
     spectrum = "thermal"
     npg = 6
     ndg = 11
     kappa = 0.06
-    tester = th_component.THComponent()
+    tester = pyrk.th_component.THComponent()
     c = [tester, tester, tester]
     kappa = 0.0
     testfile = 'testfile.py'

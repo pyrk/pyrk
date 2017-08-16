@@ -1,6 +1,6 @@
-from utilities.ur import units
-from density_model import DensityModel
-from materials.liquid_material import LiquidMaterial
+from pyrk.density_model import DensityModel
+from pyrk.materials.liquid_material import LiquidMaterial
+from pyrk.utilities.ur import units
 
 
 class Flibe(LiquidMaterial):

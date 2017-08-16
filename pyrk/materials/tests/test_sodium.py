@@ -1,8 +1,8 @@
 from nose.tools import assert_equal, assert_true
 
-from materials import sodium
-from materials.liquid_material import LiquidMaterial
-from utilities.ur import units
+from pyrk.materials import sodium
+from pyrk.materials.liquid_material import LiquidMaterial
+from pyrk.utilities.ur import units
 
 name = "testname"
 tester = sodium.Sodium(name=name)

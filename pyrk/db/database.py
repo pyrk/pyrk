@@ -1,10 +1,10 @@
 # Licensed under a 3-clause BSD style license - see LICENSE
-import tables as tb
-from db import descriptions as desc
-
 import contextlib
-import sys
 import six
+import sys
+import tables as tb
+
+from pyrk.db import descriptions as desc
 
 
 @contextlib.contextmanager

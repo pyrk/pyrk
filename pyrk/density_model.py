@@ -1,4 +1,4 @@
-from utilities.ur import units
+from pyrk.utilities.ur import units
 
 
 class DensityModel(object):
