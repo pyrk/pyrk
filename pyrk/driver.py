@@ -27,7 +27,7 @@ def update_n(t, y_n, si):
     :param y_n: The array that solves the neutronics block at time t
     :type y_n: np.ndarray.
     """
-    t_idx = si.timer.t_idx(t*units.seconds)
+    t_idx = si.timer.t_idx(t * units.seconds)
     n_n = len(y_n)
     si.y[t_idx][:n_n] = y_n
 
@@ -41,9 +41,9 @@ def update_th(t, y_n, y_th, si):
     :param y_th: The array that solves thermal hydraulics block at time t
     :type y_th: np.ndarray.
     """
-    t_idx = si.timer.t_idx(t*units.seconds)
+    t_idx = si.timer.t_idx(t * units.seconds)
     for idx, comp in enumerate(si.components):
-        comp.update_temp(t_idx, y_th[idx]*units.kelvin)
+        comp.update_temp(t_idx, y_th[idx] * units.kelvin)
     n_n = len(y_n)
     si.y[t_idx][n_n:] = y_th
 
@@ -71,7 +71,7 @@ def f_n(t, y, si):
     for j in range(0, si.n_pg):
         i += 1
         f[i] = si.ne.dzetadt(t, y[0], y[i], j)
-    assert(i == end_pg-1)
+    assert(i == end_pg - 1)
     for k in range(0, si.n_dg):
         i += 1
         f[i] = si.ne.dwdt(y[0], y[i], k)
@@ -88,12 +88,12 @@ def f_th(t, y_th, si):
     :param si: the simulation info object
     :type si: SimInfo
     """
-    t_idx = si.timer.t_idx(t*units.seconds)
+    t_idx = si.timer.t_idx(t * units.seconds)
     f = units.Quantity(np.zeros(shape=(si.n_components(),), dtype=float),
                        'kelvin / second')
     power = si.y[t_idx][0]
-    o_i = 1+si.n_pg
-    o_f = 1+si.n_pg + si.n_dg
+    o_i = 1 + si.n_pg
+    o_f = 1 + si.n_pg + si.n_dg
     omegas = si.y[t_idx][o_i:o_f]
     for idx, comp in enumerate(si.components):
         f[idx] = si.th.dtempdt(component=comp,
@@ -117,14 +117,14 @@ def y0(si):
     for j in range(0, si.n_pg):
         i += 1
         f[i] = f[0] * \
-            si.ne._pd.betas()[j]/(si.ne._pd.lambdas()[j]*si.ne._pd._Lambda)
-    assert(i == end_pg-1)
+            si.ne._pd.betas()[j] / (si.ne._pd.lambdas()[j] * si.ne._pd._Lambda)
+    assert(i == end_pg - 1)
     for k in range(0, si.n_dg):
         i += 1
         f[i] = 0
     assert(i == end_dg - 1)
     for idx, comp in enumerate(si.components):
-        f[i+idx+1] = comp.T0.magnitude
+        f[i + idx + 1] = comp.T0.magnitude
     assert len(f) == si.n_entries()
     si.y[0] = f
     return f
@@ -169,9 +169,9 @@ def solve(si, y, infile):
     th = ode(f_th).set_integrator('dopri5', nsteps=infile.nsteps)
     th.set_initial_value(y0_th(si), si.timer.t0.magnitude)
     th.set_f_params(si)
-    while (n.successful()
-           and n.t < si.timer.tf.magnitude
-           and th.t < si.timer.tf.magnitude):
+    while (n.successful() and
+            n.t < si.timer.tf.magnitude and
+            th.t < si.timer.tf.magnitude):
         si.timer.advance_one_timestep()
         si.db.record_all()
         n.integrate(si.timer.current_time().magnitude)
@@ -182,15 +182,15 @@ def solve(si, y, infile):
 
 
 def log_results(si):
-    pyrklog.info("\nReactivity : \n"+str(si.ne._rho))
-    pyrklog.info("\nFinal Result : \n"+np.array_str(si.y))
+    pyrklog.info("\nReactivity : \n" + str(si.ne._rho))
+    pyrklog.info("\nFinal Result : \n" + np.array_str(si.y))
     for comp in si.components:
         pyrklog.info("\n" + comp.name + ":\n" + np.array_str(comp.T.magnitude))
-    pyrklog.info("\nPrecursor lambdas: \n"+str(si.ne._pd.lambdas()))
-    pyrklog.info("\nDelayed neutron frac: \n"+str(si.ne._pd.beta()))
-    pyrklog.info("\nPrecursor betas: \n"+str(si.ne._pd.betas()))
-    pyrklog.info("\nDecay kappas: \n"+str(si.ne._dd.kappas()))
-    pyrklog.info("\nDecay lambdas: \n"+str(si.ne._dd.lambdas()))
+    pyrklog.info("\nPrecursor lambdas: \n" + str(si.ne._pd.lambdas()))
+    pyrklog.info("\nDelayed neutron frac: \n" + str(si.ne._pd.beta()))
+    pyrklog.info("\nPrecursor betas: \n" + str(si.ne._pd.betas()))
+    pyrklog.info("\nDecay kappas: \n" + str(si.ne._dd.kappas()))
+    pyrklog.info("\nDecay lambdas: \n" + str(si.ne._dd.lambdas()))
 
 
 def print_logo(curr_dir):

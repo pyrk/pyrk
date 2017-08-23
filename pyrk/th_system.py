@@ -48,12 +48,12 @@ class THSystem(object):
         if isinstance(component, THSuperComponent):
             #  return 0 for superComponent, doesn't calculate the temperature
             #  variation of superComponent
-            return to_ret*units.kelvin/units.second
+            return to_ret * units.kelvin / units.second
         else:
-            cap = (component.rho(t_idx).magnitude*component.cp.magnitude)
+            cap = (component.rho(t_idx).magnitude * component.cp.magnitude)
             if component.sph and component.ri.magnitude == 0.0:
                 Qcent = self.BC_center(component, t_idx)
-                to_ret -= Qcent/cap
+                to_ret -= Qcent / cap
             for interface, d in six.iteritems(component.convBC):
                 env = self.comp_from_name(interface)
                 QconvBC = self.convBoundary(component,
@@ -62,9 +62,9 @@ class THSystem(object):
                                             h=d["h"].h(env.rho(t_idx),
                                                        env.mat.mu),
                                             R=d["R"])
-                to_ret -= QconvBC/cap
+                to_ret -= QconvBC / cap
             if component.heatgen:
-                to_ret += self.heatgen(component, power, omegas)/cap
+                to_ret += self.heatgen(component, power, omegas) / cap
             for interface, d in six.iteritems(component.cond):
                 env = self.comp_from_name(interface)
                 if component.sph:
@@ -73,7 +73,7 @@ class THSystem(object):
                     Qcond = self.conduction_slab(component, env, t_idx,
                                                  L=d["L"],
                                                  A=d["area"])
-                to_ret -= Qcond/cap
+                to_ret -= Qcond / cap
             for interface, d in six.iteritems(component.conv):
                 env = self.comp_from_name(interface)
                 if isinstance(env, THSuperComponent):
@@ -86,7 +86,7 @@ class THSystem(object):
                                             h=d['h'].h(component.rho(t_idx),
                                                        component.mat.mu),
                                             A=d['area'])
-                    assert (Qconv*(component.T[t_idx].magnitude-Tr)) >= 0, '''
+                    assert (Qconv * (component.T[t_idx].magnitude - Tr)) >= 0, '''
                     convection from %s to %s, from low temperature %f to
                     high %f is not physical: %f''' % (
                         component.name, env.name, component.T[t_idx].magnitude,
@@ -122,8 +122,8 @@ class THSystem(object):
                                       t_in=d['t_in'].magnitude,
                                       m_flow=d['m_flow'],
                                       cp=d['cp'])
-                to_ret -= Qadv/cap/component.vol.magnitude
-            return to_ret*units.kelvin/units.seconds
+                to_ret -= Qadv / cap / component.vol.magnitude
+            return to_ret * units.kelvin / units.seconds
 
     def BC_center(self, component, t_idx):
         '''Volumetric conductive heat flux Qconduction from the center of a
@@ -140,7 +140,7 @@ class THSystem(object):
         conductivity = component.k.magnitude
         T_b = component.T[t_idx].magnitude
         dr = (component.ro - component.ri).magnitude
-        return (conductivity*T_b)/(dr**2)
+        return (conductivity * T_b) / (dr**2)
 
     def convBoundary(self, component, t_b, t_env, h, R):
         '''calculate heat transfer through convective boundray condition
@@ -162,9 +162,10 @@ class THSystem(object):
         '''
         r_b = component.ro.magnitude
         k = component.k.magnitude
-        dr = component.ri.magnitude-component.ro.magnitude
-        T_R = (-h.magnitude/k*t_env + t_b/dr)/(1/dr-h.magnitude/k)
-        to_ret = 1/r_b*k*(r_b*t_b-R.magnitude*T_R)/dr**2
+        dr = component.ri.magnitude - component.ro.magnitude
+        T_R = (-h.magnitude / k * t_env + t_b / dr) / \
+            (1 / dr - h.magnitude / k)
+        to_ret = 1 / r_b * k * (r_b * t_b - R.magnitude * T_R) / dr**2
         return to_ret
 
     def heatgen(self, component, power, omegas):
@@ -177,11 +178,11 @@ class THSystem(object):
         i.e.: power*power_tot = power (in watts)
         :type power: float
         """
-        return (power*component.power_tot.magnitude *
-                (1-self.kappa) + sum(omegas))/component.vol.magnitude
+        return (power * component.power_tot.magnitude *
+                (1 - self.kappa) + sum(omegas)) / component.vol.magnitude
 
-    def conductionFVM(self, component, env, t_idx, L=0.0*units.meter,
-                      k=0.0*units.meter, A=0.0*units.meter**2):
+    def conductionFVM(self, component, env, t_idx, L=0.0 * units.meter,
+                      k=0.0 * units.meter, A=0.0 * units.meter**2):
         """
         compute volumetric conductive heat transfer by conduction(watts/m3)
 
@@ -202,9 +203,9 @@ class THSystem(object):
         T_env = env.T[t_idx].magnitude
         r_b = component.ro.magnitude
         r_env = env.ro.magnitude
-        dr = (component.ro-component.ri).magnitude
+        dr = (component.ro - component.ri).magnitude
         k = component.k.magnitude
-        return k/r_b * (r_b * T_b - r_env * T_env)/(dr**2)
+        return k / r_b * (r_b * T_b - r_env * T_env) / (dr**2)
 
     def conduction_slab(self, component, env, t_idx, L,
                         A):
@@ -227,7 +228,7 @@ class THSystem(object):
         num = (T_b - T_env)
         k = component.k
         denom = (L / (k * A)).magnitude
-        return num/denom
+        return num / denom
 
     def advection(self, component, t_idx, t_in, m_flow, cp):
         ''' calculate heat transfer by advection in watts
@@ -248,11 +249,11 @@ class THSystem(object):
 
         # check if the temperature is the initial temperature 0degC
         # set Qadv=0 in this case for computation stability
-        if component.T[t_idx].to('kelvin') == 0*units.kelvin:
+        if component.T[t_idx].to('kelvin') == 0 * units.kelvin:
             Qadv = 0
         else:
-            t_out = component.T[t_idx].magnitude*2.0 - t_in
-            Qadv = m_flow.magnitude*cp.magnitude*(t_out-t_in)
+            t_out = component.T[t_idx].magnitude * 2.0 - t_in
+            Qadv = m_flow.magnitude * cp.magnitude * (t_out - t_in)
         return Qadv
 
     def mass_trans(self, t_b, t_inlet, H, u):
@@ -262,9 +263,9 @@ class THSystem(object):
         :param t_inlet: The temperature of the flow inlet
         :type t_inlet:
         """
-        num = 2.0*u*(t_b - t_inlet)
+        num = 2.0 * u * (t_b - t_inlet)
         denom = H
-        return num/denom
+        return num / denom
 
     def convection(self, t_b, t_env, h, A):
         """
@@ -279,14 +280,14 @@ class THSystem(object):
         :param A: the surface area of heat transfer
         :type A: float.
         """
-        num = (t_b-t_env)
-        denom = (1.0/(h.magnitude*A.magnitude))
-        return num/denom
+        num = (t_b - t_env)
+        denom = (1.0 / (h.magnitude * A.magnitude))
+        return num / denom
 
     def custom(self, t_b, t_env, res):
-        num = (t_b-t_env)
-        denom = res.to(units.kelvin/units.watt)
-        return num/denom
+        num = (t_b - t_env)
+        denom = res.to(units.kelvin / units.watt)
+        return num / denom
 
     def record(self, component):
         """a recorder function that calls down to each component.

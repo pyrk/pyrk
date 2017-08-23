@@ -11,6 +11,7 @@ class SFRMetal(Material):
 
     http://www.sciencedirect.com/science/article/pii/S1738573315000753
     """
+
     def __init__(self, name="sfrmetal"):
         """Initalizes a material
 
@@ -26,7 +27,7 @@ class SFRMetal(Material):
     def thermal_conductivity(self):
         """SFRMetal thermal conductivity in [W/m-K]
         """
-        to_ret = 0.16*units.watt/(units.centimeter*units.kelvin)
+        to_ret = 0.16 * units.watt / (units.centimeter * units.kelvin)
         return to_ret.to('watt/meter/kelvin')
 
     def specific_heat_capacity(self):
@@ -44,7 +45,7 @@ class SFRMetal(Material):
         Below is a constant estimate of sfrmetal cp at temperatures around 400C
         based on table 1.1-5 in http://www.ne.anl.gov/eda/ANL-RE-95-2.pdf
         """
-        to_ret = 0.17*units.joule/(units.g*units.kelvin)
+        to_ret = 0.17 * units.joule / (units.g * units.kelvin)
         return to_ret.to('J/kg/kelvin')
 
     def density(self):
@@ -52,4 +53,5 @@ class SFRMetal(Material):
         SFRMetal density as a funciton of T. [kg/m^3]
 
         """
-        return DensityModel(a=14.1*units.gram/units.cm**3, model='constant')
+        return DensityModel(a=14.1 * units.gram /
+                            units.cm**3, model='constant')

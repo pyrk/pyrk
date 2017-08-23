@@ -90,7 +90,7 @@ class Database(object):
         """
         self.open_db()
         p = self.get_tablepath(groupname, tablename)
-        self.tablehandles[p] = self.h5file.create_table('/'+groupname,
+        self.tablehandles[p] = self.h5file.create_table('/' + groupname,
                                                         tablename,
                                                         description,
                                                         tabletitle)
@@ -262,7 +262,7 @@ class Database(object):
         :returns: the path to the table in the group
         :rtype: str
         """
-        return '/'+groupname+'/'+tablename
+        return '/' + groupname + '/' + tablename
 
     def get_table(self, groupname, tablename):
         """Returns the table handle for a table within a group

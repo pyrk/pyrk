@@ -12,9 +12,9 @@ def test_ge_wrong_type():
 
 
 def test_ge_Quantity_type():
-    val = 10*units.meter
+    val = 10 * units.meter
     valname = "testval"
-    llim = 0*units.meter
+    llim = 0 * units.meter
     assert_equal(v.validate_ge(valname, val, llim), val)
 
 
@@ -68,6 +68,6 @@ def test_le_both_large():
 
 
 def test_num_Quantity_type():
-    val = 10*units.meter
+    val = 10 * units.meter
     valname = "testval"
     assert_equal(v.validate_num(valname, val), val)

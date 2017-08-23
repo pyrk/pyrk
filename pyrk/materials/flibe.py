@@ -21,6 +21,7 @@ class Flibe(LiquidMaterial):
     P. Bardet et al. Dynamics of liquid-protected fusion chambers.
     Fusion science and technology, vol 47, 2005.
     """
+
     def __init__(self, name="flibe"):
         """Initalizes a material
 
@@ -37,18 +38,19 @@ class Flibe(LiquidMaterial):
         """FLiBe thermal conductivity in [W/m-K]
         TODO:k= 0.7662+0.0005T (T in celsius)
         """
-        return 1.0*units.watt/(units.meter*units.kelvin)
+        return 1.0 * units.watt / (units.meter * units.kelvin)
 
     def specific_heat_capacity(self):
         """Specific heat capacity of flibe [J/kg/K]
         """
-        return 2415.78*units.joule/(units.kg*units.kelvin)
+        return 2415.78 * units.joule / (units.kg * units.kelvin)
 
     def density(self):
         """
         FLiBe density as a funciton of T. [kg/m^3]
 
         """
-        return DensityModel(a=2413.2172*units.kg/(units.meter**3),
-                            b=-0.488*units.kg/(units.meter**3)/units.kelvin,
+        return DensityModel(a=2413.2172 * units.kg / (units.meter**3),
+                            b=-0.488 * units.kg /
+                            (units.meter**3) / units.kelvin,
                             model="linear")

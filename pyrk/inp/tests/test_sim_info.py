@@ -23,10 +23,10 @@ def teardown_func():
 
 @with_setup(setup_func, teardown_func)
 def test_init_reasonable_sim_no_components():
-    t0 = 0*units.seconds
-    tf = 10*units.seconds
-    t_feedback = 1.*units.seconds
-    dt = 0.1*units.seconds
+    t0 = 0 * units.seconds
+    tf = 10 * units.seconds
+    t_feedback = 1. * units.seconds
+    dt = 0.1 * units.seconds
     ti = Timer(t0=t0, tf=tf, t_feedback=t_feedback, dt=dt)
     iso = "u235"
     spectrum = "thermal"
@@ -56,10 +56,10 @@ def test_init_reasonable_sim_no_components():
 
 @with_setup(setup_func, teardown_func)
 def test_init_reasonable_sim_w_components():
-    t0 = 0*units.seconds
-    tf = 10*units.seconds
-    t_feedback = 1.*units.seconds
-    dt = 0.1*units.seconds
+    t0 = 0 * units.seconds
+    tf = 10 * units.seconds
+    t_feedback = 1. * units.seconds
+    dt = 0.1 * units.seconds
     ti = Timer(t0=t0, tf=tf, t_feedback=t_feedback, dt=dt)
     iso = "u235"
     spectrum = "thermal"

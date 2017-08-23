@@ -47,7 +47,8 @@ class Neutronics(object):
         self._e = v.validate_supported("e", e, ['thermal', 'fast', 'multipt'])
         """_e (str): Energy spectrum 'thermal' or 'fast' are supported."""
 
-        self._npg = v.validate_supported("n_precursors", n_precursors, [6, 8, 0])
+        self._npg = v.validate_supported(
+            "n_precursors", n_precursors, [6, 8, 0])
         """_npg (int): Number of neutron precursor groups. 6 is supported."""
 
         self._ndg = v.validate_supported("n_decay", n_decay, [11, 0])
@@ -98,8 +99,8 @@ class Neutronics(object):
         precursors = 0
         for j in range(0, len(lams)):
             assert len(lams) == len(zetas)
-            precursors += lams[j]*zetas[j]
-        dp = power*(rho - beta)/Lambda + precursors
+            precursors += lams[j] * zetas[j]
+        dp = power * (rho - beta) / Lambda + precursors
         return dp
 
     def dzetadt(self, t, power, zeta, j):
@@ -118,7 +119,7 @@ class Neutronics(object):
         Lambda = self._pd._Lambda
         lambda_j = self._pd.lambdas()[j]
         beta_j = self._pd.betas()[j]
-        return beta_j*power/Lambda - lambda_j*zeta
+        return beta_j * power / Lambda - lambda_j * zeta
 
     def dwdt(self, power, omega, k):
         """Returns the change in decay heat for $\omega_k$ at a certain power
@@ -133,7 +134,7 @@ class Neutronics(object):
         kappa = self._dd.kappas()[k]
         p = power
         lam = self._dd.lambdas()[k]
-        return kappa*p-lam*omega
+        return kappa * p - lam * omega
 
     def reactivity(self, t_idx, components):
         """Returns the reactivity, in $\Delta k$, at time t

@@ -45,7 +45,7 @@ def call_git_describe():
         line = p.stdout.readlines()[0]
         return line.strip()
 
-    except:
+    except BaseException:
         return None
 
 
@@ -60,7 +60,7 @@ def read_release_version():
         finally:
             f.close()
 
-    except:
+    except BaseException:
         return None
 
 
