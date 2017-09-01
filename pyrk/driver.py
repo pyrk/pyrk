@@ -71,7 +71,7 @@ def f_n(t, y, si):
     for j in range(0, si.n_pg):
         i += 1
         f[i] = si.ne.dzetadt(t, y[0], y[i], j)
-    assert(i == end_pg - 1)
+    assert i == end_pg - 1
     for k in range(0, si.n_dg):
         i += 1
         f[i] = si.ne.dwdt(y[0], y[i], k)
@@ -118,11 +118,11 @@ def y0(si):
         i += 1
         f[i] = f[0] * \
             si.ne._pd.betas()[j] / (si.ne._pd.lambdas()[j] * si.ne._pd._Lambda)
-    assert(i == end_pg - 1)
+    assert i == end_pg - 1
     for k in range(0, si.n_dg):
         i += 1
         f[i] = 0
-    assert(i == end_dg - 1)
+    assert i == end_dg - 1
     for idx, comp in enumerate(si.components):
         f[i + idx + 1] = comp.T0.magnitude
     assert len(f) == si.n_entries()
@@ -170,8 +170,8 @@ def solve(si, y, infile):
     th.set_initial_value(y0_th(si), si.timer.t0.magnitude)
     th.set_f_params(si)
     while (n.successful() and
-            n.t < si.timer.tf.magnitude and
-            th.t < si.timer.tf.magnitude):
+           n.t < si.timer.tf.magnitude and
+           th.t < si.timer.tf.magnitude):
         si.timer.advance_one_timestep()
         si.db.record_all()
         n.integrate(si.timer.current_time().magnitude)

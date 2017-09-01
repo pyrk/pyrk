@@ -162,7 +162,7 @@ class Neutronics(object):
                'rho_tot': self._rho[t],
                'rho_ext':
                self._rho_ext(t_idx=t).to('delta_k').magnitude
-               }
+              }
         return rec
 
     def metadata(self, component):

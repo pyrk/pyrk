@@ -287,7 +287,7 @@ class THComponent(object):
                'alpha_temp': self.alpha_temp.magnitude,
                'heatgen': self.heatgen,
                'power_tot': self.power_tot.magnitude
-               }
+              }
         return rec
 
     def record(self):
@@ -303,7 +303,7 @@ class THComponent(object):
                'alpha_temp': self.alpha_temp.magnitude,
                'heatgen': self.heatgen,
                'power_tot': self.power_tot.magnitude
-               }
+              }
         return rec
 
 
@@ -313,7 +313,7 @@ class THSuperComponent(THComponent):
     Creating a superComponent would automatically define conduction between the
     mesh elements'''
 
-    def __init__(self, name, T0, sub_comp=[], timer=Timer()):
+    def __init__(self, name, T0, sub_comp=None, timer=Timer()):
         """Initalizes a thermal hydraulic super component.
 
         :param name: The name of the supercomponent (i.e., "fuel" or "cool")
@@ -337,7 +337,7 @@ class THSuperComponent(THComponent):
                              sph=False,
                              ri=0 * units.meter,
                              ro=0 * units.meter)
-        self.sub_comp = sub_comp
+        self.sub_comp = sub_comp if sub_comp else []
         self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
                                          dtype=float), 'kelvin')
         self.T[0] = T0
@@ -379,7 +379,7 @@ class THSuperComponent(THComponent):
         self.conv[envname] = {'h': h,
                               'k': self.sub_comp[-1].k,
                               'dr': self.sub_comp[-1].ro - self.sub_comp[-1].ri
-                              }
+                             }
 
     def add_conduction_in_mesh(self):
         '''add conduction between the mesh elements

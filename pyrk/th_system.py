@@ -113,8 +113,8 @@ class THSystem(object):
                         Qconv * (component.T[t_idx] - env.T[t_idx])).magnitude >= 0, \
                         'convection from %s to %s, %fc to %fc is not physical' \
                         % (component.name, env.name,
-                            component.T[t_idx].magnitude,
-                            env.T[t_idx].magnitude)
+                           component.T[t_idx].magnitude,
+                           env.T[t_idx].magnitude)
                 to_ret -= Qconv / cap / component.vol.magnitude
             for name, d in six.iteritems(component.adv):
                 Qadv = self.advection(component,
@@ -221,8 +221,8 @@ class THSystem(object):
         :return: Qond, dimemsionless quantity
         :rtype: float
         """
-        assert(A.magnitude > 0)
-        assert(L.magnitude > 0)
+        assert A.magnitude > 0
+        assert L.magnitude > 0
         T_b = component.T[t_idx].magnitude
         T_env = env.T[t_idx].magnitude
         num = (T_b - T_env)

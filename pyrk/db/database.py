@@ -16,9 +16,11 @@ def nostderr():
     savestderr = sys.stderr
 
     class Devnull(object):
-        def write(self, _): pass
+        def write(self, _):
+            pass
 
-        def flush(self): pass
+        def flush(self):
+            pass
 
     sys.stderr = Devnull()
     try:
@@ -35,7 +37,7 @@ class Database(object):
     def __init__(self, filepath='pyrk.h5',
                  mode='w',
                  title='PyRKDatabase'
-                 ):
+                ):
         """Creates an hdf5 database for simulation information
 
         :param filepath: the location of the h5 file. e.g. 'pyrk.h5'
@@ -135,7 +137,7 @@ class Database(object):
             return self.h5file
         else:
             self.h5file = tb.open_file(filename=self.filepath, mode='a')
-            assert(self.h5file.isopen)
+            assert self.h5file.isopen
         return self.h5file
 
     def close_db(self):
