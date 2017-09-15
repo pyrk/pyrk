@@ -29,7 +29,13 @@ setup(
     author_email='katyhuff@gmail.com',
     description='Transient Neutron Kinetics Simulation in 0D.',
     long_description=long_description,
-    packages=['pyrk', 'pyrk.utilities', 'pyrk.materials', 'pyrk.inp'],
+    packages=['pyrk',
+              'pyrk.data',
+              'pyrk.db',
+              'pyrk.inp',
+              'pyrk.materials',
+              'pyrk.utilities',
+              ],
     include_package_data=True,
     platforms='any',
     test_suite='pyrk.test.test_pyrk',
@@ -45,7 +51,7 @@ setup(
         'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Physics',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        ],
+    ],
     extras_require={
         'testing': ['nose'],
     }
