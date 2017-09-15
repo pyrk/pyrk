@@ -9,10 +9,10 @@ class Timer(object):
     """This class holds information about time"""
 
     def __init__(self,
-                 t0=0.0*units.seconds,
-                 tf=1.0*units.seconds,
-                 dt=1.0*units.seconds,
-                 t_feedback=0.0*units.seconds):
+                 t0=0.0 * units.seconds,
+                 tf=1.0 * units.seconds,
+                 dt=1.0 * units.seconds,
+                 t_feedback=0.0 * units.seconds):
         """Initialize the timer object. There should be only one.
 
         :param t0: first times in the simulation
@@ -22,10 +22,10 @@ class Timer(object):
         :param dt: size of the timestep
         :type dt: float, units of seconds
         """
-        self.t0 = validation.validate_ge("t0", t0, 0.0*units.seconds)
+        self.t0 = validation.validate_ge("t0", t0, 0.0 * units.seconds)
         self.t_feedback = validation.validate_ge("t_feedback", t_feedback, t0)
         self.tf = validation.validate_ge("tf", tf, t_feedback)
-        self.dt = validation.validate_g("dt", dt, 0.0*units.seconds)
+        self.dt = validation.validate_g("dt", dt, 0.0 * units.seconds)
         self.series = units.Quantity(np.linspace(start=t0.magnitude,
                                                  stop=tf.magnitude,
                                                  num=self.timesteps()),
@@ -55,7 +55,7 @@ class Timer(object):
         """
         num = float(time.magnitude) - float(t0.magnitude)
         denom = float(dt.magnitude)
-        return int(round(num/denom))
+        return int(round(num / denom))
 
     def t(self, t_idx):
         """given the index of t, a dimensionless int, this returns the time in
@@ -63,7 +63,7 @@ class Timer(object):
 
         :param t_idx: the index to convert to simulation time
         """
-        return self.t0 + self.dt*float(t_idx)
+        return self.t0 + self.dt * float(t_idx)
 
     def timesteps(self):
         """Returns the number of timesteps in this simulation"""
@@ -71,7 +71,7 @@ class Timer(object):
 
     def advance_one_timestep(self):
         """Advances the timer one timestep"""
-        self.advance_time(self.t(self.ts+1))
+        self.advance_time(self.t(self.ts + 1))
         return self.ts
 
     def advance_time(self, time):

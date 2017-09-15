@@ -12,15 +12,15 @@ from materials.sodium import Sodium
 #############################################
 
 # Timing: t0=initial, dt=step, tf=final
-t0 = 0.00*units.seconds
-dt = 0.005*units.seconds
-tf = 5.0*units.seconds
+t0 = 0.00 * units.seconds
+dt = 0.005 * units.seconds
+tf = 5.0 * units.seconds
 
 # Temperature feedbacks of reactivity (Ragusa2009)
 # Fuel: Note Doppler model not implemented
-alpha_f = (-0.8841*units.pcm/units.kelvin)
+alpha_f = (-0.8841 * units.pcm / units.kelvin)
 # Coolant
-alpha_c = (0.1263*units.pcm/units.kelvin)
+alpha_c = (0.1263 * units.pcm / units.kelvin)
 
 # Initial Temperatures
 t_fuel = units.Quantity(525.0, units.degC)
@@ -35,26 +35,26 @@ kappa = 0.00
 
 # Geometry
 # fuel pin radius
-r_fuel = 0.00348*units.meter
+r_fuel = 0.00348 * units.meter
 # active core height
-h_core = 0.8*units.meter
+h_core = 0.8 * units.meter
 # surface area of fuel pin
-a_fuel = 2*math.pi*r_fuel*h_core
+a_fuel = 2 * math.pi * r_fuel * h_core
 # volume of a fuel pin
-vol_fuel = math.pi*pow(r_fuel, 2)*h_core
+vol_fuel = math.pi * pow(r_fuel, 2) * h_core
 # hydraulic area per fuel pin
-a_flow = 5.281e-5*pow(units.meter, 2)
+a_flow = 5.281e-5 * pow(units.meter, 2)
 # volume of coolant per pin
-vol_cool = a_flow*h_core
+vol_cool = a_flow * h_core
 # velocity of coolant
-v_cool = 5.0*units.meter/units.second
+v_cool = 5.0 * units.meter / units.second
 
 # constant heat transfer approximation
-h_cool = 1.0e5*units.watt/units.kelvin/pow(units.meter, 2)
+h_cool = 1.0e5 * units.watt / units.kelvin / pow(units.meter, 2)
 # power density
-omega = 4.77E8*units.watt/pow(units.meter, 3)
+omega = 4.77E8 * units.watt / pow(units.meter, 3)
 # total power, watts, thermal, per 1 fuel pin
-power_tot = omega*vol_fuel
+power_tot = omega * vol_fuel
 
 #############################################
 #
@@ -111,7 +111,7 @@ inlet = th.THComponent(name="inlet",
                        mat=Sodium(name="sodiumcoolant"),
                        vol=vol_cool,
                        T0=t_inlet,
-                       alpha_temp=0.0*units.pcm/units.kelvin,
+                       alpha_temp=0.0 * units.pcm / units.kelvin,
                        timer=ti)
 
 # The clad convects with the coolant

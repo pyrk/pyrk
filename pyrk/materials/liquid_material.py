@@ -6,12 +6,13 @@ from inp import validation
 
 class LiquidMaterial(Material):
     ''' subclass of material for liquid'''
+
     def __init__(self,
                  name=None,
-                 k=0*units.watt/units.meter/units.kelvin,
-                 cp=0*units.joule/units.kg/units.kelvin,
+                 k=0 * units.watt / units.meter / units.kelvin,
+                 cp=0 * units.joule / units.kg / units.kelvin,
                  dm=DensityModel(),
-                 mu=0*units.pascal*units.seconds):
+                 mu=0 * units.pascal * units.seconds):
         """Initalizes a material
 
         :param name: The name of the component (i.e., "fuel" or "cool")
@@ -27,4 +28,4 @@ class LiquidMaterial(Material):
         """
         Material.__init__(self, name, k, cp, dm)
         self.mu = mu.to('pascal*seconds')
-        validation.validate_ge("mu", mu, 0*units.pascal*units.seconds)
+        validation.validate_ge("mu", mu, 0 * units.pascal * units.seconds)

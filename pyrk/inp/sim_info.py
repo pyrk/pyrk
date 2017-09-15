@@ -13,7 +13,7 @@ class SimInfo(object):
 
     def __init__(self,
                  timer=Timer(),
-                 components={},
+                 components=None,
                  iso="u235",
                  e="thermal",
                  n_precursors=6,
@@ -53,7 +53,7 @@ class SimInfo(object):
         :type plotdir: string
         """
         self.timer = timer
-        self.components = components
+        self.components = components if components else {}
         self.iso = iso
         self.e = e
         self.n_pg = n_precursors + n_fic

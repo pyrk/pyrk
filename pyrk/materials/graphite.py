@@ -7,6 +7,7 @@ class Graphite(Material):
     """This class represents graphite materials. It inherits from the material
     class and has attributes intrinsic to graphite.
     """
+
     def __init__(self, name="graphite"):
         """Initalizes a material
 
@@ -39,7 +40,7 @@ class Graphite(Material):
         Also noted in:
         http://www.osti.gov/scitech/servlets/purl/714896/
         """
-        return 0.26*units.watt/(units.meter*units.kelvin)
+        return 0.26 * units.watt / (units.meter * units.kelvin)
 
     def specific_heat_capacity(self):
         """Specific heat capacity for H451 graphite [J/kg/K]
@@ -63,7 +64,7 @@ class Graphite(Material):
         Transient Benchmark.'' Transactions of the American Nuclear Society
         104: 854.
         """
-        return 1650.0*units.joule/(units.kg*units.kelvin)
+        return 1650.0 * units.joule / (units.kg * units.kelvin)
 
     def density(self):
         """
@@ -84,5 +85,5 @@ class Graphite(Material):
         "1.74 kg/m^3". However, this is a units error. The number intended by
         that document was 1.74 g/cm^3, which corresponds to this model.
         """
-        return DensityModel(a=1740.*units.kg/(units.meter**3),
+        return DensityModel(a=1740. * units.kg / (units.meter**3),
                             model="constant")

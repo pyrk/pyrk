@@ -17,15 +17,15 @@ class THComponent(object):
 
     def __init__(self, name=None,
                  mat=Material(),
-                 vol=0.0*units.meter**3,
-                 T0=0.0*units.kelvin,
-                 alpha_temp=0*units.delta_k/units.kelvin,
+                 vol=0.0 * units.meter**3,
+                 T0=0.0 * units.kelvin,
+                 alpha_temp=0 * units.delta_k / units.kelvin,
                  timer=Timer(),
                  heatgen=False,
-                 power_tot=0*units.watt,
+                 power_tot=0 * units.watt,
                  sph=False,
-                 ri=0*units.meter,
-                 ro=0*units.meter):
+                 ri=0 * units.meter,
+                 ro=0 * units.meter):
         """Initalizes a thermal hydraulic component.
         A thermal-hydraulic component will be treated as one "lump" in the
         lumped capacitance model.
@@ -92,18 +92,18 @@ class THComponent(object):
         if not self.sph:
             msg = 'mesh function only implemented for spherical component'
             raise TypeError(msg)
-        if size > self.ro-self.ri:
+        if size > self.ro - self.ri:
             msg = 'mesh size can not be larger than the thickness of the shell'
             raise ValueError(msg)
-        N = int(round((self.ro-self.ri)/size))
+        N = int(round((self.ro - self.ri) / size))
         to_ret = []
         for i in range(0, N):
-            ri = self.ri+i*size
-            ro = self.ri+(i+1)*size
-            vol = 4.0/3.0*math.pi*(ro**3-ri**3)
-            power_tot = self.power_tot/self.vol*vol
-            alpha_temp = self.alpha_temp/self.vol*vol
-            to_ret.append(THComponent(name=self.name+'%d' % i,
+            ri = self.ri + i * size
+            ro = self.ri + (i + 1) * size
+            vol = 4.0 / 3.0 * math.pi * (ro**3 - ri**3)
+            power_tot = self.power_tot / self.vol * vol
+            alpha_temp = self.alpha_temp / self.vol * vol
+            to_ret.append(THComponent(name=self.name + '%d' % i,
                                       mat=self.mat,
                                       vol=vol,
                                       T0=self.T0,
@@ -159,7 +159,7 @@ class THComponent(object):
         """
         T0 = self.T[self.timer.t_idx_feedback]
         # timestep -1 because timestep hasn't been updated yet, is 0
-        return self.T[timestep-1]-T0
+        return self.T[timestep - 1] - T0
 
     def temp_reactivity(self, timestep):
         '''calculate reactivity of a component from temperature feedback
@@ -173,7 +173,7 @@ class THComponent(object):
         assert timestep > self.timer.t_idx_feedback, "timestep that feedback\
             starts %f should be prior to the timestep %f for temp feedback\
             calculation" % (self.timer.t_idx_feedback, timestep)
-        return self.alpha_temp*self.dtemp(timestep)
+        return self.alpha_temp * self.dtemp(timestep)
 
     def add_convection(self, env, h, area):
         '''add convection in the self.conv dictionary
@@ -185,7 +185,7 @@ class THComponent(object):
         :param area: heat transfer area
         :type area: float
         '''
-        if type(h) is not ConvectiveModel:
+        if not isinstance(h, ConvectiveModel):
             h = ConvectiveModel(h0=h)
         self.conv[env] = {
             "h": h,
@@ -194,13 +194,13 @@ class THComponent(object):
 
     def add_mass_trans(self, env, H, u):
 
-        if type(H) is not ConvectiveModel:
+        if not isinstance(H, ConvectiveModel):
             H = ConvectiveModel(h0=H)
         self.mass[env] = {"H": H,
                           "u": u}
 
     def add_custom(self, env, res):
-        self.cust[env] = {"res": res.to(units.kelvin/units.watt)}
+        self.cust[env] = {"res": res.to(units.kelvin / units.watt)}
 
     def addConvBC(self, env, prev_comp, h, R):
         '''add convective boundary condition
@@ -216,7 +216,7 @@ class THComponent(object):
         :param R: radius of the sphere
         :type R: float
         '''
-        if type(h) is not ConvectiveModel:
+        if not isinstance(h, ConvectiveModel):
             h = ConvectiveModel(h0=h)
 
         self.convBC[env] = {
@@ -225,8 +225,17 @@ class THComponent(object):
             "R": R
         }
 
-    def add_conduction(self, env, area=0.0*units.meter**2, L=0.0*units.meter,
-                       r_b=0.0*units.meter, r_env=0.0*units.meter):
+    def add_conduction(
+            self,
+            env,
+            area=0.0 *
+            units.meter**2,
+            L=0.0 *
+            units.meter,
+            r_b=0.0 *
+            units.meter,
+            r_env=0.0 *
+            units.meter):
         '''Add parameters for conduction heat transfer calculation
         area and L are used for slab geometry
         r_b and r_env are used for spherical heat diffusion
@@ -278,7 +287,7 @@ class THComponent(object):
                'alpha_temp': self.alpha_temp.magnitude,
                'heatgen': self.heatgen,
                'power_tot': self.power_tot.magnitude
-               }
+              }
         return rec
 
     def record(self):
@@ -294,7 +303,7 @@ class THComponent(object):
                'alpha_temp': self.alpha_temp.magnitude,
                'heatgen': self.heatgen,
                'power_tot': self.power_tot.magnitude
-               }
+              }
         return rec
 
 
@@ -304,7 +313,7 @@ class THSuperComponent(THComponent):
     Creating a superComponent would automatically define conduction between the
     mesh elements'''
 
-    def __init__(self, name, T0, sub_comp=[], timer=Timer()):
+    def __init__(self, name, T0, sub_comp=None, timer=Timer()):
         """Initalizes a thermal hydraulic super component.
 
         :param name: The name of the supercomponent (i.e., "fuel" or "cool")
@@ -319,22 +328,22 @@ class THSuperComponent(THComponent):
         """
         THComponent.__init__(self, name=name,
                              mat=Material(),
-                             vol=0.0*units.meter**3,
+                             vol=0.0 * units.meter**3,
                              T0=T0,
-                             alpha_temp=0*units.delta_k/units.kelvin,
+                             alpha_temp=0 * units.delta_k / units.kelvin,
                              timer=timer,
                              heatgen=False,
-                             power_tot=0*units.watt,
+                             power_tot=0 * units.watt,
                              sph=False,
-                             ri=0*units.meter,
-                             ro=0*units.meter)
-        self.sub_comp = sub_comp
+                             ri=0 * units.meter,
+                             ro=0 * units.meter)
+        self.sub_comp = sub_comp if sub_comp else []
         self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
                                          dtype=float), 'kelvin')
         self.T[0] = T0
         self.conv = {}
         self.add_conduction_in_mesh()
-        self.alpha_temp = 0.0*units.delta_k/units.kelvin
+        self.alpha_temp = 0.0 * units.delta_k / units.kelvin
 
     def compute_tr(self, t_env, t_innercomp, h):
         '''compute temperature at r=R for the sphere from the temperature at r=R-dr
@@ -350,7 +359,7 @@ class THSuperComponent(THComponent):
             # h = self.conv[envname]["h"].h(env.rho(t_env)).magnitude
             k = self.conv[envname]["k"].magnitude
             dr = self.conv[envname]["dr"].magnitude
-        return (-h/k*t_env+t_innercomp/dr)/(1/dr-h/k)
+        return (-h / k * t_env + t_innercomp / dr) / (1 / dr - h / k)
 
     def add_component(self, a_component):
         self.sub_comp.append(a_component)
@@ -369,8 +378,8 @@ class THSuperComponent(THComponent):
                                     (self.sub_comp)[-1].ro)
         self.conv[envname] = {'h': h,
                               'k': self.sub_comp[-1].k,
-                              'dr': self.sub_comp[-1].ro-self.sub_comp[-1].ri
-                              }
+                              'dr': self.sub_comp[-1].ro - self.sub_comp[-1].ri
+                             }
 
     def add_conduction_in_mesh(self):
         '''add conduction between the mesh elements
@@ -380,7 +389,7 @@ class THSuperComponent(THComponent):
         self.sub_comp[0].add_conduction(
             self.sub_comp[1].name)
         # element i=1:elementNb-3
-        for i in range(1, N-2):
+        for i in range(1, N - 2):
             self.sub_comp[i].add_conduction(
                 self.sub_comp[i - 1].name)
             self.sub_comp[i].add_conduction(
