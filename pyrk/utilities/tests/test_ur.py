@@ -1,6 +1,6 @@
 from nose.tools import assert_equal
 
-import utilities.ur as ur
+import pyrk.utilities.ur as ur
 
 
 def test_pcm_to_per_cent_delta_k():

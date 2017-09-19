@@ -1,6 +1,6 @@
 from nose.tools import assert_equal
 
-from data import decay_heat
+from pyrk.data import decay_heat
 
 
 def test_u235_thermal_constructor():

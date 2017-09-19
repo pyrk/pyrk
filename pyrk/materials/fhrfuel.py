@@ -1,6 +1,6 @@
-from ur import units
-from materials.material import Material
-from density_model import DensityModel
+from pyrk.ur import units
+from pyrk.materials.material import Material
+from pyrk.density_model import DensityModel
 
 
 class Fhrfuel(Material):

@@ -1,6 +1,6 @@
 from nose.tools import assert_equal
 
-import driver
+from pyrk import driver
 
 
 def test_name_from_path():

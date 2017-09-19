@@ -1,7 +1,7 @@
 from nose.tools import assert_equal
 
-from utilities.ur import units
-import density_model
+from pyrk.utilities.ur import units
+from pyrk import density_model
 
 u_dens = units.kg / pow(units.meter, 3)
 alpha = 2.0 * u_dens

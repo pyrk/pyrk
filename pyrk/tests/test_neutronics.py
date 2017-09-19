@@ -1,6 +1,6 @@
 from nose.tools import assert_equal, assert_raises
 
-import neutronics
+from pyrk import neutronics
 
 
 def test_default_constructor():

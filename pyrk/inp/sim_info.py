@@ -1,11 +1,11 @@
 # Licensed under a 3-clause BSD style license - see LICENSE
 import numpy as np
 
-from timer import Timer
-import neutronics
-import reactivity_insertion as ri
-import th_system
-from db import database
+from pyrk.timer import Timer
+from pyrk import neutronics
+import pyrk.reactivity_insertion as ri
+from pyrk import th_system
+from pyrk.db import database
 
 
 class SimInfo(object):

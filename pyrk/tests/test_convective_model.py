@@ -1,7 +1,7 @@
 from nose.tools import assert_equal
-from utilities.ur import units
-from convective_model import ConvectiveModel
-from materials.liquid_material import LiquidMaterial
+from pyrk.utilities.ur import units
+from pyrk.convective_model import ConvectiveModel
+from pyrk.materials.liquid_material import LiquidMaterial
 
 
 def test_constant_model():

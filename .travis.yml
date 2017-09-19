@@ -35,10 +35,10 @@ install:
   - source activate test-environment
   - pip install coveralls
   - pip install pint
-  - export PYTHONPATH="${PYTHONPATH}:${HOME}/pyrk/pyrk"
+  - python setup.py install
 
 script:
-  - cd pyrk && nosetests
+  - nosetests pyrk
 
 after_success:
   - coveralls

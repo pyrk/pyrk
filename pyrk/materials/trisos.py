@@ -1,6 +1,6 @@
-from utilities.ur import units
-from th import THComponent
-from density_model import DensityModel
+from pyrk.utilities.ur import units
+from pyrk.th import THComponent
+from pyrk.density_model import DensityModel
 
 
 class Triso(THComponent):

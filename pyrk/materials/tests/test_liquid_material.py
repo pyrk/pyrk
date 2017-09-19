@@ -1,8 +1,8 @@
 from nose.tools import assert_equal
 
-from materials import liquid_material
-from utilities.ur import units
-from density_model import DensityModel
+from pyrk.materials import liquid_material
+from pyrk.utilities.ur import units
+from pyrk.density_model import DensityModel
 
 T0 = 0.0 * units.kelvin
 k_default = 0 * units.watt / (units.meter * units.kelvin)

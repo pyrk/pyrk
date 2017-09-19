@@ -1,7 +1,7 @@
 import six
-from th_component import THSuperComponent
-from utilities.ur import units
-from materials.liquid_material import LiquidMaterial
+from pyrk.th_component import THSuperComponent
+from pyrk.utilities.ur import units
+from pyrk.materials.liquid_material import LiquidMaterial
 
 
 class THSystem(object):
