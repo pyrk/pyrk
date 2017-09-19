@@ -8,6 +8,7 @@ class Triso(THComponent):
     geometric properties essential to thermal modeling and heat transfer in
     support of calculations related to the thermal hydraulics subblock
     """
+
     def __init__(self, name=None, vol=0, T0=0,
                  alpha_temp=0, timesteps=0, heatgen=True, power_tot=0):
         """Initalizes a thermal hydraulic component.
@@ -44,14 +45,14 @@ class Triso(THComponent):
         from
         http://digitalcommons.usu.edu/cgi/viewcontent.cgi?article=2453&context=etd
         """
-        return 3.7*units.watt/(units.meter*units.kelvin)
+        return 3.7 * units.watt / (units.meter * units.kelvin)
 
     def specific_heat_capacity(self):
         """Specific heat capacity of a triso particle
 
         """
-        return 1650.0*units.joule/(units.kg*units.kelvin)
+        return 1650.0 * units.joule / (units.kg * units.kelvin)
 
     def density(self):
-        return DensityModel(a=10500.*units.kg/(units.meter**3),
+        return DensityModel(a=10500. * units.kg / (units.meter**3),
                             model="constant")

@@ -8,6 +8,7 @@ class SS316(Material):
     properties essential to thermal modeling and heat transfer in
     support of calculations related to the thermal hydraulics subblock
     """
+
     def __init__(self, name="ss316"):
         """Initalizes a material based on stainless steel 316, a common nuclear
         grade steel.
@@ -36,14 +37,14 @@ class SS316(Material):
         also from http://www.azom.com/article.aspx?ArticleID=863.
 
         """
-        return 21.5*units.watt/(units.meter*units.kelvin)
+        return 21.5 * units.watt / (units.meter * units.kelvin)
 
     def specific_heat_capacity(self):
         """Specific heat capacity for stainless steel [J/kg/K]
         ASM material data asm.matweb.com
 
         """
-        asm = 500.0*units.joule/(units.kg*units.kelvin)  # [J/kg/K]
+        asm = 500.0 * units.joule / (units.kg * units.kelvin)  # [J/kg/K]
         return asm
 
     def density(self):
@@ -51,5 +52,5 @@ class SS316(Material):
         SS316 density in [kg/m^3]
         from asm.matweb.com
         """
-        return DensityModel(a=8000.0*units.kg/(units.meter**3),
+        return DensityModel(a=8000.0 * units.kg / (units.meter**3),
                             model="constant")

@@ -7,6 +7,7 @@ class Sodium(LiquidMaterial):
     """This class represents Sodium. It inherits from the material
     class and possesses attributes intrinsic to flibe.
     """
+
     def __init__(self, name="sodium"):
         """Initalizes a material, specifically sodium
 
@@ -34,7 +35,7 @@ class Sodium(LiquidMaterial):
 
         (but, note that wikipedia gives it as 142 W/m-K...)
         """
-        return 70.0*units.watt/(units.meter*units.kelvin)
+        return 70.0 * units.watt / (units.meter * units.kelvin)
 
     def specific_heat_capacity(self):
         """Specific heat capacity of Sodium [J/kg/K]
@@ -52,7 +53,7 @@ class Sodium(LiquidMaterial):
         Below is a constant estimate of sodium cp at temperatures around 400C
         based on table 1.1-5 in http://www.ne.anl.gov/eda/ANL-RE-95-2.pdf
         """
-        to_ret = 1.3*units.kilojoule/(units.kg*units.kelvin)
+        to_ret = 1.3 * units.kilojoule / (units.kg * units.kelvin)
         return to_ret.to('J/kg/kelvin')
 
     def density(self):
@@ -113,14 +114,14 @@ class SodiumDensity(DensityModel):
            t_c = 2503.7K
         """
 
-        self.rho_c = 219.0*units.kg/pow(units.meter, 3)
-        self.T_c = 2503.7*units.kelvin
-        self.T_m = 371.0*units.kelvin
-        self.f = 275.32*units.kg/pow(units.meter, 3)
-        self.g = 511.58*units.kg/pow(units.meter, 3)
+        self.rho_c = 219.0 * units.kg / pow(units.meter, 3)
+        self.T_c = 2503.7 * units.kelvin
+        self.T_m = 371.0 * units.kelvin
+        self.f = 275.32 * units.kg / pow(units.meter, 3)
+        self.g = 511.58 * units.kg / pow(units.meter, 3)
         self.h = 0.5
 
-    def hornung(self, temp=0.0*units.kelvin):
+    def hornung(self, temp=0.0 * units.kelvin):
         """In the hornung model, K. Hornung [Hornung, 1985] used the available
         data on the sound velocity and the density of Na to determine its
         adiabatic and isothermal compressibility.
@@ -129,9 +130,9 @@ class SodiumDensity(DensityModel):
         :type temp: Quantity (units of kelvin)
 
         """
-        to_ret = self.rho_c + self.f*(1 - temp/self.T_c) + \
-            self.g*pow((1 - temp/self.T_c), self.h)
+        to_ret = self.rho_c + self.f * (1 - temp / self.T_c) + \
+            self.g * pow((1 - temp / self.T_c), self.h)
         return to_ret.to('kg/m**3')
 
-    def rho(self, temp=0.0*units.kelvin):
+    def rho(self, temp=0.0 * units.kelvin):
         return self.hornung(temp)

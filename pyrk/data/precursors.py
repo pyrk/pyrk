@@ -111,7 +111,7 @@ class PrecursorData(object):
         lambda_dict["pu239"] = {}
         lambda_dict["sfr"] = {}
         lambda_dict["fhr"] = {}
-        lambda_dict["u235"]["thermal"] = [math.log(2)/x for x in
+        lambda_dict["u235"]["thermal"] = [math.log(2) / x for x in
                                           [54.51, 21.84, 6.00, 2.23, 0.496,
                                            0.179]]
         lambda_dict["u235"]["fast"] = [0.0127, 0.0317, 0.155, 0.311, 1.4, 3.87]

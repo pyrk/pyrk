@@ -9,8 +9,8 @@ class DensityModel(object):
     """
 
     def __init__(self,
-                 a=0*units.kg/pow(units.meter, 3),
-                 b=0*units.kg/units.kelvin/pow(units.meter, 3),
+                 a=0 * units.kg / pow(units.meter, 3),
+                 b=0 * units.kg / units.kelvin / pow(units.meter, 3),
                  model="linear"):
         """
         Initializes the DensityModel object.
@@ -22,8 +22,8 @@ class DensityModel(object):
         :param b: second coefficient of the model.
         :type b: float
         """
-        self.a = a.to(units.kg/pow(units.meter, 3))
-        self.b = b.to(units.kg/units.kelvin/pow(units.meter, 3))
+        self.a = a.to(units.kg / pow(units.meter, 3))
+        self.b = b.to(units.kg / units.kelvin / pow(units.meter, 3))
 
         self.implemented = {'constant': self.constant,
                             'linear': self.linear}
@@ -39,7 +39,7 @@ class DensityModel(object):
                 msg += m
             raise ValueError(msg)
 
-    def rho(self, temp=0*units.kelvin):
+    def rho(self, temp=0 * units.kelvin):
         """
         Returns the density based on the temperature and the irradiation.
 
@@ -48,7 +48,7 @@ class DensityModel(object):
         """
         return self.implemented[self.model](temp)
 
-    def constant(self, temp=0*units.kelvin):
+    def constant(self, temp=0 * units.kelvin):
         """
         Returns a constant density, a.
 
@@ -57,12 +57,12 @@ class DensityModel(object):
         """
         return self.a
 
-    def linear(self, temp=0.0*units.kelvin):
+    def linear(self, temp=0.0 * units.kelvin):
         """
         Returns a linear dependence on temperature ($ a + b*temp$) .
 
         :param temp: The temperature of the object
         :type temp: float. units of kelvin
         """
-        ret = self.a + self.b*temp
+        ret = self.a + self.b * temp
         return ret

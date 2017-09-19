@@ -9,8 +9,8 @@ class Material(object):
 
     def __init__(self,
                  name=None,
-                 k=0*units.watt/units.meter/units.kelvin,
-                 cp=0*units.joule/units.kg/units.kelvin,
+                 k=0 * units.watt / units.meter / units.kelvin,
+                 cp=0 * units.joule / units.kg / units.kelvin,
                  dm=DensityModel()):
         """Initalizes a material
 
@@ -25,9 +25,11 @@ class Material(object):
         """
         self.name = name
         self.k = k.to('watt/meter/kelvin')
-        validation.validate_ge("k", k, 0*units.watt/units.meter/units.kelvin)
+        validation.validate_ge("k", k, 0 * units.watt /
+                               units.meter / units.kelvin)
         self.cp = cp.to('joule/kg/kelvin')
-        validation.validate_ge("cp", cp, 0*units.joule/units.kg/units.kelvin)
+        validation.validate_ge(
+            "cp", cp, 0 * units.joule / units.kg / units.kelvin)
         self.dm = dm
 
     def rho(self, temp):

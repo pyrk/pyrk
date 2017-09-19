@@ -19,88 +19,88 @@ from timer import Timer
 
 # Thermal hydraulic params
 # Temperature feedbacks of reactivity
-alpha_f = -3.8*units.pcm/units.kelvin
-alpha_c = -1.8*units.pcm/units.kelvin
-alpha_m = -0.7*units.pcm/units.kelvin
-alpha_r = 1.8*units.pcm/units.kelvin
+alpha_f = -3.8 * units.pcm / units.kelvin
+alpha_c = -1.8 * units.pcm / units.kelvin
+alpha_m = -0.7 * units.pcm / units.kelvin
+alpha_r = 1.8 * units.pcm / units.kelvin
 # below from steady state analysis
-t_fuel = 946.74521*units.kelvin
-t_cool = 936.57636*units.kelvin
-t_refl = 923.18521*units.kelvin
-t_mod = 937.39862*units.kelvin
-t_graph_peb = 936.40806*units.kelvin
-t_core = 970.54064*units.kelvin
+t_fuel = 946.74521 * units.kelvin
+t_cool = 936.57636 * units.kelvin
+t_refl = 923.18521 * units.kelvin
+t_mod = 937.39862 * units.kelvin
+t_graph_peb = 936.40806 * units.kelvin
+t_core = 970.54064 * units.kelvin
 
 # the data below comes from design doc rev c
 
 # self._vol_flow_rate = 976.0*0.3 # kg/s TODO 0.3 is nat circ guess
-vel_cool = 2.*units.meter/units.second  # m/s
+vel_cool = 2. * units.meter / units.second  # m/s
 t_inlet = units.Quantity(600.0, units.degC)  # degrees C
 # [m] ... matrix(4mm) + coating(1mm)
-thickness_fuel_matrix = 0.005*units.meter
+thickness_fuel_matrix = 0.005 * units.meter
 kappa = 0.00  # TODO if you fix omegas, kappa ~ 0.06
-core_height = 3.5*units.meter  # [m] (TODO currently approximate)
-core_inner_radius = 0.35*units.meter  # m
-core_outer_radius = 1.25*units.meter  #
+core_height = 3.5 * units.meter  # [m] (TODO currently approximate)
+core_inner_radius = 0.35 * units.meter  # m
+core_outer_radius = 1.25 * units.meter  #
 
 # Initial time
-t0 = 0.00*units.seconds
+t0 = 0.00 * units.seconds
 
 # Timestep
-dt = 0.001*units.seconds
+dt = 0.001 * units.seconds
 
 # Final Time
-tf = 5.0*units.seconds
+tf = 5.0 * units.seconds
 
 
 def area_sphere(r):
-    assert(r >= 0*units.meter)
-    return (4.0)*math.pi*pow(r.to('meter'), 2)
+    assert(r >= 0 * units.meter)
+    return (4.0) * math.pi * pow(r.to('meter'), 2)
 
 
 def vol_sphere(r):
-    assert(r >= 0*units.meter)
-    return (4./3.)*math.pi*pow(r.to('meter'), 3)
+    assert(r >= 0 * units.meter)
+    return (4. / 3.) * math.pi * pow(r.to('meter'), 3)
 
 
 # volumes
 n_pebbles = 470000
 n_graph_peb = 218000
 n_particles_per_pebble = 4730
-r_pebble = 0.015*units.meter  # [m] diam = 3cm
-r_core = 0.0125*units.meter  # [m] diam = 2.5cm
-r_particle = 200*units.micrometer
+r_pebble = 0.015 * units.meter  # [m] diam = 3cm
+r_core = 0.0125 * units.meter  # [m] diam = 2.5cm
+r_particle = 200 * units.micrometer
 
 # vol of 4730 kernels per pebble, each 400 micrometer diameter
-vol_fuel = n_pebbles*n_particles_per_pebble*vol_sphere(r_particle)
-vol_core = (n_pebbles)*(vol_sphere(r_core))
-vol_mod = (n_pebbles)*(vol_sphere(r_pebble) - vol_sphere(r_core)) - vol_fuel
-vol_graph_peb = (n_graph_peb)*(vol_sphere(r_pebble))
+vol_fuel = n_pebbles * n_particles_per_pebble * vol_sphere(r_particle)
+vol_core = (n_pebbles) * (vol_sphere(r_core))
+vol_mod = (n_pebbles) * (vol_sphere(r_pebble) - vol_sphere(r_core)) - vol_fuel
+vol_graph_peb = (n_graph_peb) * (vol_sphere(r_pebble))
 
 # from design report
-vol_cool = 7.20*units.meter**3
-mass_inner_refl = 43310.0*units.kg
-mass_outer_refl = 5940.0*units.kg
+vol_cool = 7.20 * units.meter**3
+mass_inner_refl = 43310.0 * units.kg
+mass_outer_refl = 5940.0 * units.kg
 mass_refl = mass_inner_refl + mass_outer_refl
-rho_refl = 1740.0*units.kg/units.meter**3
-vol_refl = mass_refl/rho_refl
+rho_refl = 1740.0 * units.kg / units.meter**3
+vol_refl = mass_refl / rho_refl
 
-a_core = area_sphere(r_core)*n_pebbles
-a_mod = area_sphere(r_pebble)*n_pebbles
-a_graph_peb = area_sphere(r_pebble)*n_graph_peb
-a_fuel = area_sphere(r_particle)*n_pebbles*n_particles_per_pebble
-a_refl = 2*math.pi*core_outer_radius*core_height
+a_core = area_sphere(r_core) * n_pebbles
+a_mod = area_sphere(r_pebble) * n_pebbles
+a_graph_peb = area_sphere(r_pebble) * n_graph_peb
+a_fuel = area_sphere(r_particle) * n_pebbles * n_particles_per_pebble
+a_refl = 2 * math.pi * core_outer_radius * core_height
 
 # TODO implement h(T) model
-h_mod = 4700*units.watt/units.kelvin/units.meter**2
+h_mod = 4700 * units.watt / units.kelvin / units.meter**2
 # TODO placeholder
-h_refl = 600*units.watt/units.kelvin/units.meter**2
+h_refl = 600 * units.watt / units.kelvin / units.meter**2
 
 # modified alphas for mod
 vol_mod_tot = vol_mod + vol_graph_peb + vol_core
-alpha_mod = alpha_m*vol_mod/vol_mod_tot
-alpha_core = alpha_m*vol_core/vol_mod_tot
-alpha_graph_peb = alpha_m*vol_graph_peb/vol_mod_tot
+alpha_mod = alpha_m * vol_mod / vol_mod_tot
+alpha_core = alpha_m * vol_core / vol_mod_tot
+alpha_graph_peb = alpha_m * vol_graph_peb / vol_mod_tot
 
 #############################################
 #
@@ -109,7 +109,7 @@ alpha_graph_peb = alpha_m*vol_graph_peb/vol_mod_tot
 #############################################
 
 # Total power, Watts, thermal
-power_tot = 236000000.0*units.watt
+power_tot = 236000000.0 * units.watt
 
 # Timer instance, based on t0, tf, dt
 ti = Timer(t0=t0, tf=tf, dt=dt)
@@ -132,10 +132,10 @@ feedback = True
 # External Reactivity
 from reactivity_insertion import ImpulseReactivityInsertion
 rho_ext = ImpulseReactivityInsertion(timer=ti,
-                                     t_start=1.0*units.seconds,
-                                     t_end=2.0*units.seconds,
-                                     rho_init=0.0*units.delta_k,
-                                     rho_max=0.001*units.delta_k)
+                                     t_start=1.0 * units.seconds,
+                                     t_end=2.0 * units.seconds,
+                                     rho_init=0.0 * units.delta_k,
+                                     rho_max=0.001 * units.delta_k)
 
 # maximum number of internal steps that the ode solver will take
 nsteps = 10000
@@ -193,7 +193,7 @@ fuel.add_conduction('mod', area=a_fuel, L=thickness_fuel_matrix)
 # The moderator graphite conducts to the core graphite
 mod.add_conduction('core', area=a_core, L=r_core)
 # The moderator graphite conducts to the fuel
-mod.add_conduction('fuel', area=a_mod, L=vol_mod/a_mod)
+mod.add_conduction('fuel', area=a_mod, L=vol_mod / a_mod)
 # The moderator graphite convects to the coolant
 mod.add_convection('cool', h=h_mod, area=a_mod)
 

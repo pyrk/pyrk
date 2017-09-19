@@ -1,35 +1,35 @@
 from nose.tools import assert_equal, assert_true
 
 import pyrk.reactivity_insertion as ri
-import pyrk.timer
+from pyrk import timer
 from pyrk.utilities.ur import units
 
-ti = pyrk.timer.Timer(t0=0.0*units.seconds,
-                      tf=10.0*units.seconds,
-                      dt=0.01*units.seconds)
+ti = timer.Timer(t0=0.0 * units.seconds,
+                 tf=10.0 * units.seconds,
+                 dt=0.01 * units.seconds)
 
 
 def test_default_ri():
     default = ri.ReactivityInsertion(timer=ti)
-    assert_equal(default.reactivity(0), 0.0*units.delta_k)
-    assert_equal(default.reactivity(1), 0.0*units.delta_k)
-    assert_equal(default.reactivity(10), 0.0*units.delta_k)
-    assert_equal(default.reactivity(1000), 0.0*units.delta_k)
+    assert_equal(default.reactivity(0), 0.0 * units.delta_k)
+    assert_equal(default.reactivity(1), 0.0 * units.delta_k)
+    assert_equal(default.reactivity(10), 0.0 * units.delta_k)
+    assert_equal(default.reactivity(1000), 0.0 * units.delta_k)
 
 
 def test_default_step_ri():
     step = ri.StepReactivityInsertion(timer=ti)
-    assert_equal(step.t_step, 1.0*units.seconds)
-    assert_equal(step.reactivity(0), 0.0*units.delta_k)
-    assert_equal(step.reactivity(1), 0.0*units.delta_k)
-    assert_equal(step.reactivity(101), 1.0*units.delta_k)
-    assert_equal(step.reactivity(1000), 1.0*units.delta_k)
+    assert_equal(step.t_step, 1.0 * units.seconds)
+    assert_equal(step.reactivity(0), 0.0 * units.delta_k)
+    assert_equal(step.reactivity(1), 0.0 * units.delta_k)
+    assert_equal(step.reactivity(101), 1.0 * units.delta_k)
+    assert_equal(step.reactivity(1000), 1.0 * units.delta_k)
 
 
 def test_custom_step_ri():
-    t_step = 2.0*units.seconds
-    rho_init = 1.0*units.delta_k
-    rho_final = 2.0*units.delta_k
+    t_step = 2.0 * units.seconds
+    rho_init = 1.0 * units.delta_k
+    rho_final = 2.0 * units.delta_k
     t_step_idx = ti.t_idx(t_step)
     step = ri.StepReactivityInsertion(timer=ti,
                                       t_step=t_step,
@@ -43,17 +43,17 @@ def test_custom_step_ri():
 
 def test_default_impulse_ri():
     impulse = ri.ImpulseReactivityInsertion(timer=ti)
-    assert_equal(impulse.reactivity(0), 0.0*units.delta_k)
-    assert_equal(impulse.reactivity(1), 0.0*units.delta_k)
-    assert_equal(impulse.reactivity(101), 1.0*units.delta_k)
-    assert_equal(impulse.reactivity(1000), 0.0*units.delta_k)
+    assert_equal(impulse.reactivity(0), 0.0 * units.delta_k)
+    assert_equal(impulse.reactivity(1), 0.0 * units.delta_k)
+    assert_equal(impulse.reactivity(101), 1.0 * units.delta_k)
+    assert_equal(impulse.reactivity(1000), 0.0 * units.delta_k)
 
 
 def test_custom_impulse_ri():
-    t_start = 2.0*units.seconds
-    t_end = 3.0*units.seconds
-    rho_init = 1.0*units.delta_k
-    rho_max = 2.0*units.delta_k
+    t_start = 2.0 * units.seconds
+    t_end = 3.0 * units.seconds
+    rho_init = 1.0 * units.delta_k
+    rho_max = 2.0 * units.delta_k
     t_start_idx = ti.t_idx(t_start)
     t_end_idx = ti.t_idx(t_end)
     impulse = ri.ImpulseReactivityInsertion(timer=ti,
@@ -70,19 +70,19 @@ def test_custom_impulse_ri():
 
 def test_default_ramp_ri():
     ramp = ri.RampReactivityInsertion(timer=ti)
-    assert_equal(ramp.reactivity(0), 0.0*units.delta_k)
-    assert_equal(ramp.reactivity(1), 0.0*units.delta_k)
-    assert_true(ramp.reactivity(101) > 0.0*units.delta_k)
-    assert_true(ramp.reactivity(101) < 1.0*units.delta_k)
-    assert_equal(ramp.reactivity(1000), 1.0*units.delta_k)
+    assert_equal(ramp.reactivity(0), 0.0 * units.delta_k)
+    assert_equal(ramp.reactivity(1), 0.0 * units.delta_k)
+    assert_true(ramp.reactivity(101) > 0.0 * units.delta_k)
+    assert_true(ramp.reactivity(101) < 1.0 * units.delta_k)
+    assert_equal(ramp.reactivity(1000), 1.0 * units.delta_k)
 
 
 def test_custom_ramp_ri():
-    t_start = 2.0*units.seconds
-    t_end = 3.0*units.seconds
-    rho_init = 1.0*units.delta_k
-    rho_rise = 2.0*units.delta_k
-    rho_final = 1.5*units.delta_k
+    t_start = 2.0 * units.seconds
+    t_end = 3.0 * units.seconds
+    rho_init = 1.0 * units.delta_k
+    rho_rise = 2.0 * units.delta_k
+    rho_final = 1.5 * units.delta_k
     t_start_idx = ti.t_idx(t_start)
     t_end_idx = ti.t_idx(t_end)
     ramp = ri.RampReactivityInsertion(timer=ti,
@@ -94,6 +94,6 @@ def test_custom_ramp_ri():
     assert_equal(ramp.reactivity(0), rho_init)
     assert_equal(ramp.reactivity(1), rho_init)
     assert_true(ramp.reactivity(t_start_idx + 1) > rho_init)
-    assert_true(ramp.reactivity(t_start_idx + 1) < rho_init+rho_rise)
+    assert_true(ramp.reactivity(t_start_idx + 1) < rho_init + rho_rise)
     assert_equal(ramp.reactivity(t_end_idx + 1), rho_final)
     assert_equal(ramp.reactivity(1000), rho_final)

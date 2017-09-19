@@ -8,6 +8,7 @@ class Kernel(Material):
     properties essential to thermal modeling and heat transfer in
     support of calculations related to the thermal hydraulics subblock
     """
+
     def __init__(self, name="kernel"):
         """Initalizes a material based on the fuel kernel in a TRISO particle.
         A material has intensive (as opposed to extensive) material properties.
@@ -45,7 +46,7 @@ class Kernel(Material):
         Wirth:
         http://www.sciencedirect.com/science/article/pii/S0022311510003284
         """
-        return 1.5*units.watt/(units.meter*units.kelvin)
+        return 1.5 * units.watt / (units.meter * units.kelvin)
 
     def specific_heat_capacity(self):
         """Specific heat capacity for TRISO kernel [J/kg/K]
@@ -62,7 +63,7 @@ class Kernel(Material):
         Note that a temperature dependent model could be implemented based on
         that work.
         """
-        ortensi = 0.3*units.joule/(units.g*units.kelvin)  # [J/g/K]
+        ortensi = 0.3 * units.joule / (units.g * units.kelvin)  # [J/g/K]
         return ortensi.to('joule/kg/kelvin')  # [J/kg/K]
 
     def density(self):
@@ -80,5 +81,5 @@ class Kernel(Material):
         Berkeley, Department of Nuclear Engineering.
 
         """
-        return DensityModel(a=10500.0*units.kg/(units.meter**3),
+        return DensityModel(a=10500.0 * units.kg / (units.meter**3),
                             model="constant")
