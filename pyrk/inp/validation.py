@@ -1,4 +1,4 @@
-from utilities.ur import units
+from pyrk.utilities.ur import units
 import sys
 
 if sys.version_info > (3,):

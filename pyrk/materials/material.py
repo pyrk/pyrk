@@ -1,6 +1,6 @@
-from inp import validation
-from utilities.ur import units
-from density_model import DensityModel
+from pyrk.inp import validation
+from pyrk.utilities.ur import units
+from pyrk.density_model import DensityModel
 
 
 class Material(object):

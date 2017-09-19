@@ -1,11 +1,11 @@
 from __future__ import print_function
 from nose.tools import assert_equal, assert_raises
 
-import th_component as th
-from utilities.ur import units
-from timer import Timer
-from materials.material import Material
-import density_model
+import pyrk.th_component as th
+from pyrk.utilities.ur import units
+from pyrk.timer import Timer
+from pyrk.materials.material import Material
+from pyrk import density_model
 
 name = "testname"
 vol = 20*units.meter**3

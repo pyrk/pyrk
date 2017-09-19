@@ -1,5 +1,5 @@
-from utilities.ur import units
-from inp import validation
+from pyrk.utilities.ur import units
+from pyrk.inp import validation
 
 
 class ReactivityInsertion(object):

@@ -5,9 +5,9 @@ import os
 from pyrk.inp import sim_info as si
 from pyrk.db import database
 
-from utilities.ur import units
-import th_component
-from timer import Timer
+from pyrk.utilities.ur import units
+from pyrk import th_component
+from pyrk.timer import Timer
 
 
 def setup_func():

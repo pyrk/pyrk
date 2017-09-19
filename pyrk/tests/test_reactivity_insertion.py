@@ -1,12 +1,12 @@
 from nose.tools import assert_equal, assert_true
 
-import reactivity_insertion as ri
-import timer
-from utilities.ur import units
+import pyrk.reactivity_insertion as ri
+import pyrk.timer
+from pyrk.utilities.ur import units
 
-ti = timer.Timer(t0=0.0*units.seconds,
-                 tf=10.0*units.seconds,
-                 dt=0.01*units.seconds)
+ti = pyrk.timer.Timer(t0=0.0*units.seconds,
+                      tf=10.0*units.seconds,
+                      dt=0.01*units.seconds)
 
 
 def test_default_ri():

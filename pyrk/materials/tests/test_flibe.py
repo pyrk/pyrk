@@ -1,8 +1,8 @@
 from nose.tools import assert_equal, assert_true
 
-from materials import flibe
-from materials.liquid_material import LiquidMaterial
-from utilities.ur import units
+from pyrk.materials import flibe
+from pyrk.materials.liquid_material import LiquidMaterial
+from pyrk.utilities.ur import units
 
 name = "testname"
 tester = flibe.Flibe(name=name)

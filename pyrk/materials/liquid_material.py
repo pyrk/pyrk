@@ -1,7 +1,7 @@
-from materials.material import Material
-from utilities.ur import units
-from density_model import DensityModel
-from inp import validation
+from pyrk.materials.material import Material
+from pyrk.utilities.ur import units
+from pyrk.density_model import DensityModel
+from pyrk.inp import validation
 
 
 class LiquidMaterial(Material):

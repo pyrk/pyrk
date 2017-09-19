@@ -11,11 +11,11 @@ import numpy as np
 from scipy.integrate import ode
 import importlib
 import argparse
-from db import database
-from utilities import logger
-from utilities.logger import pyrklog
-from inp import sim_info
-from utilities.ur import units
+from pyrk.db import database
+from pyrk.utilities import logger
+from pyrk.utilities.logger import pyrklog
+from pyrk.inp import sim_info
+from pyrk.utilities.ur import units
 import os
 
 

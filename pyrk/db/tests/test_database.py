@@ -1,6 +1,6 @@
 from nose.tools import assert_equal, assert_true, assert_false
 
-from db import database as d
+from pyrk.db import database as d
 
 import unittest
 

@@ -1,11 +1,11 @@
 import six
 import numpy as np
-from inp import validation
-from utilities.ur import units
-from timer import Timer
+from pyrk.inp import validation
+from pyrk.utilities.ur import units
+from pyrk.timer import Timer
 import math
-from materials.material import Material
-from convective_model import ConvectiveModel
+from pyrk.materials.material import Material
+from pyrk.convective_model import ConvectiveModel
 
 
 class THComponent(object):

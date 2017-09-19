@@ -1,10 +1,10 @@
 from nose.tools import assert_equal
 
 import numpy as np
-import th_system
-import th_component
-from utilities.ur import units
-from materials.material import Material
+from pyrk import th_system
+from  pyrk import th_component
+from pyrk.utilities.ur import units
+from pyrk.materials.material import Material
 
 
 def test_dtempfueldt_returns_numbers():
