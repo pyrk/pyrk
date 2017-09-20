@@ -1,0 +1,11 @@
+=== 0.3.0
+
+* Use explicit imports for module imports
+* PEP8 and Pylint cleanups
+* Update developer docs
+* True up Travis CI config
+* True up requirements
+
+=== 0.2.0
+
+* Baseline
