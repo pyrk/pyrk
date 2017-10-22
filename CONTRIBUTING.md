@@ -59,14 +59,12 @@ Start in the root directory where you have cloned the pyrk repository
 and run for Python 2.7 --
 
  - source active pyrk-27-test-environment
- - cd pyrk
- - PYTHONPATH=$PWD nosetests
+ - nosetests pyrk
 
 And then for Python 3.6 --
 
  - source activate pyrk-36-test-environment
- - cd pyrk
- - PYTHONPATH=$PWD nosetests
+ - nosetests pyrk
 
 ##### Run style tests with flake8
 
