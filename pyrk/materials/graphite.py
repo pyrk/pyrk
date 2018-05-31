@@ -40,7 +40,7 @@ class Graphite(Material):
         Also noted in:
         http://www.osti.gov/scitech/servlets/purl/714896/
         """
-        return 0.26 * units.watt / (units.meter * units.kelvin)
+        return 150.0 * units.watt / (units.meter * units.kelvin)
 
     def specific_heat_capacity(self):
         """Specific heat capacity for H451 graphite [J/kg/K]
