@@ -8,12 +8,13 @@ alpha = 2.0 * u_k
 beta = 3.0 * u_k / units.kelvin
 
 tcm_constant = thermal_conductivity_model.ThermalConductivityModel(a=alpha,
-                                         b=beta, model="constant")
-tcm_linear = thermal_conductivity_model.ThermalConductivityModel(a=alpha, b=beta, model="linear")
+                                                                   b=beta, model="constant")
+tcm_linear = thermal_conductivity_model.ThermalConductivityModel(
+    a=alpha, b=beta, model="linear")
 
 tcm_flibe = thermal_conductivity_model.ThermalConductivityModel(a=1.0 * units.watt / units.meter,
-                                      b=0.05 * units.watt / units.meter
-                                      / units.kelvin, model="linear")
+                                                                b=0.05 * units.watt / units.meter
+                                                                / units.kelvin, model="linear")
 
 
 def test_default_constructor():
@@ -47,5 +48,3 @@ def test_flibe():
     assert_equal(tcm_flibe.k(), a_flibe)
     assert_equal(tcm_flibe.k(1 * units.kelvin), a_flibe +
                  b_flibe * 1.0 * units.kelvin)
-
-

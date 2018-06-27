@@ -8,12 +8,15 @@ u_cp = units.joule / units.kg
 alpha = 2.0 * u_cp
 beta = 3.0 * u_cp / units.kelvin
 
-cpm_constant = specific_heat_capacity_model.SpecificHeatCapacityModel(a=alpha, b=beta, model="constant")
-cpm_linear = specific_heat_capacity_model.SpecificHeatCapacityModel(a=alpha, b=beta, model="linear")
+cpm_constant = specific_heat_capacity_model.SpecificHeatCapacityModel(
+    a=alpha, b=beta, model="constant")
+cpm_linear = specific_heat_capacity_model.SpecificHeatCapacityModel(
+    a=alpha, b=beta, model="linear")
 cpm_flibe = specific_heat_capacity_model.SpecificHeatCapacityModel(a=2415.78 * units.joule / units.kg,
-                                      b=0.075 * units.joule / 
-                                      (units.kg * units.kelvin),
-                                      model="linear")
+                                                                   b=0.075 * units.joule /
+                                                                   (units.kg *
+                                                                    units.kelvin),
+                                                                   model="linear")
 
 
 def test_default_constructor():
@@ -22,6 +25,7 @@ def test_default_constructor():
     assert_equal(cpm.b, 0 * u_cp / units.kelvin)
     assert_equal(cpm.model, 'linear')
     assert_equal(cpm.cp(), cpm.a)
+
 
 def test_linear():
     assert_equal(cpm_linear.model, 'linear')
