@@ -44,7 +44,7 @@ class DensityModel(object):
         Returns the density based on the temperature and the irradiation.
 
         :param temp: the temperature
-        :type temp: float.
+        :type temp: pint Quantity object with units of kelvin.
         """
         return self.implemented[self.model](temp)
 
@@ -53,7 +53,7 @@ class DensityModel(object):
         Returns a constant density, a.
 
         :param temp: The temperature of the object
-        :type temp: float.
+        :type temp: pint Quantity object with units of kelvin.
         """
         return self.a
 
@@ -62,7 +62,7 @@ class DensityModel(object):
         Returns a linear dependence on temperature ($ a + b*temp$) .
 
         :param temp: The temperature of the object
-        :type temp: float. units of kelvin
+        :type temp: pint Quantity object with units of kelvin.
         """
         ret = self.a + self.b * temp
         return ret

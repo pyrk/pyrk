@@ -10,7 +10,7 @@ class ThermalConductivityModel(object):
 
     def __init__(self,
                  a=0 * units.watt / units.meter,
-                 b=0 * units.watt / (units.meter * units.kelvin),
+                 b=0 * units.watt / units.meter / pow(units.kelvin,2),
                  model="linear"):
         """
         Initializes the Thermal Conductivty object.
@@ -18,12 +18,12 @@ class ThermalConductivityModel(object):
         :param model: The keyword for a model type.
         :type model: string
         :param a: first coefficient of the model
-        :type a: float.
+        :type a: pint Quantity object with units W/m/kelvin
         :param b: second coefficient of the model.
-        :type b: float
+        :type b: pint Quantity object with units W/m/kelvin^2
         """
-        self.a = a.to(units.watt / units.meter)
-        self.b = b.to(units.watt / (units.meter * units.kelvin))
+        self.a = a.to(units.watt / units.meter / units.kelvin)
+        self.b = b.to(units.watt / units.meter / pow(units.kelvin, 2))
 
         self.implemented = {'constant': self.constant,
                             'linear': self.linear}
@@ -44,7 +44,7 @@ class ThermalConductivityModel(object):
         Returns the thermal conductivty based on the temperature and the irradiation.
 
         :param temp: the temperature
-        :type temp: float.
+        :type temp: pint Quantity object with units kelvin.
         """
         return self.implemented[self.model](temp)
 
@@ -53,7 +53,7 @@ class ThermalConductivityModel(object):
         Returns a constant thermal conductivity, a.
 
         :param temp: The temperature of the object
-        :type temp: float.
+        :type temp: pint Quantity object with units kelvin
         """
         return self.a
 
@@ -62,7 +62,7 @@ class ThermalConductivityModel(object):
         Returns a linear dependence on temperature ($ a + b*temp$) .
 
         :param temp: The temperature of the object
-        :type temp: float. units of kelvin
+        :type temp: pint Quantity object with units of kelvin
         """
         ret = self.a + self.b * temp
         return ret
