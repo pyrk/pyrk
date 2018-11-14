@@ -44,7 +44,7 @@ class SpecificHeatCapacityModel(object):
         """
         Returns the specific heat capacity based on the temperature and the irradiation.
 
-        :param temp: the temperature
+        :param temp: the temperature of the material [kelvin]
         :type temp: float.
         """
         return self.implemented[self.model](temp)
