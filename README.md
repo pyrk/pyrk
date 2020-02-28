@@ -30,6 +30,15 @@ following steps
 
 After these steps, the website will be found in `pyrk/doc/_build/html`.
 
+## Getting Help
+If you have a problem, please do not email the developers. Please create
+a GitHub issue here: . In that issue, please incude all information relevant 
+to the problem. The issue should, at the very least, explain what you did, 
+what you were expecting, and what you observed instead. We will need this 
+information to reproduce your issue and help you debug it. Consider including
+the commands that you ran, the input files you used, the output hdf5 database 
+that you used, and the exact text of any errors you encountered. 
+
 ## License
 
 The license for this work can be found
