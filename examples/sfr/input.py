@@ -1,10 +1,10 @@
-from utilities.ur import units
-import th_component as th
+from pyrk.utilities.ur import units
+from pyrk import th_component as th
 import math
-from materials.sfrmetal import SFRMetal
-from materials.sodium import Sodium
-from materials.ss316 import SS316
-from timer import Timer
+from pyrk.materials.sfrmetal import SFRMetal
+from pyrk.materials.sodium import Sodium
+from pyrk.materials.ss316 import SS316
+from pyrk.timer import Timer
 
 #############################################
 #
