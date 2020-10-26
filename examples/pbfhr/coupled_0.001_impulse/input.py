@@ -3,13 +3,13 @@
 # parameters are not real material properties, but rather placeholders to
 # check the code
 
-from utilities.ur import units
-import th_component as th
+from pyrk.utilities.ur import units
+from pyrk import th_component as th
 import math
-from materials.flibe import Flibe
-from materials.graphite import Graphite
-from materials.kernel import Kernel
-from timer import Timer
+from pyrk.materials.flibe import Flibe
+from pyrk.materials.graphite import Graphite
+from pyrk.materials.kernel import Kernel
+from pyrk.timer import Timer
 
 #############################################
 #

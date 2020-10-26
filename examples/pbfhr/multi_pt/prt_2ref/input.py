@@ -7,14 +7,14 @@ The simulation has 3 stages:
 - turn on external reactivity
 '''
 
-from utilities.ur import units
-import th_component as th
+from pyrk.utilities.ur import units
+from pyrk import th_component as th
 import math
-from materials.material import Material
-from materials.liquid_material import LiquidMaterial
-from density_model import DensityModel
-from convective_model import ConvectiveModel
-from timer import Timer
+from pyrk.materials.material import Material
+from pyrk.materials.liquid_material import LiquidMaterial
+from pyrk.density_model import DensityModel
+from pyrk.convective_model import ConvectiveModel
+from pyrk.timer import Timer
 
 #############################################
 #
