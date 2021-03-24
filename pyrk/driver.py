@@ -13,6 +13,7 @@ import importlib
 import argparse
 from pyrk.db import database
 from pyrk.utilities import logger
+from pyrk.utilities import plotter
 from pyrk.utilities.logger import pyrklog
 from pyrk.inp import sim_info
 from pyrk.utilities.ur import units
@@ -257,9 +258,11 @@ def main(args, curr_dir):
     # TODO: think about weather to add n_ref to all input files, or put n_ref
     # in database files
     print_logo(curr_dir)
-    _ = solve(si=si, y=si.y, infile=infile)
+    sol = solve(si=si, y=si.y, infile=infile)
     log_results(si)
     out_db.close_db()
+    print(si.plotdir)
+    plotter.plot(sol, si)
     pyrklog.critical("\nSimulation succeeded.\n")
 
 
