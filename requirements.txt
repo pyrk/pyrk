@@ -1,6 +1,7 @@
-matplotlib
 numpy
 scipy
+matplotlib
+pytables
 pint
 tables
 bokeh
