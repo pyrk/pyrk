@@ -1,5 +1,3 @@
-from nose.tools import assert_equal
-
 from pyrk.materials import graphite
 from pyrk.utilities.ur import units
 from pyrk.timer import Timer

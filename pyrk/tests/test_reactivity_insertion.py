@@ -1,5 +1,3 @@
-from nose.tools import assert_equal, assert_true
-
 import pyrk.reactivity_insertion as ri
 from pyrk import timer
 from pyrk.utilities.ur import units

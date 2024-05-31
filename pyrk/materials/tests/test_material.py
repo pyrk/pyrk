@@ -1,5 +1,3 @@
-from nose.tools import assert_equal
-
 from pyrk.materials import material
 from pyrk.utilities.ur import units
 from pyrk.density_model import DensityModel

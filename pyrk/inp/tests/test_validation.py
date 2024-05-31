@@ -1,5 +1,3 @@
-from nose.tools import assert_equal, assert_raises
-
 from pyrk.inp import validation as v
 from pyrk.utilities.ur import units
 

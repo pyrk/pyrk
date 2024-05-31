@@ -1,5 +1,3 @@
-from nose.tools import assert_equal, assert_true
-
 from pyrk.materials import sodium
 from pyrk.materials.liquid_material import LiquidMaterial
 from pyrk.utilities.ur import units

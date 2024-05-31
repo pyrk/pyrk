@@ -1,5 +1,3 @@
-from nose.tools import assert_equal
-
 import numpy as np
 from pyrk import th_system
 from  pyrk import th_component

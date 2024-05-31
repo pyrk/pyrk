@@ -1,4 +1,3 @@
-from nose.tools import assert_equal
 from pyrk.utilities.ur import units
 from pyrk.convective_model import ConvectiveModel
 from pyrk.materials.liquid_material import LiquidMaterial

@@ -1,5 +1,4 @@
 from __future__ import print_function
-from nose.tools import assert_equal, assert_raises
 
 import pyrk.th_component as th
 from pyrk.utilities.ur import units

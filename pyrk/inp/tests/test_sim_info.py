@@ -1,5 +1,3 @@
-from nose.tools import assert_equal, assert_false, with_setup
-
 import os
 
 from pyrk.inp import sim_info as si
