@@ -1,3 +1,4 @@
+import pytest
 from pyrk import neutronics
 
 
@@ -10,7 +11,15 @@ def test_default_constructor():
 
 
 def test_malformed_constructor():
-    assert_raises(ValueError, neutronics.Neutronics, iso="th233")
-    assert_raises(ValueError, neutronics.Neutronics, e="epithermal")
-    assert_raises(ValueError, neutronics.Neutronics, n_precursors=99)
-    assert_raises(ValueError, neutronics.Neutronics, n_decay=99)
+    with pytest.raises(ValueError) as excinfo:
+        neutronics.Neutronics(iso="th233")
+    assert excinfo.value == ValueError
+    with pytest.raises(ValueError) as excinfo:
+        neutronics.Neutronics(e="epithermal")
+    assert excinfo.value == ValueError
+    with pytest.raises(ValueError) as excinfo:
+        neutronics.Neutronics(n_precursor=99)
+    assert excinfo.value == ValueError
+    with pytest.raises(ValueError) as excinfo:
+        neutronics.Neutronics(n_decay=99)
+    assert excinfo.value == ValueError

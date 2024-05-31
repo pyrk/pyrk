@@ -1,3 +1,4 @@
+import pytest
 from __future__ import print_function
 
 import pyrk.th_component as th
@@ -64,8 +65,12 @@ def test_dtemp():
 
 
 def test_meshing():
-    assert_raises(TypeError, tester.mesh, 2)
-    assert_raises(ValueError, tester_sph.mesh, 2)
+    with pytest.raises(TypeError) as excinfo:
+        tester.mesh(2)
+    assert excinfo.value == TypeError
+    with pytest.raises(ValueError) as excinfo:
+        tester_sph.mesh(2)
+    assert excinfo.value == ValueError
     l = 0.2 * units.meter
     mesh_list = tester_sph.mesh(l)
     assert mesh_list[0].ro - mesh_list[0].ri == l
