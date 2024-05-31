@@ -1,3 +1,4 @@
+import pytest
 import os
 
 from pyrk.inp import sim_info as si
@@ -8,18 +9,18 @@ from pyrk import th_component
 from pyrk.timer import Timer
 
 
+@pytest.fixture
 def setup_func():
     "set up test fixtures"
     file = open('testfile.py', 'w+')
     file.close()
-
-
+    
+@pytest.fixture
 def teardown_func():
     "tear down test fixtures"
     os.remove('testfile.py')
 
 
-@with_setup(setup_func, teardown_func)
 def test_init_reasonable_sim_no_components():
     t0 = 0 * units.seconds
     tf = 10 * units.seconds
@@ -52,7 +53,6 @@ def test_init_reasonable_sim_no_components():
     info.db.delete_db()
 
 
-@with_setup(setup_func, teardown_func)
 def test_init_reasonable_sim_w_components():
     t0 = 0 * units.seconds
     tf = 10 * units.seconds

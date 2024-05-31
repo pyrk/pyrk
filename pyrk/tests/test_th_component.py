@@ -1,5 +1,5 @@
-import pytest
 from __future__ import print_function
+import pytest
 
 import pyrk.th_component as th
 from pyrk.utilities.ur import units
