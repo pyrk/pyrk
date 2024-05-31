@@ -46,10 +46,10 @@ def test_init_reasonable_sim_no_components():
                       infile=testfile,
                       sim_id=None,
                       db=database.Database(mode='w'))
-    assert_equal(t0, info.timer.t0)
-    assert_equal(tf, info.timer.tf)
-    assert_equal(dt, info.timer.dt)
-    assert_equal(info.timer.timesteps(), 101)
+    assert t0 == info.timer.t0
+    assert tf == info.timer.tf
+    assert dt == info.timer.dt
+    assert info.timer.timesteps() == 101
     info.db.close_db()
     info.db.delete_db()
 
@@ -74,10 +74,10 @@ def test_init_reasonable_sim_w_components():
     info = si.SimInfo(timer=ti, components=c, iso=iso, e=spectrum,
                       n_precursors=npg, n_decay=ndg, kappa=kappa,
                       infile=testfile, db=database.Database(mode='w'))
-    assert_equal(t0, info.timer.t0)
-    assert_equal(tf, info.timer.tf)
-    assert_equal(dt, info.timer.dt)
-    assert_equal(info.timer.timesteps(), 101)
+    assert t0 == info.timer.t0
+    assert tf == info.timer.tf
+    assert dt == info.timer.dt
+    assert info.timer.timesteps() == 101
     info.db.close_db()
     info.db.delete_db()
 
@@ -86,6 +86,6 @@ def test_sim_id():
     info = si.SimInfo()
     first_id = info.generate_sim_id()
     next_id = info.generate_sim_id()
-    assert_false(first_id == next_id)
+    assert not first_id == next_id
     info.db.close_db()
     info.db.delete_db()

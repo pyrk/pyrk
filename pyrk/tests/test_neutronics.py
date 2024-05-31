@@ -5,10 +5,10 @@ from pyrk import neutronics
 
 def test_default_constructor():
     ne = neutronics.Neutronics()
-    assert_equal(ne._iso, "u235")
-    assert_equal(ne._e, "thermal")
-    assert_equal(ne._npg, 6)
-    assert_equal(ne._ndg, 11)
+    assert ne._iso == "u235"
+    assert ne._e == "thermal"
+    assert ne._npg == 6
+    assert ne._ndg == 11
 
 
 def test_malformed_constructor():

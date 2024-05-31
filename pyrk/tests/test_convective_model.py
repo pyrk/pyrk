@@ -8,9 +8,9 @@ def test_constant_model():
     h_constant = ConvectiveModel(20 * units.W / units.meter**2 / units.kelvin)
     h1_constant = ConvectiveModel(
         20 * units.W / units.centimeter**2 / units.kelvin)
-    assert_equal(h_constant.h0,
+    assert (h_constant.h0 ==
                  20 * units.W / units.meter**2 / units.kelvin)
-    assert_equal(h1_constant.h0,
+    assert (h1_constant.h0 ==
                  200000 * units.W / units.meter**2 / units.kelvin)
 
 
@@ -23,8 +23,8 @@ def test_wakao_model():
                               a_flow=1 * units.meter**2,
                               length_scale=1 * units.meter,
                               model='wakao')
-    assert_equal(h_wakao.mu,
+    assert (h_wakao.mu ==
                  2 * units.pascal * units.second)
     rho = 100 * units.kg / units.meter**3
-    assert_equal(h_wakao.h(rho, 0 * units.pascal * units.second),
+    assert (h_wakao.h(rho, 0 * units.pascal * units.second) ==
                  h_wakao.h(rho, 2 * units.pascal * units.second))

@@ -17,9 +17,9 @@ rho_at_temp_zero = 2413.2172 * units.kg / units.meter**3
 
 
 def test_constructor():
-    assert_equal(tester.name, name)
-    assert_equal(tester.k, k_flibe)
-    assert_equal(tester.cp, cp_flibe)
-    assert_equal(tester.rho(T0), rho_at_time_zero)
-    assert_equal(tester.rho(0 * units.kelvin), rho_at_temp_zero)
-    assert_true(isinstance(tester, LiquidMaterial))
+    assert tester.name == name
+    assert tester.k == k_flibe
+    assert tester.cp == cp_flibe
+    assert tester.rho(T0) == rho_at_time_zero
+    assert tester.rho(0 * units.kelvin) == rho_at_temp_zero
+    assert isinstance(tester, LiquidMaterial)

@@ -17,7 +17,7 @@ def test_constructor():
     '''
     TODO: test density
     '''
-    assert_equal(tester.name, name)
-    assert_equal(tester.k, k_Na)
-    assert_equal(tester.cp, cp_Na)
-    assert_true(isinstance(tester, LiquidMaterial))
+    assert tester.name == name
+    assert tester.k == k_Na
+    assert tester.cp == cp_Na
+    assert isinstance(tester, LiquidMaterial)

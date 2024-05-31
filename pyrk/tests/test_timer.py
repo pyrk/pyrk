@@ -42,57 +42,57 @@ trouble = timer.Timer(t0=0.0 * units.seconds,
 
 
 def test_default_constructor():
-    assert_equal(default.t0, 0.0 * units.seconds)
-    assert_equal(default.tf, 1.0 * units.seconds)
-    assert_equal(default.dt, 1.0 * units.seconds)
-    assert_equal(default.ts, 0)
-    assert_equal(default.current_time(), 0.0 * units.seconds)
+    assert default.t0 == 0.0 * units.seconds
+    assert default.tf == 1.0 * units.seconds
+    assert default.dt == 1.0 * units.seconds
+    assert default.ts == 0
+    assert default.current_time() == 0.0 * units.seconds
 
 
 def test_default_t_idx():
-    assert_equal(default.t_idx(0.0 * units.seconds), 0)
-    assert_equal(default.t_idx(1.0 * units.seconds), 1)
-    assert_equal(default.timesteps(), 2)
-    assert_equal(default.advance_time(
-        1.0 * units.seconds), 1.0 * units.seconds)
+    assert default.t_idx(0.0 * units.seconds) == 0
+    assert default.t_idx(1.0 * units.seconds) == 1
+    assert default.timesteps() == 2
+    assert default.advance_time(
+        1.0 * units.seconds) == 1.0 * units.seconds
 
 
 def test_long_sim_t_idx():
-    assert_equal(long_sim.t_idx(zero), 0)
-    assert_equal(long_sim.t_idx(small), 1)
-    assert_equal(long_sim.t_idx(large), long_sim.timesteps() - 1)
-    assert_equal(long_sim.timesteps(), large / small + 1)
+    assert long_sim.t_idx(zero) == 0
+    assert long_sim.t_idx(small) == 1
+    assert long_sim.t_idx(large) == long_sim.timesteps() - 1
+    assert long_sim.timesteps() == large / small + 1
     for i in range(1, 5):
-        assert_equal(long_sim.advance_time(i * small), i * small)
-        assert_equal(long_sim.current_time(), i * small)
+        assert long_sim.advance_time(i * small) == i * small
+        assert long_sim.current_time() == i * small
 
 
 def test_all_ints_t_idx():
-    assert_equal(all_ints.t_idx(zero), 0)
-    assert_equal(all_ints.t_idx(one), 1)
-    assert_equal(all_ints.t_idx(ten), all_ints.timesteps() - 1)
-    assert_equal(all_ints.timesteps(), 11)
+    assert all_ints.t_idx(zero) == 0
+    assert all_ints.t_idx(one) == 1
+    assert all_ints.t_idx(ten) == all_ints.timesteps() - 1
+    assert all_ints.timesteps() == 11
     for i in range(1, 10):
-        assert_equal(all_ints.advance_time(i * one), i * one)
-        assert_equal(all_ints.current_time(), i * one)
+        assert all_ints.advance_time(i * one) == i * one
+        assert all_ints.current_time() == i * one
 
 
 def test_short_sim_t_idx():
-    assert_equal(short_sim.t_idx(zero), 0)
-    assert_equal(short_sim.t_idx(ptone), 1)
-    assert_equal(short_sim.t_idx(one), short_sim.timesteps() - 1)
-    assert_equal(short_sim.timesteps(), one / ptone + 1)
+    assert short_sim.t_idx(zero) == 0
+    assert short_sim.t_idx(ptone) == 1
+    assert short_sim.t_idx(one) == short_sim.timesteps() - 1
+    assert short_sim.timesteps() == one / ptone + 1
     for i in np.linspace(start=0, stop=1, num=11):
         t = i * units.seconds
-        assert_equal(short_sim.advance_time(t), t)
-        assert_equal(short_sim.current_time(), t)
+        assert short_sim.advance_time(t) == t
+        assert short_sim.current_time() == t
 
 
 def test_troublemaker():
     for i in range(0, 50):
         time = i * 0.005 * units.seconds
-        assert_equal(trouble.t(trouble.t_idx(time)), time)
-        assert_equal(trouble.advance_time(time), time)
+        assert trouble.t(trouble.t_idx(time)) == time
+        assert trouble.advance_time(time) == time
 
 
 def test_idx_from_t():
@@ -105,7 +105,7 @@ def test_idx_from_t():
                  28: 0.14 * units.seconds}
     for exp, time in six.iteritems(test_dict):
         obs = default.idx_from_t(time=time, t0=t0, dt=dt)
-        assert_equal(obs, exp)
+        assert obs == exp
 
 
 def test_idx_from_t_and_back():
@@ -119,4 +119,4 @@ def test_idx_from_t_and_back():
     for exp, time in six.iteritems(test_dict):
         idx = trouble.idx_from_t(time=time, t0=t0, dt=dt)
         other_idx = trouble.idx_from_t(time=trouble.t(idx), t0=t0, dt=dt)
-        assert_equal(idx, other_idx)
+        assert idx == other_idx
