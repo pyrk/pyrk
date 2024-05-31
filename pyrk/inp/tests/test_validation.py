@@ -9,7 +9,7 @@ def test_ge_wrong_type():
         valname = "testval"
         llim = 0
         v.validate_ge(valname, val, llim)
-    assert excinfo.value == TypeError
+    assert excinfo.type is TypeError
 
 
 def test_ge_Quantity_type():
@@ -32,7 +32,7 @@ def test_ge_too_small():
         valname = "testval"
         llim = 0
         v.validate_ge(valname, val, llim)
-    assert excinfo.value == ValueError
+    assert excinfo.type is ValueError
 
 
 def test_ge_both_neg():
@@ -48,7 +48,7 @@ def test_le_wrong_type():
         valname = "testval"
         ulim = 20
         v.validate_le(valname, val, ulim)
-    assert excinfo.value == TypeError
+    assert excinfo.type is TypeError
 
 
 def test_le_right_type():
@@ -64,7 +64,7 @@ def test_le_too_big():
         valname = "testval"
         ulim = 0
         v.validate_le(valname, val, ulim)
-    assert excinfo.value == ValueError
+    assert excinfo.type is ValueError
 
 
 def test_le_both_large():

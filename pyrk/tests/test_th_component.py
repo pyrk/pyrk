@@ -67,10 +67,10 @@ def test_dtemp():
 def test_meshing():
     with pytest.raises(TypeError) as excinfo:
         tester.mesh(2)
-    assert excinfo.value == TypeError
+    assert excinfo.type is TypeError
     with pytest.raises(ValueError) as excinfo:
         tester_sph.mesh(2)
-    assert excinfo.value == ValueError
+    assert excinfo.type is ValueError
     l = 0.2 * units.meter
     mesh_list = tester_sph.mesh(l)
     assert mesh_list[0].ro - mesh_list[0].ri == l

@@ -13,13 +13,13 @@ def test_default_constructor():
 def test_malformed_constructor():
     with pytest.raises(ValueError) as excinfo:
         neutronics.Neutronics(iso="th233")
-    assert excinfo.value == ValueError
+    assert excinfo.type is ValueError
     with pytest.raises(ValueError) as excinfo:
         neutronics.Neutronics(e="epithermal")
-    assert excinfo.value == ValueError
+    assert excinfo.type is ValueError
     with pytest.raises(ValueError) as excinfo:
         neutronics.Neutronics(n_precursor=99)
-    assert excinfo.value == ValueError
+    assert excinfo.type is ValueError
     with pytest.raises(ValueError) as excinfo:
         neutronics.Neutronics(n_decay=99)
-    assert excinfo.value == ValueError
+    assert excinfo.type is ValueError
