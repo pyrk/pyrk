@@ -18,7 +18,7 @@ def test_malformed_constructor():
         neutronics.Neutronics(e="epithermal")
     assert excinfo.type is ValueError
     with pytest.raises(ValueError) as excinfo:
-        neutronics.Neutronics(n_precursor=99)
+        neutronics.Neutronics(n_precursors=99)
     assert excinfo.type is ValueError
     with pytest.raises(ValueError) as excinfo:
         neutronics.Neutronics(n_decay=99)
