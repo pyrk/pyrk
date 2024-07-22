@@ -18,16 +18,21 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    strategy:
-        matrix:
-            python-version: ["3.10", "2.7"]
+    services:
+        python2:
+            image: python:2.7.16
+        python3:
+            image: python:3.10.13
+    # strategy:
+    #     matrix:
+    #         python-version: ["3.10", "2.7"]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
+    # - uses: actions/checkout@v4
+    # - name: Set up Python ${{ matrix.python-version }}
+    #   uses: actions/setup-python@v3
+    #   with:
+    #     python-version: ${{ matrix.python-version }}
     - name: Display Current Python Version
       run: python -c "import sys; print(sys.version)"
     - name: Install dependencies
