@@ -1,19 +1,18 @@
 from pyrk.db import database as d
 
-import unittest
-
+import pytest
 
 def dictfunc():
     return {'t0': 2}
 
+class TestDatabase:
 
-class DatabaseTest(unittest.TestCase):
-    def setUp(self):
+    @pytest.fixture(autouse=True)
+    def resource(self):
         "set up test fixtures"
         self.a = d.Database(mode='w')
         self.custom = d.Database(filepath='testfile.h5', mode='w')
-
-    def tearDown(self):
+        yield "resource"
         "tear down test fixtures"
         self.a.close_db()
         self.a.delete_db()
