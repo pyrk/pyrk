@@ -93,20 +93,19 @@ class TestDatabase:
         tables = self.a.set_up_tables()
         for t in tables:
             assert t['groupname'] in ['th',
-                                           'metadata',
-                                           'neutronics']
+                                      'metadata',
+                                      'neutronics']
             assert t['tablename'] in ['th_params', 'th_timeseries',
-                                           'sim_info',
-                                           'sim_timeseries',
-                                           'neutronics_timeseries',
-                                           'neutronics_params',
-                                           'zetas',
-                                           'omegas'
-                                           ]
+                                      'sim_info',
+                                      'sim_timeseries',
+                                      'neutronics_timeseries',
+                                      'neutronics_params',
+                                      'zetas',
+                                      'omegas']
 
     def test_set_up_groups(self):
         groups = self.a.set_up_groups()
         for g in groups:
             assert g['groupname'] in ['th',
-                                           'metadata',
-                                           'neutronics']
+                                      'metadata',
+                                      'neutronics']

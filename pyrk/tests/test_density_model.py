@@ -27,7 +27,7 @@ def test_linear():
     assert dm_linear.rho(0 * units.kelvin) == alpha
     assert dm_linear.rho() == alpha
     assert (dm_linear.rho(1 * units.kelvin) ==
-                 alpha + beta * 1.0 * units.kelvin)
+            alpha + beta * 1.0 * units.kelvin)
 
 
 def test_constant():
@@ -44,4 +44,4 @@ def test_flibe():
     assert dm_flibe.rho(0 * units.kelvin) == a_flibe
     assert dm_flibe.rho() == a_flibe
     assert (dm_flibe.rho(1 * units.kelvin) == a_flibe +
-                 b_flibe * 1.0 * units.kelvin)
+            b_flibe * 1.0 * units.kelvin)

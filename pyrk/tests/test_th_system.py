@@ -25,7 +25,7 @@ def test_conduction_slab():
                   th_component.THComponent(mat=mat, T0=700 * units.kelvin)]
     th = th_system.THSystem(0, components)
     assert th.conduction_slab(components[0], components[1], 0,
-                                    1 * units.meter, 1 * units.meter**2) == 0
+                              1 * units.meter, 1 * units.meter**2) == 0
     components = [th_component.THComponent(mat=mat, T0=800 * units.kelvin),
                   th_component.THComponent(mat=mat, T0=700 * units.kelvin)]
     th = th_system.THSystem(0, components)
