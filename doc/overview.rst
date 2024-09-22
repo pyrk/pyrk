@@ -5,9 +5,9 @@ Time-dependent fluctuations in neutron population, fluid flow, and heat transfer
 essential to understanding the performance and safety of a reactor. Such
 *transients* include normal reactor startup and shutdown as well as abnormal scenarios
 including Beyond Design Basis Events (BDBEs) such as Accident Transients
-Without Scram (ATWS). However, no open source tool currently exists for
+Without Scram (ATWS). However, no open-source tool currently exists for
 reactor transient analysis. To fill this gap, PyRK (Python for Reactor
-Kinetics) was created. PyRK is the first open source tool capable of:
+Kinetics) was created. PyRK is the first open-source tool capable of:
 
 - time-dependent,
 - lumped parameter thermal-hydraulics,
@@ -22,20 +22,27 @@ The PRKE
 ---------
 
 The point reactor kinetics equations are implemented in this software as a 
-suite of pdes. These are solved using the integration tools in the scipy 
+suite of PDEs. These are solved using the integration tools in the SciPy 
 package.
+
+Additionally, different reactor regions and their effects on kinetics can be
+modeled using the multi-point kinetics model.
 
 Lumped Parameter TH
 -------------------
 
-TH is represented in 1-D, lumped paramter model, by default. That is, 
-components that make up the reactor system are treated as material lumps and 
+TH is represented in 1-D, lumped parameter model, by default. That is, 
+components that make up the reactor system are treated as material lumps and
 the system is treated as a thermal circuit.
+
+Parameters such as density and heat transfer coefficients can be modeled as
+functions of temperature, and other TH parameters can be defined either by
+material or by the user.
 
 Material Library
 ------------------
 
-A number of materials are represented. Additional materials are a key area
+Several materials are represented. Additional materials are a key area
 where user/developer contributions are desired.
 
 Data Library
