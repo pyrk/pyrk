@@ -1,5 +1,3 @@
-from nose.tools import assert_equal
-
 from pyrk.materials import graphite
 from pyrk.utilities.ur import units
 from pyrk.timer import Timer
@@ -19,12 +17,12 @@ rho_const = 1740. * units.kg / (units.meter**3)
 
 
 def test_constructor():
-    assert_equal(tester.name, name)
-    assert_equal(tester.k, k_graphite)
-    assert_equal(tester.cp, cp_graphite)
-    assert_equal(tester.rho(temp=0 * units.kelvin), rho_const)
+    assert tester.name == name
+    assert tester.k == k_graphite
+    assert tester.cp == cp_graphite
+    assert tester.rho(temp=0 * units.kelvin) == rho_const
 
 
 def test_temp():
-    assert_equal(tester.rho(temp=0 * units.kelvin), rho_const)
-    assert_equal(tester.rho(temp=T0), rho_const)
+    assert tester.rho(temp=0 * units.kelvin) == rho_const
+    assert tester.rho(temp=T0) == rho_const

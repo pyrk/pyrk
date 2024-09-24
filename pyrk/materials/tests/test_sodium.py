@@ -1,5 +1,3 @@
-from nose.tools import assert_equal, assert_true
-
 from pyrk.materials import sodium
 from pyrk.materials.liquid_material import LiquidMaterial
 from pyrk.utilities.ur import units
@@ -17,7 +15,7 @@ def test_constructor():
     '''
     TODO: test density
     '''
-    assert_equal(tester.name, name)
-    assert_equal(tester.k, k_Na)
-    assert_equal(tester.cp, cp_Na)
-    assert_true(isinstance(tester, LiquidMaterial))
+    assert tester.name == name
+    assert tester.k == k_Na
+    assert tester.cp == cp_Na
+    assert isinstance(tester, LiquidMaterial)

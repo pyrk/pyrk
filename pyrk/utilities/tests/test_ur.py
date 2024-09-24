@@ -1,5 +1,3 @@
-from nose.tools import assert_equal
-
 import pyrk.utilities.ur as ur
 
 
@@ -8,7 +6,7 @@ def test_pcm_to_per_cent_delta_k():
     apcm = 1.0 * ur.units.pcm
     obs = apcm.to('per_cent_delta_k')
     exp = 0.001 * ur.units.per_cent_delta_k
-    assert_equal(obs, exp)
+    assert obs == exp
 
 
 def test_pcm_to_delta_k():
@@ -17,4 +15,4 @@ def test_pcm_to_delta_k():
     apcm = 1.0 * ur.units.pcm
     obs = apcm.to('delta_k')
     exp = 0.00001 * ur.units.delta_k
-    assert_equal(obs, exp)
+    assert obs == exp

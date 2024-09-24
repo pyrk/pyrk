@@ -1,5 +1,5 @@
 from __future__ import print_function
-from nose.tools import assert_equal, assert_raises
+import pytest
 
 import pyrk.th_component as th
 from pyrk.utilities.ur import units
@@ -31,42 +31,46 @@ tester_sph = th.THComponent(name=name, mat=mat, vol=vol, T0=T0, timer=ti,
 
 
 def test_constructor():
-    assert_equal(tester.name, name)
-    assert_equal(tester.vol, vol)
-    assert_equal(tester.k, k)
-    assert_equal(tester.rho(0), dm.rho())
-    assert_equal(tester.T0, T0)
+    assert tester.name == name
+    assert tester.vol == vol
+    assert tester.k == k
+    assert tester.rho(0) == dm.rho()
+    assert tester.T0 == T0
 
 
 def test_temp():
-    assert_equal(tester.temp(0), T0)
+    assert tester.temp(0) == T0
 
 
 def test_update_temp():
-    assert_equal(tester.temp(0), T0)
+    assert tester.temp(0) == T0
     T1 = 10 * units.kelvin
     T2 = 20 * units.kelvin
     tester.update_temp(1, T1)
-    assert_equal(tester.temp(1), T1)
+    assert tester.temp(1) == T1
     tester.update_temp(2, T2)
-    assert_equal(tester.temp(2), T2)
+    assert tester.temp(2) == T2
 
 
 def test_dtemp():
     T1 = 20 * units.kelvin
     tester.update_temp(ti.t_idx_feedback, T1)
     time1 = ti.t_idx(4 * units.seconds)
-    assert_equal(tester.dtemp(time1), tester.T[time1] - T1)
+    assert tester.dtemp(time1) == tester.T[time1] - T1
 
     T2 = 50 * units.kelvin
     tester.update_temp(time1 - 1, T2)
     print(tester.T[time1 - 1])
-    assert_equal(tester.dtemp(time1), T2 - tester.T[ti.t_idx_feedback])
+    assert tester.dtemp(time1) == T2 - tester.T[ti.t_idx_feedback]
 
 
 def test_meshing():
-    assert_raises(TypeError, tester.mesh, 2)
-    assert_raises(ValueError, tester_sph.mesh, 2)
+    with pytest.raises(TypeError) as excinfo:
+        tester.mesh(2)
+    assert excinfo.type is TypeError
+    with pytest.raises(ValueError) as excinfo:
+        tester_sph.mesh(2)
+    assert excinfo.type is ValueError
     l = 0.2 * units.meter
     mesh_list = tester_sph.mesh(l)
-    assert_equal(mesh_list[0].ro - mesh_list[0].ri, l)
+    assert mesh_list[0].ro - mesh_list[0].ri == l

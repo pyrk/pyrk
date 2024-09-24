@@ -1,5 +1,3 @@
-from nose.tools import assert_equal
-
 from pyrk.materials import material
 from pyrk.utilities.ur import units
 from pyrk.density_model import DensityModel
@@ -23,8 +21,8 @@ name_test = "testname"
 
 
 def test_constructor():
-    assert_equal(default.name, name)
-    assert_equal(default.k, k_default)
-    assert_equal(default.cp, cp_default)
-    assert_equal(default.rho(T0), rho_at_time_zero)
-    assert_equal(default.rho(0 * units.kelvin), rho_at_temp_zero)
+    assert default.name == name
+    assert default.k == k_default
+    assert default.cp == cp_default
+    assert default.rho(T0) == rho_at_time_zero
+    assert default.rho(0 * units.kelvin) == rho_at_temp_zero
