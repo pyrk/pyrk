@@ -2,7 +2,7 @@ PyRK Tutorial
 =============
 
 Creating an Input File
-------------------
+-----------------------
 
 To create an input file, the user can use a default example as a good starting
 template. Each simulation object requires several parameters to run:
