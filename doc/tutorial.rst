@@ -1,7 +1,7 @@
 PyRK Tutorial
 =============
 
-Creating an Input
+Creating an Input File
 ------------------
 
 To create an input file, the user can use a default example as a good starting
