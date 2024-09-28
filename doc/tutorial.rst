@@ -4,8 +4,9 @@ PyRK Tutorial
 Creating an Input File
 -----------------------
 
-To create an input file, the user can use the default example as a good starting
-template. Each simulation object requires several parameters to run:
+To create an input file, the user can use the default example as a good 
+starting template. Each simulation object requires several parameters 
+to run:
 
 - A timer for each simulation must be created. The user can define a start/end
 times as well as a time-step value. The timer is its own module with more
@@ -26,9 +27,9 @@ insertions are modeled in their own module, with more details in its file.
 Running an Input File
 ----------------------
 
-A simulation can be run by using the command below. Here, replace `input` with the path
-to the input file, and replace `output` with the path to the directory where output plots 
-should be saved.
+A simulation can be run by using the command below. Here, replace `input` with
+the path to the input file, and replace `output` with the path to the directory
+where output plots should be saved.
 
 
 .. code-block:: bash
@@ -38,6 +39,10 @@ should be saved.
 
 In the example above, path/to/pyrk is, of course, the path to the pyrk 
 directory, containing driver.py.
+
+It is important to run setup.py as an install before attempting to run 
+driver.py. Also note: there is a second pyrk folder within the package
+which contains driver.py, this is what should be pathed to.
 
 Reading Output
 ---------------
