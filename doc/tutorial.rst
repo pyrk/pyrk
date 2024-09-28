@@ -26,8 +26,9 @@ insertions are modeled in their own module, with more details in its file.
 Running an Input File
 ----------------------
 
-A simulation can be run by using the command below. The infile is the path
-to the input file, and plotdir is the path to the output folder location.
+A simulation can be run by using the command below. Here, replace `input` with the path
+to the input file, and replace `output` with the path to the directory where output plots 
+should be saved.
 
 
 .. code-block:: bash
