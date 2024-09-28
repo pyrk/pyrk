@@ -23,8 +23,8 @@ groups (if multi-point kinetics is used) should also be specified.
 if feedback and reactivity insertions are modeled. External reactivity
 insertions are modeled in their own module, with more details in its file.
 
-Running an Input
------------------
+Running an Input File
+----------------------
 
 A simulation can be run by using the command below. The infile is the path
 to the input file, and plotdir is the path to the output folder location.
