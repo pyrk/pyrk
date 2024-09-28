@@ -9,7 +9,7 @@ The default and PBFHR examples model the Pebble-Bed Fluoride salt cooled High
 temperature Reactor proposed by the University of California, Berkely
 (https://fhr.nuc.berkeley.edu/pb-fhr-technology/).
 
-The SFR example models a Sodium Fast Reactor using data from Ragusa
+The SFR example models a Sodium-cooled Fast Reactor using data from Ragusa
 (Ragusa, Jean C., and Vijay S. Mahadevan. “Consistent and Accurate Schemes for
  Coupled Neutronics Thermal-Hydraulics Reactor Analysis.” Nuclear Engineering
  and Design, vol. 239, no. 3, Mar. 2009, pp. 566–79, 
