@@ -3,9 +3,5 @@
 PyRK is a point reactor kinetics and thermal hydraulics solver module
 for coupled, 0-D transient analysis.
 """
-from pyrk.ver import get_git_version
-
-try:
-    __version__ = get_git_version()
-except (ValueError, IOError):
-    __version__ = 'unknown'
+import importlib.metadata
+__version__ = importlib.metadata.version("pyrk")
