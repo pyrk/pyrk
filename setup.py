@@ -34,6 +34,7 @@ setup(
               'pyrk.materials',
               'pyrk.utilities',
               ],
+    package_data={'pyrk.utilities': ['*.mplstyle']},
     include_package_data=True,
     platforms='any',
     test_suite='pyrk.test.test_pyrk',
