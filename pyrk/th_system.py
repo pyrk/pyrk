@@ -162,7 +162,7 @@ class THSystem(object):
         '''
         r_b = component.ro.magnitude
         k = component.k.magnitude
-        dr = component.ri.magnitude - component.ro.magnitude
+        dr = (component.ro - component.ri).magnitude
         T_R = (-h.magnitude / k * t_env + t_b / dr) / \
             (1 / dr - h.magnitude / k)
         to_ret = 1 / r_b * k * (r_b * t_b - R.magnitude * T_R) / dr**2
