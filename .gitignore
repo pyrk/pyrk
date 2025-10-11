@@ -30,6 +30,7 @@ matplotlibrc
 
 *.pdf
 *.eps
+*.png
 
 .DS_Store
 
@@ -42,3 +43,11 @@ matplotlibrc
 
 # Ignore mergetool temp file
 *.orig
+
+
+# Ignore info files
+pyrk.egg-info/dependency_links.txt
+pyrk.egg-info/top_level.txt
+pyrk.egg-info/SOURCES.txt
+pyrk.egg-info/requires.txt
+pyrk.egg-info/PKG-INFO

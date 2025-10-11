@@ -1,7 +1,8 @@
 from pyrk.utilities.ur import units
 from pyrk.density_model import DensityModel
+from pyrk.conductivity_model import ConductivityModel
 from pyrk.materials.liquid_material import LiquidMaterial
-
+from pyrk.viscosity_model import ViscosityModel
 
 class Flibe(LiquidMaterial):
     """This class represents FLiBe. It inherits from the material
@@ -36,9 +37,10 @@ class Flibe(LiquidMaterial):
 
     def thermal_conductivity(self):
         """FLiBe thermal conductivity in [W/m-K]
-        TODO:k= 0.7662+0.0005T (T in celsius)
         """
-        return 1.0 * units.watt / (units.meter * units.kelvin)
+        return ConductivityModel(model='linear',
+                                 a = 0.7662 * units.watt / units.meter / units.kelvin, 
+                                 b = 0.0005 * units.watt / units.meter / units.kelvin / units.kelvin)
 
     def specific_heat_capacity(self):
         """Specific heat capacity of flibe [J/kg/K]
@@ -54,3 +56,11 @@ class Flibe(LiquidMaterial):
                             b=-0.488 * units.kg /
                             (units.meter**3) / units.kelvin,
                             model="linear")
+    
+    def dynamic_viscosiy(self):
+        """
+        FLiBE dynamic viscosity as a function of T. [Pa * s]
+        """
+        return ViscosityModel(a=1.16e-4 * units.pascal * units.second,
+                              b=3755 * units.kelvin,
+                              model="exponential")

@@ -1,6 +1,7 @@
 from pyrk.utilities.ur import units
 from pyrk.convective_model import ConvectiveModel
 from pyrk.materials.liquid_material import LiquidMaterial
+from pyrk.viscosity_model import ViscosityModel
 
 
 def test_constant_model():
@@ -13,16 +14,22 @@ def test_constant_model():
 
 
 def test_wakao_model():
-    mat = LiquidMaterial(k=1 * units.watt / units.meter / units.kelvin,
-                         cp=1 * units.joule / units.kg / units.kelvin,
-                         mu=2 * units.pascal * units.second)
-    h_wakao = ConvectiveModel(mat=mat,
-                              m_flow=1 * units.kg / units.g,
-                              a_flow=1 * units.meter**2,
-                              length_scale=1 * units.meter,
-                              model='wakao')
-    assert (h_wakao.mu ==
-            2 * units.pascal * units.second)
-    rho = 100 * units.kg / units.meter**3
-    assert (h_wakao.h(rho, 0 * units.pascal * units.second) ==
-            h_wakao.h(rho, 2 * units.pascal * units.second))
+        mat = LiquidMaterial(k=1 * units.watt / units.meter / units.kelvin,
+                                cp=1 * units.joule / units.kg / units.kelvin,
+                                mu=2 * units.pascal * units.second)
+        h_wakao = ConvectiveModel(mat=mat,
+                                m_flow=1 * units.kg / units.g,
+                                a_flow=1 * units.meter**2,
+                                length_scale=1 * units.meter,
+                                model='wakao')
+        
+        model_mu = ViscosityModel(a=2 * units.pascal * units.second)
+        assert h_wakao.mu.dynamic_viscosity() == model_mu.dynamic_viscosity()
+
+        rho = 100 * units.kg / units.meter**3
+
+        assert h_wakao.h(rho=rho,
+                        mu=1 * units.pascal * units.second,
+                        k=mat.k.thermal_conductivity()) != h_wakao.h(rho=rho,
+                        mu=2 * units.pascal * units.second,
+                        k=mat.k.thermal_conductivity())

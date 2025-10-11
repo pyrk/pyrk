@@ -18,7 +18,7 @@ rho_const = 1740. * units.kg / (units.meter**3)
 
 def test_constructor():
     assert tester.name == name
-    assert tester.k == k_graphite
+    assert tester.k.thermal_conductivity() == k_graphite
     assert tester.cp == cp_graphite
     assert tester.rho(temp=0 * units.kelvin) == rho_const
 

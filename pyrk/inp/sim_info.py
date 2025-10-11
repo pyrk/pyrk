@@ -1,6 +1,5 @@
 # Licensed under a 3-clause BSD style license - see LICENSE
 import numpy as np
-
 from pyrk.timer import Timer
 from pyrk import neutronics
 import pyrk.reactivity_insertion as ri

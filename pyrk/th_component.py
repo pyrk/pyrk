@@ -6,6 +6,7 @@ from pyrk.timer import Timer
 import math
 from pyrk.materials.material import Material
 from pyrk.convective_model import ConvectiveModel
+from pyrk.materials.liquid_material import LiquidMaterial
 
 
 class THComponent(object):
@@ -59,9 +60,9 @@ class THComponent(object):
         self.name = name
         self.vol = vol.to('meter**3')
         self.mat = mat
-        self.k = mat.k
         self.cp = mat.cp
         self.dm = mat.dm
+        self.km = mat.k
         self.timer = timer
         self.T = units.Quantity(np.zeros(shape=(timer.timesteps(),),
                                          dtype=float), 'kelvin')
@@ -80,6 +81,9 @@ class THComponent(object):
         self.sph = sph
         self.ri = ri.to('meter')
         self.ro = ro.to('meter')
+
+        if isinstance(self.mat, LiquidMaterial):
+            self.vm = mat.mu
 
     def mesh(self, size):
         '''cut a THComponent into a list of smaller components
@@ -123,9 +127,14 @@ class THComponent(object):
         :return: the temperature of the component at the chosen timestep
         :rtype: float, in units of kelvin
         """
-        validation.validate_ge("timestep", timestep, 0)
-        validation.validate_le("timestep", timestep, self.timer.timesteps())
-        return self.T[timestep]
+
+        if timestep == 0:
+            return self.T0
+        
+        else:
+            validation.validate_ge("timestep", timestep, 0)
+            validation.validate_le("timestep", timestep, self.timer.timesteps())
+            return self.T[timestep]
 
     def rho(self, timestep):
         """The density of this component's materials
@@ -135,7 +144,42 @@ class THComponent(object):
         :return: the density of this component
         :rtype: float, in units of $kg/m^3$
         """
-        ret = self.dm.rho(self.temp(timestep))
+        if timestep == 0:
+            Temp = self.T[0]
+        else:
+            Temp = self.temp(timestep -1)
+        ret = self.dm.rho(Temp)
+        return ret
+    
+    def k_tdx(self, timestep):
+        """The thermal conductivity (k) of this
+        componenent's materials
+
+        :param timestep: the timestep at which to query the temperature
+        :type timestep: int
+        :return: the thermal conductivity of this component
+        :rtype: float in units, watts / kelvin / meter
+        """
+        if timestep == 0:
+            Temp = self.T[0]
+        else:
+            Temp = self.temp(timestep -1)
+        ret = self.km.thermal_conductivity(Temp)
+        return ret
+    
+    def mu_tdx(self,timestep):
+        """The dynamic viscosity (mu) of componenent
+
+        :param timestep: the timestep at which to query the temperature
+        :type timestep: int
+        :return: the dynamic viscosity of this component
+        :rtype: float in units, pascals * seconds
+        """
+        if timestep == 0:
+            Temp = self.T[0]
+        else:
+            Temp = self.temp(timestep -1)
+        ret = self.vm.dynamic_viscosity(Temp)
         return ret
 
     def update_temp(self, timestep, temp):
@@ -281,7 +325,7 @@ class THComponent(object):
         rec = {'component': self.name,
                'vol': self.vol.magnitude,
                'matname': self.mat.name,
-               'k': self.k.magnitude,
+               #'k': self.k.magnitude,
                'cp': self.cp.magnitude,
                'T0': self.T0.magnitude,
                'alpha_temp': self.alpha_temp.magnitude,
@@ -298,12 +342,15 @@ class THComponent(object):
                'component': self.name,
                'temp': self.temp(timestep).magnitude,
                'density': self.rho(timestep).magnitude,
-               'k': self.k.magnitude,
+               'k': self.k_tdx(timestep).magnitude,
                'cp': self.cp.magnitude,
                'alpha_temp': self.alpha_temp.magnitude,
                'heatgen': self.heatgen,
                'power_tot': self.power_tot.magnitude
               }
+        if isinstance(self.mat, LiquidMaterial):
+            rec['mu'] = self.mu_tdx(timestep).magnitude
+
         return rec
 
 
@@ -354,11 +401,14 @@ class THSuperComponent(THComponent):
         :type t_env: float
         :param t_innercomp: temperature of the component that is inside self
         :type t_innercomp: float
+        :param h: convective heat transfer coefficient
+        :type h: float
+        :param k: thermal conduction coefficient of the body
+        :type k: float
         '''
         for envname, d in six.iteritems(self.conv):
-            # h = self.conv[envname]["h"].h(env.rho(t_env)).magnitude
-            k = self.conv[envname]["k"].magnitude
             dr = self.conv[envname]["dr"].magnitude
+            k = self.km.thermal_conductivity(t_innercomp)
         return (-h / k * t_env + t_innercomp / dr) / (1 / dr - h / k)
 
     def add_component(self, a_component):
@@ -371,13 +421,14 @@ class THSuperComponent(THComponent):
         :type envname: str
         :param h: convective heat transfer coefficient
         :type h: float
+        :param k: thermal conductivity (k)
+        :type k: float
         '''
         self.sub_comp[-2].addConvBC(envname,
                                     self.sub_comp[-1],
                                     h,
                                     (self.sub_comp)[-1].ro)
         self.conv[envname] = {'h': h,
-                              'k': self.sub_comp[-1].k,
                               'dr': self.sub_comp[-1].ro - self.sub_comp[-1].ri
                              }
 

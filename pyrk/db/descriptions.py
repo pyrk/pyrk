@@ -47,6 +47,7 @@ class ThTimeseriesRow(tb.IsDescription):
     alpha_temp = tb.Float64Col()
     heatgen = tb.BoolCol()
     power_tot = tb.Float64Col()
+    mu = tb.Float64Col()
 
 
 class ThMetadataRow(tb.IsDescription):

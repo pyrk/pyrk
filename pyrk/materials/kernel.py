@@ -41,6 +41,7 @@ class Kernel(Material):
         Petti, Martin, Phelip et al
         http://www.sciencedirect.com/science/article/pii/S0022311510003284#bib9
 
+        TODO
         Note that temperature dependent thermal conductivity model could be
         implemented in the place of this constant model based on Powers and
         Wirth:
