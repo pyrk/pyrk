@@ -1,5 +1,6 @@
 # Licensed under a 3-clause BSD style license - see LICENSE
 import numpy as np
+import functools
 
 from pyrk.timer import Timer
 from pyrk import neutronics
@@ -81,6 +82,8 @@ class SimInfo(object):
     def register_recorders(self):
         """Registers the function pointers that return database rows
         """
+
+
         self.db.register_recorder('metadata', 'sim_info', self.metadata,
                                   timeseries=False)
         self.db.register_recorder('metadata', 'sim_timeseries', self.record,
@@ -96,7 +99,24 @@ class SimInfo(object):
             self.db.register_recorder('th', 'th_params',
                                       c.metadata,
                                       timeseries=False)
-        # TODO: for all n_pg and n_dg, report zetas and omegas
+            self.db.register_recorder('neutronics', 
+                                      'neutronics_timeseries',
+                                      recorder= c.ne_record_timeseries,
+                                      timeseries=True)
+            
+
+        # Zeta Treatment
+        self.db.register_recorder(
+            'neutronics', 'zetas',
+            recorder=functools.partial(self.zeta_record),
+            timeseries=True)
+            
+        # Omega Recording
+        if self.n_dg > 0 :
+                self.db.register_recorder(
+                    'th', 'omegas',
+                    recorder=functools.partial(self.omega_record),
+                    timeseries=True)
 
     def init_rho_ext(self, rho_ext):
         """Initializes reactivity insertion object for the none case.
@@ -211,4 +231,20 @@ class SimInfo(object):
         power = self.y[t_idx][0]
         rec = {'t_idx': t_idx,
                'power': power}
+        return rec
+    
+    def zeta_record(self):
+        """A recorder function for the neutronics_timeseries table"""
+        t_idx = self.timer.current_timestep() - 1
+        rec = {'t_idx': t_idx}
+        for z in range(0,self.n_pg):
+            rec[f'zeta_{z+1}'] = self.y[t_idx, z + 1]
+        return rec
+    
+    def omega_record(self):
+        """A recorder function for the th/omegas table"""
+        t_idx = self.timer.current_timestep() - 1
+        rec = {"t_idx": t_idx}
+        for o in range(self.n_dg):
+            rec[f"omega_{o+1}"] = self.y[t_idx, (self.n_pg + o) + 1]
         return rec

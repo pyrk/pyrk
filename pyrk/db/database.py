@@ -228,7 +228,7 @@ class Database(object):
                        'tablename': 'zetas',
                        'description': desc.ZetasTimestepRow,
                        'tabletitle': 'Neutron Precursor Concentrations'})
-        tables.append({'groupname': 'neutronics',
+        tables.append({'groupname': 'th',
                        'tablename': 'omegas',
                        'description': desc.OmegasTimestepRow,
                        'tabletitle': 'Decay Heat Fractions'})

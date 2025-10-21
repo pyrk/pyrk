@@ -5,6 +5,7 @@ pyrk\.egg-info/
 dist/
 RELEASE\-VERSION
 pyrk/RELEASE\-VERSION
+testfile.py
 # Ignore temp files
 __pycache__/
 *.py[cod]

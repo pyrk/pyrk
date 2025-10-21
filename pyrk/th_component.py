@@ -305,7 +305,22 @@ class THComponent(object):
                'power_tot': self.power_tot.magnitude
               }
         return rec
-
+    
+    def ne_record_timeseries(self):
+        """A recorder function to hold reactivity in each component for the
+        neutronics/neutronics_timeseries table
+        """
+        
+        timestep = self.timer.current_timestep() - 1
+        if timestep >= 1:
+            rec = {'t_idx': timestep,
+                'component': self.name,
+                'rho': self.temp_reactivity(timestep)}
+        if timestep == 0: #Needs time for feebacks to start
+            rec = {'t_idx': 0.0,
+                'component': self.name,
+                'rho': 0.0}
+        return rec
 
 class THSuperComponent(THComponent):
 

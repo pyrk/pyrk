@@ -111,7 +111,7 @@ def plot_omegas(x, y, si):
     plt.xlabel(r'Time $[s]$')
     plt.ylabel(r'Decay Heat Fractions, $\omega_i [\#/dr^3]$')
     plt.title(r'Decay Heat Fractions, $\omega_i [\#/dr^3]$')
-    saveplot("omegas", plt)
+    saveplot("omegas", plt, si.plotdir)
 
 
 def saveplot(name, plt, plotdir='images'):

@@ -87,3 +87,30 @@ def test_sim_id():
     assert not first_id == next_id
     info.db.close_db()
     info.db.delete_db()
+
+
+def test_zeta_recorder():
+    info = si.SimInfo()
+    zeta_record = info.zeta_record()
+    assert isinstance(zeta_record, dict)
+    assert "t_idx" in zeta_record
+    assert isinstance(zeta_record['t_idx'],int)
+    for i in range(0,6):
+        assert f"zeta_{i+1}" in zeta_record
+        assert isinstance(zeta_record[f'zeta_{i+1}'],float)
+    info.db.close_db()
+    info.db.delete_db()
+
+
+def test_omega_record():
+    info = si.SimInfo()
+    omega_record = info.omega_record()
+    assert isinstance(omega_record, dict)
+    assert "t_idx" in omega_record
+    assert isinstance(omega_record['t_idx'],int)
+    for i in range(0,11):
+        assert f"omega_{i+1}" in omega_record
+        assert isinstance(omega_record[f'omega_{i+1}'],float)
+    info.db.close_db()
+    info.db.delete_db()
+
