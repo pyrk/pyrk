@@ -4,3 +4,4 @@ scipy
 pint
 tables
 bokeh
+h5py

@@ -3,36 +3,48 @@ import tables as tb
 
 
 class NeutronicsParamsRow(tb.IsDescription):
-    """ A row describing the neutronics parameters in a component..
+    """ A row describing the neutronics parameters.
     """
     t_idx = tb.Int32Col()
-    component = tb.StringCol(16)
     rho_tot = tb.Float64Col()
     rho_ext = tb.Float64Col()
 
 
 class NeutronicsTimeseriesRow(tb.IsDescription):
-    """ A row describing the neutronics data at each timestep
+    """ A row describing the reactivity data in a component at each timestep
     """
     t_idx = tb.Int32Col()
     component = tb.StringCol(16)
     rho = tb.Float64Col()
 
-
 class ZetasTimestepRow(tb.IsDescription):
     """ A row descriptor for precursor concentrations at each timestep
     """
     t_idx = tb.Int32Col()
-    zeta_idx = tb.Float64Col()
-    zeta = tb.Float64Col()
+    zeta_1 = tb.Float64Col()
+    zeta_2 = tb.Float64Col()
+    zeta_3 = tb.Float64Col()
+    zeta_4 = tb.Float64Col()
+    zeta_5 = tb.Float64Col()
+    zeta_6 = tb.Float64Col()
 
 
 class OmegasTimestepRow(tb.IsDescription):
     """ A row descriptor for decay heat powers at each timestep
     """
     t_idx = tb.Int32Col()
-    omega_idx = tb.Float64Col()
-    omega = tb.Float64Col()
+    omega_1  = tb.Float64Col()
+    omega_2  = tb.Float64Col()
+    omega_3  = tb.Float64Col()
+    omega_4  = tb.Float64Col()
+    omega_5  = tb.Float64Col()
+    omega_6  = tb.Float64Col()
+    omega_7  = tb.Float64Col()
+    omega_8  = tb.Float64Col()
+    omega_9  = tb.Float64Col()
+    omega_10 = tb.Float64Col()
+    omega_11 = tb.Float64Col()
+
 
 
 class ThTimeseriesRow(tb.IsDescription):

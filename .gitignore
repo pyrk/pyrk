@@ -5,6 +5,9 @@ pyrk\.egg-info/
 dist/
 RELEASE\-VERSION
 pyrk/RELEASE\-VERSION
+testfile.py
+/images
+
 # Ignore temp files
 __pycache__/
 *.py[cod]
@@ -30,6 +33,7 @@ matplotlibrc
 
 *.pdf
 *.eps
+*.png
 
 .DS_Store
 

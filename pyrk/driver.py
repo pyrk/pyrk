@@ -18,6 +18,7 @@ from pyrk.utilities.logger import pyrklog
 from pyrk.utilities.progress_bar import ProgressBar
 from pyrk.inp import sim_info
 from pyrk.utilities.ur import units
+from pyrk.utilities.h5_processor import H5Processor
 import os
 
 
@@ -286,12 +287,14 @@ def main(args, curr_dir):
     sol = solve(si=si, y=si.y, infile=infile)
     log_results(si)
     out_db.close_db()
-    print(si.plotdir)
-    plotter.plot(sol, si)
     if args.enable_profiler is True and profile is not None:
         post_profiling(profile, args)
+    
+    sim_plots = H5Processor(infile=[args.outfile],
+                      names=[''],
+                      plotdir=args.plotdir)
+    sim_plots.h5plot()
 
-    pyrklog.critical("\nSimulation succeeded.\n")
     pyrklog.critical("\nSimulation succeeded.\n")
 
 """Run it as a script"""

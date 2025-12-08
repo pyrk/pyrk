@@ -1,4 +1,4 @@
-from pyrk.ur import units
+from pyrk.utilities.ur import units
 from pyrk.materials.material import Material
 from pyrk.density_model import DensityModel
 

@@ -35,6 +35,9 @@ setup(
               'pyrk.utilities',
               ],
     include_package_data=True,
+    package_data={
+        'pyrk.utilities': ['plotting.mplstyle'],
+    },
     platforms='any',
     test_suite='pyrk.test.test_pyrk',
     classifiers=[
